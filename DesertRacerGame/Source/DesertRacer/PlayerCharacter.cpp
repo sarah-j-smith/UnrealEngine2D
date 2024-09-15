@@ -60,9 +60,20 @@ void APlayerCharacter::Move(const FInputActionValue &Value)
 	if (canMove) {
 		if (abs(moveActionValue.Y) > 0.0) {
 			const float deltaTime = GetWorld()->DeltaTimeSeconds;
+
+			// If A or D is pressed to turn
+			if (abs(moveActionValue.X) > 0.0) {
+				float rotationMagnitude = rotationSpeed * deltaTime * -moveActionValue.X;
+				AddActorWorldRotation(FRotator(rotationMagnitude, 0.0, 0.0));
+			}
+
 			const FVector currentLocation = GetActorLocation();
 			const FVector directionVector = GetActorUpVector();
-			const FVector moveVector = directionVector * moveSpeed * deltaTime * moveActionValue.Y;
+			float finalMovementSpeed = moveSpeed;
+			if (moveActionValue.Y < 0.0) {
+				finalMovementSpeed *= 0.5;
+			}
+			const FVector moveVector = directionVector * finalMovementSpeed * deltaTime * moveActionValue.Y;
 			const FVector newLocation = currentLocation + moveVector;
 			SetActorLocation(newLocation);
 		}
