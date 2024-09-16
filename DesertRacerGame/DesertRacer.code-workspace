@@ -11,10 +11,7 @@
 	],
 	"settings": {
 		"typescript.tsc.autoDetect": "off",
-		"npm.autoDetect": "off",
-		"C_Cpp.intelliSenseCachePath": "\"${workspaceFolder}/Intermediate/Build/Mac/arm64/${workspaceFolderBasename}/Development/UnrealEd/**",
-		"C_Cpp.loggingLevel": "Debug",
-		"dotnet.defaultSolution": "disable"
+		"npm.autoDetect": "off"
 	},
 	"extensions": {
 		"recommendations": [

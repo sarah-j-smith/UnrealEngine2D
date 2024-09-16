@@ -1,6 +1,6 @@
 # Desert Racer - Unreal Tuto 1
 
-From:
+These instructions are for Mac. From:
 
 > Unreal Engine 2D: Make Your Own Epic 2D Games Using C++
 
@@ -76,3 +76,9 @@ Instead of refreshing the project from Unreal you can also run:
 [Reference for variables]: https://code.visualstudio.com/docs/editor/variables-reference
 
 [full file]: https://gist.github.com/sarah-j-smith/317386821d3de5b08fcf7605187caf60
+
+# HowTo 
+
+* [See How To Create this project] in Unreal and C++.
+
+[See How To Create this project]: ./Docs/HowTo.md
