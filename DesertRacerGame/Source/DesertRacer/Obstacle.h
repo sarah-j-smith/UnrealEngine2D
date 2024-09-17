@@ -7,6 +7,7 @@
 
 #include "Components/CapsuleComponent.h"
 #include "PaperSpriteComponent.h"
+#include "MainGameMode.h"
 
 #include "Obstacle.generated.h"
 
@@ -14,6 +15,8 @@ UCLASS()
 class DESERTRACER_API AObstacle : public AActor
 {
 	GENERATED_BODY()
+
+	AMainGameMode *mainGameMode;
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
