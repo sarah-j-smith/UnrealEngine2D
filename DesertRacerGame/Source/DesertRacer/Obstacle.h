@@ -14,23 +14,23 @@ UCLASS()
 class DESERTRACER_API AObstacle : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UCapsuleComponent *capsuleComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UPaperSpriteComponent *obstacleSprite;
-	
-	// Sets default values for this actor's properties
+
 	AObstacle();
 
-protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
+	void OverlapBegin(
+			UPrimitiveComponent *OverlappedComponent, 
+			AActor *OtherActor, UPrimitiveComponent *OtherComponent, 
+			int32 OtherBodyIndex, bool FromSweep, const FHitResult &SweepResult);
 };

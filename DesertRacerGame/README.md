@@ -82,3 +82,19 @@ Instead of refreshing the project from Unreal you can also run:
 * [See How To Create this project] in Unreal and C++.
 
 [See How To Create this project]: ./Docs/HowTo.md
+
+# Troubleshooting
+
+```
+UE_LOG(LogTemp, Warning, TEXT("binding capsule collision handler"));
+```
+
+Checkin the **Output Log** bottom left of the Unreal Editor window.
+
+* Ensure the Editor and all Unreal processes (in Activity monitor) are not running when rebuilding
+* Do a regen after any header file changes to pick up changes
+* If a clean doesn't help can try nuking all the build files:
+    - `Binaries`
+    - `Intermediate`
+    - `Saved`
+    
