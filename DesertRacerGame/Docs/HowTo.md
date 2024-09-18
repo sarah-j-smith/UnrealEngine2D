@@ -74,3 +74,28 @@
         - just changing the sprite and collision capsule
         - turn off the collision preset - `NoCollision` for the sprite
         - the capsule will be `DynamicAll`
+
+# Music
+
+Background music can be launched off the Game Instance, a class instance
+that persists between level changes. But the Start Game event cannot
+be used for this - it has to be triggered from the Game Mode when the 
+game starts.
+
+## Create a Game Instance
+
+* Right click in Blueprints folder and create a new Blueprint
+* Base it off the Game Instance class (not the Platform Game Instance)
+    - Call it `BP_MyGameInstance`
+* Edit > Project Settings > Maps & Modes > Game Instance
+    - Select `BP_MyGameInstance`
+
+## Add the Logic for the Music to Start
+
+* Inside `BP_MyGameInstance`
+
+![screenshot of blueprint](./BP_MyGameInstance.png)
+
+* Inside `BP_MyGameMode`
+
+![screenshot of blueprint](./BP_MyGameMode.png)
