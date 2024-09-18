@@ -45,7 +45,8 @@ void AObstacle::OverlapBegin(
 	if (PlayerCharacter) {
 		if (PlayerCharacter->canMove) {
 			PlayerCharacter->canMove = false;
-			mainGameMode->ResetGameLevel(false);
+			UGameplayStatics::PlaySound2D(GetWorld(), hitSound);
+			mainGameMode->ResetGameLevel(isFinishLine);
 		}
 	}
 }
