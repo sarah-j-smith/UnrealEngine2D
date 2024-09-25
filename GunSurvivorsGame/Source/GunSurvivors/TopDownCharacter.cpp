@@ -3,6 +3,8 @@
 
 #include "TopDownCharacter.h"
 
+#include "Kismet/KismetMathLibrary.h"
+
 // Sets default values
 ATopDownCharacter::ATopDownCharacter()
 {
@@ -14,6 +16,15 @@ ATopDownCharacter::ATopDownCharacter()
 
 	characterFlipbook = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("CharacterFlipbook"));
 	characterFlipbook->SetupAttachment(RootComponent);
+
+	gunParent = CreateDefaultSubobject<USceneComponent>(TEXT("GunParent"));
+	gunParent->SetupAttachment(RootComponent);
+
+	gunSprite = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("GunSprite"));
+	gunSprite->SetupAttachment(gunParent);
+
+	bulletSpawnPosition = CreateDefaultSubobject<USceneComponent>(TEXT("BulletSpawnPosition"));
+	bulletSpawnPosition->SetupAttachment(gunSprite);
 }
 
 // Called when the game starts or when spawned
@@ -23,11 +34,27 @@ void ATopDownCharacter::BeginPlay()
 	
 	APlayerController *playerController = Cast<APlayerController>(Controller);
 	if (playerController) {
+		playerController->SetShowMouseCursor(true);
+		
 		UEnhancedInputLocalPlayerSubsystem *subSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(playerController->GetLocalPlayer());
 		if (subSystem) {
 			subSystem->AddMappingContext(inputMappingContext, 0);
 		}
 	}
+}
+
+bool ATopDownCharacter::IsInMapBoundsHorizontal(float xpos)
+{
+	bool Result = true;
+	Result = (mapLimitsHorizontal.X < xpos && xpos < mapLimitsHorizontal.Y);
+	return Result;
+}
+
+bool ATopDownCharacter::IsInMapBoundsVertical(float zpos)
+{
+	bool Result = true;
+	Result = (mapLimitsVertical.X < zpos && zpos < mapLimitsVertical.Y);
+	return Result;
 }
 
 // Called every frame
@@ -42,9 +69,29 @@ void ATopDownCharacter::Tick(float DeltaTime)
 			}
 			FVector2D moveVector = movementDirection * movementSpeed * DeltaTime;
 			FVector currentLocation = GetActorLocation();
-			FVector newLocation = currentLocation + FVector(moveVector.X, 0.0, moveVector.Y);
+			FVector newLocation = currentLocation + FVector(moveVector.X, 0.0, 0.0);
+			if (!IsInMapBoundsHorizontal(newLocation.X)) {
+				newLocation -= FVector(moveVector.X, 0.0, 0.0);
+			}
+			newLocation += FVector(0.0, 0.0, moveVector.Y);
+			if (!IsInMapBoundsVertical(newLocation.Z)) {
+				newLocation -= FVector(0.0, 0.0, moveVector.Y);
+			}
 			SetActorLocation(newLocation);
 		}
+	}
+
+	APlayerController *playerController = Cast<APlayerController>(Controller);
+	if (playerController) {
+		FVector MouseWorldLocation, MouseWorldDirection;
+		playerController->DeprojectMousePositionToWorld(MouseWorldLocation, MouseWorldDirection);
+
+		FVector currentLocation = GetActorLocation();
+		FVector start = FVector(currentLocation.X, 0.0, currentLocation.Z);
+		FVector target = FVector(MouseWorldLocation.X, 0.0, MouseWorldLocation.Z);
+		FRotator gunParentRotator = UKismetMathLibrary::FindLookAtRotation(start, target);
+
+		gunParent->SetRelativeRotation(gunParentRotator);
 	}
 }
 
@@ -69,12 +116,25 @@ void ATopDownCharacter::MoveTriggered(const FInputActionValue &Value)
 
 	if (canMove) {
 		movementDirection = moveValue;
+		characterFlipbook->SetFlipbook(runFlipbook);
+
+		FVector flipbookScale = characterFlipbook->GetComponentScale();
+		if (movementDirection.X < 0.0) {
+			if (flipbookScale.X > 0.0) {
+				characterFlipbook->SetWorldScale3D(FVector(-1.0, 1.0, 1.0));
+			}
+		} else if (movementDirection.X > 0.0) {
+			if (flipbookScale.X < 0.0) {
+				characterFlipbook->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
+			}
+		}
 	}
 }
 
 void ATopDownCharacter::MoveCompleted(const FInputActionValue &Value)
 {
 	movementDirection = FVector2D::ZeroVector;
+	characterFlipbook->SetFlipbook(idleFlipbook);
 }
 
 void ATopDownCharacter::Shoot(const FInputActionValue &Value)
