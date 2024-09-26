@@ -139,5 +139,42 @@ void ATopDownCharacter::MoveCompleted(const FInputActionValue &Value)
 
 void ATopDownCharacter::Shoot(const FInputActionValue &Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan, TEXT("Shoot"));
+	if (canShoot) {
+		canShoot = false;
+
+		// Shoot logic
+		// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::White, TEXT("Shoot"));
+		ABullet *bullet = GetWorld()->SpawnActor<ABullet>(BulletActorToSpawn,
+			bulletSpawnPosition->GetComponentLocation(),
+			FRotator(0.0f, 0.0f, 0.0f)
+		);
+		check(bullet);
+
+		// Get Mouse location
+		APlayerController *playerController = Cast<APlayerController>(Controller);
+		check(playerController);
+		FVector MouseWorldLocation, MouseWorldDirection;
+		playerController->DeprojectMousePositionToWorld(MouseWorldLocation, MouseWorldDirection);
+
+		// Calculate vector from player to mouse position
+		FVector playerLocation = GetActorLocation();
+		FVector2D shootDirection = FVector2D(
+			MouseWorldLocation.X - playerLocation.X, 
+			MouseWorldLocation.Z - playerLocation.Z);
+		shootDirection.Normalize();
+
+		// Launch the bullet
+		bullet->Launch(shootDirection, 300.0);
+
+		// Set cooldown timer
+		GetWorldTimerManager().SetTimer(
+			ShootCooldownTimer, this, 
+			&ATopDownCharacter::OnShootCooldownTimerTimeout, 1.0, 
+			false, shootCooldownDurationInSeconds);
+	}
+}
+
+void ATopDownCharacter::OnShootCooldownTimerTimeout()
+{
+	canShoot = true;
 }
