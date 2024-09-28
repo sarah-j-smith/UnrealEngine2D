@@ -26,3 +26,14 @@ Go to my [notes from the previous section of this course] for sprite sheets and 
 * Save and compile
 * In the Project Settings > Engine > Software Cursor
     - Add a new default cursor and select `WidgetBP_MouseCursor`
+
+## Packaging for iOS
+
+* Very good video on how to do this in 2024, with new XCode integration in Unreal
+
+* https://youtu.be/fuUYPrZNE6Y?si=pWJ10xz67kRE4uvj
+* Have to create an app on the [Apple Developer portal]
+* From there assign a new App Id:
+    * `au.com.smithsoft.splodgehunters`
+
+[Apple Developer portal]: https://developer.apple.com/account/

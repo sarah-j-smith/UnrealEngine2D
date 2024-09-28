@@ -42,6 +42,8 @@ void AEnemySpawner::StopSpawning()
 
 void AEnemySpawner::SpawnEnemy()
 {
+	// This Vrand function is not all that efficient really.  Maybe could do better with
+	// basic trigonometry.
 	FVector2D randomPosition = FVector2D(FMath::VRand());
 	randomPosition.Normalize();
 	randomPosition *= spawnDistance;
