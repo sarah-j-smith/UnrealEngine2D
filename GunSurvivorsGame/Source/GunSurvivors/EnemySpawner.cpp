@@ -1,21 +1,19 @@
 // (c) 2024 Sarah Smith
 
-
 #include "EnemySpawner.h"
 
 // Sets default values
 AEnemySpawner::AEnemySpawner()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
 void AEnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	StartSpawning();
 }
 
@@ -23,7 +21,6 @@ void AEnemySpawner::BeginPlay()
 void AEnemySpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AEnemySpawner::OnSpawnTimerTimeOut()
@@ -45,11 +42,14 @@ void AEnemySpawner::StopSpawning()
 
 void AEnemySpawner::SpawnEnemy()
 {
-	FVector spawnLocation = GetActorLocation();
+	FVector2D randomPosition = FVector2D(FMath::VRand());
+	randomPosition.Normalize();
+	randomPosition *= spawnDistance;
+	FVector spawnLocation = FVector(randomPosition.X, 0.0f, randomPosition.Y) + GetActorLocation();
+
 	AEnemy *enemy = GetWorld()->SpawnActor<AEnemy>(
 		EnemyActorToSpawn,
 		spawnLocation,
-		FRotator::ZeroRotator
-	);
+		FRotator::ZeroRotator);
 	check(enemy);
 }

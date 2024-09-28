@@ -22,6 +22,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float spawnDelay = 1.0f;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float spawnDistance = 400.0;
+
 	FTimerHandle spawnTimer;
 
 	AEnemySpawner();
