@@ -9,6 +9,8 @@
 #include "PaperFlipbookComponent.h"
 #include "TopDownCharacter.h"
 
+#include "Engine/TimerHandle.h"
+
 #include "Enemy.generated.h"
 
 UCLASS()
@@ -19,6 +21,9 @@ class GUNSURVIVORS_API AEnemy : public AActor
 public:	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UPaperFlipbookComponent *enemyFlipbook;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPaperFlipbook *deadFlipbookAsset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UCapsuleComponent *capsuleComp;
@@ -38,10 +43,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float StopDistance = 20.0f;
 
+	FTimerHandle destroyTimer;
+
 	AEnemy();
 
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+
+	void Die();
+
+	void OnDestroyTimerTimeout();
 
 };

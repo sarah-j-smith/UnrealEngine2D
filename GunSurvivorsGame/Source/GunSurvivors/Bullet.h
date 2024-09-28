@@ -17,7 +17,7 @@ class GUNSURVIVORS_API ABullet : public AActor
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USphereComponent *sphereComp;
 
@@ -33,21 +33,29 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool isLaunched;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool isDisabled;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadonly)
 	FTimerHandle deleteTimer;
 
-	// Sets default values for this actor's properties
 	ABullet();
 
-protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	void Launch(FVector2D direction, float speed);
 
 	void OnDeleteTimerTimeout();
+
+	UFUNCTION()
+	void OverlapBegin(
+		UPrimitiveComponent *OverlappedComponent,
+		AActor *OtherActor, UPrimitiveComponent *OtherComponent,
+		int32 OtherBodyIndex, bool FromSweep, const FHitResult &SweepResult);
+
+	void DisableBullet();
 };
