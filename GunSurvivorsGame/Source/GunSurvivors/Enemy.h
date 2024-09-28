@@ -26,15 +26,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ATopDownCharacter *playerCharacter;
 
-	// Sets default values for this actor's properties
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool IsAlive = true;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool CanFollow = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MovementSpeed = 50.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float StopDistance = 20.0f;
+
 	AEnemy();
 
-protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 };

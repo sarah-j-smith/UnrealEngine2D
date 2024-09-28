@@ -27,6 +27,7 @@ void AEnemy::BeginPlay()
 		AActor *playerActor = UGameplayStatics::GetActorOfClass(GetWorld(), ATopDownCharacter::StaticClass());
 		if (playerActor) {
 			playerCharacter = Cast<ATopDownCharacter>(playerActor);
+			CanFollow = true;
 		}
 	}
 }
@@ -36,5 +37,31 @@ void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (IsAlive && CanFollow && playerCharacter) {
+		FVector currentLocation = GetActorLocation();
+		FVector playerLocation = playerCharacter->GetActorLocation();
+		FVector chaseVector = playerLocation - currentLocation;
+		float distanceToPlayer = chaseVector.Length();
+		if (distanceToPlayer > StopDistance) {
+			chaseVector.Normalize();
+			FVector movementVector = chaseVector * DeltaTime * MovementSpeed;
+			FVector newLocation = currentLocation + movementVector;
+			SetActorLocation(newLocation);
+		}
+
+		currentLocation = GetActorLocation();
+		playerLocation = playerCharacter->GetActorLocation();
+		FVector FlipbookScale = enemyFlipbook->GetComponentScale();
+		// Enemy is to the right of the player so needs to look left - scale.x === -1
+		if (playerLocation.X < currentLocation.X) {
+			if (FlipbookScale.X > 0) {
+				enemyFlipbook->SetWorldScale3D(FVector(-1.0, 1.0, 1.0));
+			}
+		} else if (playerLocation.X > currentLocation.X ) {
+			if (FlipbookScale.X < 0) {
+				enemyFlipbook->SetWorldScale3D(FVector(1.0, 1.0, 1.0));
+			}
+		}
+	}
 }
 
