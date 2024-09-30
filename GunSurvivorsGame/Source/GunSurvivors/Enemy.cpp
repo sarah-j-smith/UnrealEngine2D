@@ -22,14 +22,6 @@ AEnemy::AEnemy()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	if (!playerCharacter) {
-		AActor *playerActor = UGameplayStatics::GetActorOfClass(GetWorld(), ATopDownCharacter::StaticClass());
-		if (playerActor) {
-			playerCharacter = Cast<ATopDownCharacter>(playerActor);
-			CanFollow = true;
-		}
-	}
 }
 
 // Called every frame
@@ -81,6 +73,7 @@ void AEnemy::Die()
 		this, &AEnemy::OnDestroyTimerTimeout,
 		1.0f, false, DestroyTime
 	);
+	enemyDiedDelegate.Broadcast();
 }
 
 void AEnemy::OnDestroyTimerTimeout() {

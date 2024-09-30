@@ -83,8 +83,15 @@ void ATopDownCharacter::Tick(float DeltaTime)
 
 	APlayerController *playerController = Cast<APlayerController>(Controller);
 	if (playerController) {
+		float locationX, locationY;
+		bool isPressed;
+		playerController->GetInputTouchState(ETouchIndex::Type::Touch1, locationX, locationY, isPressed);
+		if (isPressed) {
+			hasTouch = true;
+		}
+
 		FVector MouseWorldLocation, MouseWorldDirection;
-		playerController->DeprojectMousePositionToWorld(MouseWorldLocation, MouseWorldDirection);
+		hasMouse = playerController->DeprojectMousePositionToWorld(MouseWorldLocation, MouseWorldDirection);
 
 		FVector currentLocation = GetActorLocation();
 		FVector start = FVector(currentLocation.X, 0.0, currentLocation.Z);

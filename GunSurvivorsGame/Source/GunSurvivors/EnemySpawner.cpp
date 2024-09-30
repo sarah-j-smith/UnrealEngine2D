@@ -2,22 +2,31 @@
 
 #include "EnemySpawner.h"
 
-// Sets default values
+#include "Kismet/GameplayStatics.h"
+
+
 AEnemySpawner::AEnemySpawner()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-// Called when the game starts or when spawned
 void AEnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
+	AGameModeBase *gameModeBase = UGameplayStatics::GetGameMode(GetWorld());
+	if (gameModeBase) {
+		mainGameMode = Cast<AMainGameMode>(gameModeBase);
+	}
+
+	AActor *playerActor = UGameplayStatics::GetActorOfClass(GetWorld(), ATopDownCharacter::StaticClass());
+	if (playerActor)
+	{
+		playerCharacter = Cast<ATopDownCharacter>(playerActor);
+	}
 	StartSpawning();
 }
 
-// Called every frame
 void AEnemySpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -53,5 +62,32 @@ void AEnemySpawner::SpawnEnemy()
 		EnemyActorToSpawn,
 		spawnLocation,
 		FRotator::ZeroRotator);
-	check(enemy);
+	SetupEnemy(enemy);
+
+	// Difficulty system
+	totalEnemyCount += 1;
+	if (totalEnemyCount % difficultySpikeInterval == 0) {
+		// Hit interval
+		if (spawnDelay > spawnTimeMinimumLimit) {
+			spawnDelay -= decreaseSpawnTimerByEveryInterval;
+			if (spawnDelay < spawnTimeMinimumLimit) {
+				spawnDelay = spawnTimeMinimumLimit;
+			}
+		}
+	}
+}
+
+void AEnemySpawner::SetupEnemy(AEnemy *enemy)
+{
+	if (enemy) {
+		enemy->playerCharacter = playerCharacter;
+		enemy->CanFollow = true;
+		enemy->enemyDiedDelegate.AddDynamic(this, &AEnemySpawner::OnEnemyDied);
+	}
+}
+
+void AEnemySpawner::OnEnemyDied()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, TEXT("Enemy died"));
+	// mainGameMode->IncreaseScore();
 }

@@ -78,6 +78,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool canShoot = true;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool hasMouse = true;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool hasTouch = false;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float shootCooldownDurationInSeconds = 0.3f;
 
