@@ -18,8 +18,7 @@ void AMainGameMode::SetScore(int newScore)
 {
     if (newScore >= 0) {
         score = newScore;
-
-        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, FString::Printf(TEXT("Score: %d"), score));
+        scoreChangedDelegate.Broadcast(score);
     }
 }
 
