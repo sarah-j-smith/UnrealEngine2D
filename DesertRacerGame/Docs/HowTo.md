@@ -13,6 +13,18 @@
 * Add copyright notice and other info in the 
     - Edit > Project Settings > Project > Description
 
+## Setup for Pixel Art
+* Motion blur off
+* Auto exposure turn off
+* Anti-aliasing off - for pixel art
+
+## Import and sprite creation scale
+* Pixels-per-Unreal-unit - eg 0.5 (instead of 1.0)
+    * Under Editor - Paper2D - Import
+    * Effectively scales up the pixel art
+    * Needed for movements systems
+    * Needs to approximate human measurements 
+
 ## Paper2D setup
 * Check Edit > Plugins
     - Check Paper2D is enabled and context menu in the content draw shows Paper2D items
