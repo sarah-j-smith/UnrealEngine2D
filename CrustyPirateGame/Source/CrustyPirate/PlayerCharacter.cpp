@@ -6,7 +6,7 @@
 APlayerCharacter::APlayerCharacter()
 {
     PrimaryActorTick.bCanEverTick = true;
-
+    
     springArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
     springArm->SetupAttachment(RootComponent);
     
@@ -17,9 +17,73 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
     Super::BeginPlay();
+    
+    APlayerController *playerController = Cast<APlayerController>(Controller);
+    if (playerController) {
+        UEnhancedInputLocalPlayerSubsystem *subSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(playerController->GetLocalPlayer());
+        if (subSystem) {
+            subSystem->AddMappingContext(inputMappingContext, 0);
+        }
+    }
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+}
+
+void APlayerCharacter::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
+{
+    Super::SetupPlayerInputComponent(PlayerInputComponent);
+    
+    UEnhancedInputComponent *inputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+    if (inputComponent) {
+        inputComponent->BindAction(moveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
+        inputComponent->BindAction(attackAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Attack);
+        inputComponent->BindAction(jumpAction, ETriggerEvent::Started, this, &APlayerCharacter::JumpStarted);
+        inputComponent->BindAction(jumpAction, ETriggerEvent::Completed, this, &APlayerCharacter::JumpEnded);
+        inputComponent->BindAction(jumpAction, ETriggerEvent::Canceled, this, &APlayerCharacter::JumpEnded);
+    }
+}
+
+void APlayerCharacter::Attack(const FInputActionValue &Value)
+{
+    GEngine->AddOnScreenDebugMessage(1, 20.0, FColor::White, TEXT("Attack"), false, FVector2D(2.0, 2.0));
+}
+
+void APlayerCharacter::JumpStarted(const FInputActionValue &Value)
+{
+    if (isAlive && canMove) {
+        Jump();
+    }
+}
+
+void APlayerCharacter::JumpEnded(const FInputActionValue &Value)
+{
+    StopJumping();
+}
+
+void APlayerCharacter::Move(const FInputActionValue &Value)
+{
+    if (isAlive && canMove) {
+        float moveActionValue = Value.Get<float>();
+        FVector direction = FVector(1.0f, 0.0f, 0.0f);
+        AddMovementInput(direction, moveActionValue);
+        
+        UpdateDirection(moveActionValue);
+    }
+}
+
+void APlayerCharacter::UpdateDirection(float moveDirection)
+{
+    FRotator currentRotation = Controller->GetControlRotation();
+    if (moveDirection < 0.0f) {
+        if (currentRotation.Yaw != 180.0f) {
+            Controller->SetControlRotation(FRotator(currentRotation.Pitch, 180.0f, currentRotation.Roll));
+        }
+    } else if (moveDirection > 0.0f) {
+        if (currentRotation.Yaw != 0.0f) {
+            Controller->SetControlRotation(FRotator(currentRotation.Pitch, 0.0f, currentRotation.Roll));
+        }
+    }
 }
