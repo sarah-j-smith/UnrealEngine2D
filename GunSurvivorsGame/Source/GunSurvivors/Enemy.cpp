@@ -74,6 +74,8 @@ void AEnemy::Die()
 		1.0f, false, DestroyTime
 	);
 	enemyDiedDelegate.Broadcast();
+
+	UGameplayStatics::PlaySound2D(GetWorld(), hitSound);
 }
 
 void AEnemy::OnDestroyTimerTimeout() {

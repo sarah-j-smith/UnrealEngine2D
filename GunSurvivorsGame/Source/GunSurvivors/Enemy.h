@@ -45,6 +45,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float StopDistance = 20.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase *hitSound;
+
 	FTimerHandle destroyTimer;
 
 	FEnemyDiedDelegate enemyDiedDelegate;

@@ -4,6 +4,9 @@
 #include "TopDownCharacter.h"
 
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
+
+#include "Enemy.h"
 
 // Sets default values
 ATopDownCharacter::ATopDownCharacter()
@@ -41,6 +44,8 @@ void ATopDownCharacter::BeginPlay()
 			subSystem->AddMappingContext(inputMappingContext, 0);
 		}
 	}
+
+	capsuleComp->OnComponentBeginOverlap.AddDynamic(this, &ATopDownCharacter::OverlapBegin);
 }
 
 bool ATopDownCharacter::IsInMapBoundsHorizontal(float xpos)
@@ -141,7 +146,9 @@ void ATopDownCharacter::MoveTriggered(const FInputActionValue &Value)
 void ATopDownCharacter::MoveCompleted(const FInputActionValue &Value)
 {
 	movementDirection = FVector2D::ZeroVector;
-	characterFlipbook->SetFlipbook(idleFlipbook);
+	if (isAlive) {
+		characterFlipbook->SetFlipbook(idleFlipbook);
+	}
 }
 
 void ATopDownCharacter::Shoot(const FInputActionValue &Value)
@@ -156,6 +163,8 @@ void ATopDownCharacter::Shoot(const FInputActionValue &Value)
 			FRotator(0.0f, 0.0f, 0.0f)
 		);
 		check(bullet);
+
+		UGameplayStatics::PlaySound2D(GetWorld(), bulletSound);
 
 		// Get Mouse location
 		APlayerController *playerController = Cast<APlayerController>(Controller);
@@ -183,5 +192,30 @@ void ATopDownCharacter::Shoot(const FInputActionValue &Value)
 
 void ATopDownCharacter::OnShootCooldownTimerTimeout()
 {
-	canShoot = true;
+	if (isAlive) {
+		canShoot = true;
+	}
+}
+
+void ATopDownCharacter::OverlapBegin(
+	UPrimitiveComponent *OverlappedComponent,
+	AActor *OtherActor, UPrimitiveComponent *OtherComponent,
+	int32 OtherBodyIndex, bool FromSweep, const FHitResult &SweepResult)
+{
+	AEnemy *enemyActor = Cast<AEnemy>(OtherActor);
+	if (enemyActor && enemyActor->IsAlive) {
+		if (isAlive) {
+			Die();
+		}
+	}
+}
+
+void ATopDownCharacter::Die() {
+	isAlive = false;
+	canMove = false;
+	canShoot = false;
+
+	playerDiedDelegate.Broadcast();
+
+	UGameplayStatics::PlaySound2D(GetWorld(), hitSound);
 }

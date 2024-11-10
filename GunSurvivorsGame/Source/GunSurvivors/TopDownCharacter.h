@@ -21,10 +21,14 @@
 
 #include "TopDownCharacter.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPlayerDiedDelegate);
+
 UCLASS()
 class GUNSURVIVORS_API ATopDownCharacter : public APawn
 {
 	GENERATED_BODY()
+
+	void Die();
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -58,6 +62,12 @@ public:
 	UPaperFlipbook *runFlipbook;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase *hitSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase *bulletSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float movementSpeed = 100.0f;
 
 	UPROPERTY(BlueprintReadWrite)
@@ -79,6 +89,9 @@ public:
 	bool canShoot = true;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool isAlive = true;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool hasMouse = true;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -88,6 +101,8 @@ public:
 	float shootCooldownDurationInSeconds = 0.3f;
 
 	FTimerHandle ShootCooldownTimer;
+
+	FPlayerDiedDelegate playerDiedDelegate;
 
 	ATopDownCharacter();
 
@@ -109,4 +124,10 @@ public:
 	bool IsInMapBoundsVertical(float zpos);
 
 	void OnShootCooldownTimerTimeout();
+
+	UFUNCTION()
+	void OverlapBegin(
+		UPrimitiveComponent *OverlappedComponent,
+		AActor *OtherActor, UPrimitiveComponent *OtherComponent,
+		int32 OtherBodyIndex, bool FromSweep, const FHitResult &SweepResult);
 };
