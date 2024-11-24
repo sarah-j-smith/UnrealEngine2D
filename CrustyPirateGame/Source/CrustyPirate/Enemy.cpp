@@ -22,11 +22,22 @@ void AEnemy::Tick(float DeltaTime) {
     
     if (isAlive && followTarget) {
         float moveDirection = (followTarget->GetActorLocation().X - GetActorLocation().X) > 0.0 ? 1.0f : -1.0f;
-        if (canMove) {
+        if (canMove && ShouldMoveToTarget()) {
             FVector worldDirection = FVector(1.0f, 0.0f, 0.0f);
             AddMovementInput(worldDirection, moveDirection);
         }
     }
+}
+
+bool AEnemy::ShouldMoveToTarget() {
+    bool result = false;
+    
+    if (followTarget) {
+        float distance = abs(followTarget->GetActorLocation().X - GetActorLocation().X);
+        result = distance > stopDistanceToTarget;
+    }
+    
+    return result;
 }
 
 void AEnemy::DetectorOverlapBegin(UPrimitiveComponent *OverlappedComponent,
