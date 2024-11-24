@@ -22,6 +22,7 @@ void AEnemy::Tick(float DeltaTime) {
     
     if (isAlive && followTarget) {
         float moveDirection = (followTarget->GetActorLocation().X - GetActorLocation().X) > 0.0 ? 1.0f : -1.0f;
+        UpdateDirection(moveDirection);
         if (canMove && ShouldMoveToTarget()) {
             FVector worldDirection = FVector(1.0f, 0.0f, 0.0f);
             AddMovementInput(worldDirection, moveDirection);
@@ -56,5 +57,19 @@ void AEnemy::DetectorOverlapEnd(
     APlayerCharacter *playerCharacter = Cast<APlayerCharacter>(OtherActor);
     if (playerCharacter) {
         followTarget = NULL;
+    }
+}
+
+void AEnemy::UpdateDirection(float moveDirection) {
+    FRotator currentRotation = GetActorRotation();
+    
+    if (moveDirection < 0.0f) {
+        if (currentRotation.Yaw != 180.0f) {
+            SetActorRotation(FRotator(currentRotation.Pitch, 180.0f, currentRotation.Roll));
+        }
+    } else if (moveDirection > 0.0f) {
+        if (currentRotation.Yaw != 0.0f) {
+            SetActorRotation(FRotator(currentRotation.Pitch, 0.0f, currentRotation.Roll));
+        }
     }
 }

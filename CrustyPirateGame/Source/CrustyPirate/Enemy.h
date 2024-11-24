@@ -55,4 +55,6 @@ public:
                             int32 OtherBodyIndex);
     
     bool ShouldMoveToTarget();
+    
+    void UpdateDirection(float moveDirection);
 };
