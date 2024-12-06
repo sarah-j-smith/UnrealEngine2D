@@ -38,6 +38,7 @@
     - ensure textures are set to the TranslucentUnlit sprite material
 * From each texture right-click and Sprite Action > Create Sprite
     - drag the resulting sprite into a new `Assets/Sprites` folder
+* Create Flipbooks from the sprites 
 
 ## Create the C++ Class 
 * Tools > New C++ Class - Choose Pawn and name it `PlayerCharacter`
@@ -111,3 +112,22 @@ game starts.
 * Inside `BP_MyGameMode`
 
 ![screenshot of blueprint](./BP_MyGameMode.png)
+
+## Use PaperZD for FSM Animation
+
+* Extended state machine based sprite animation
+* Start by creating an AnimationSource alongside the character blueprint
+* Create animation sequences from flipbooks inside the asset browser
+* Add any sound effects in the timeline notify dopesheet
+* Create an Animation Blueprint for the character eg `AnimBP_CharacterName`
+* Ensure in the character Blueprint eg `BP_CharacterName` the animation component"
+    * is `ComponentClass`: `PaperZDAnimationComponent`
+    * `PaperZD Anim Instance class`: `AnimBP_CharacterName`
+* In `AnimBP_CharacterName` nav top left should have `Event Graph` and `Anim Graph`
+* In the Event graph:
+    * Use GetOwningActor cast to its class, then promote to variable eg `CharacterName`
+    * Hook that to the event on init 
+* In the Anim graph:
+    * Create a state machine hooked output to the Output Animation
+    * Create states for each animation to play 
+    * Create the rules for the character to switch from state to state
