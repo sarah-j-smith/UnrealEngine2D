@@ -25,6 +25,8 @@ void APlayerCharacter::BeginPlay()
             subSystem->AddMappingContext(inputMappingContext, 0);
         }
     }
+    
+    OnAttackOverrideEndDelegate.BindUObject(this, &APlayerCharacter::OnAttackOverrideAnimEnd);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -48,7 +50,14 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent *PlayerInputCom
 
 void APlayerCharacter::Attack(const FInputActionValue &Value)
 {
-    GEngine->AddOnScreenDebugMessage(1, 20.0, FColor::White, TEXT("Attack"), false, FVector2D(2.0, 2.0));
+    // GEngine->AddOnScreenDebugMessage(1, 20.0, FColor::White, TEXT("Attack"), false, FVector2D(2.0, 2.0));
+    if (isAlive && canAttack) {
+        canAttack = false;
+        canMove = false;
+        
+        UPaperZDAnimInstance *anim = GetAnimInstance();
+        anim->PlayAnimationOverride(attackAnimSequence, FName("DefaultSlot"), 1.0f, 0.0f, OnAttackOverrideEndDelegate);
+    }
 }
 
 void APlayerCharacter::JumpStarted(const FInputActionValue &Value)
@@ -86,4 +95,10 @@ void APlayerCharacter::UpdateDirection(float moveDirection)
             Controller->SetControlRotation(FRotator(currentRotation.Pitch, 0.0f, currentRotation.Roll));
         }
     }
+}
+
+void APlayerCharacter::OnAttackOverrideAnimEnd(bool completed)
+{
+    canAttack = true;
+    canMove = true;
 }
