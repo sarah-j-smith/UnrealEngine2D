@@ -3,6 +3,8 @@
 
 #include "PlayerCharacter.h"
 
+#include "Enemy.h"
+
 APlayerCharacter::APlayerCharacter()
 {
     PrimaryActorTick.bCanEverTick = true;
@@ -12,6 +14,9 @@ APlayerCharacter::APlayerCharacter()
     
     camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
     camera->SetupAttachment(springArm, USpringArmComponent::SocketName);
+    
+    attackCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Attack Collision Box"));
+    attackCollisionBox->SetupAttachment(RootComponent);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -27,6 +32,10 @@ void APlayerCharacter::BeginPlay()
     }
     
     OnAttackOverrideEndDelegate.BindUObject(this, &APlayerCharacter::OnAttackOverrideAnimEnd);
+    
+    attackCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::AttackBoxOverlapBegin);
+    
+    EnableAttackCollisionBox(false);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -57,6 +66,8 @@ void APlayerCharacter::Attack(const FInputActionValue &Value)
         
         UPaperZDAnimInstance *anim = GetAnimInstance();
         anim->PlayAnimationOverride(attackAnimSequence, FName("DefaultSlot"), 1.0f, 0.0f, OnAttackOverrideEndDelegate);
+        
+        EnableAttackCollisionBox(true);
     }
 }
 
@@ -101,4 +112,29 @@ void APlayerCharacter::OnAttackOverrideAnimEnd(bool completed)
 {
     canAttack = true;
     canMove = true;
+    
+    EnableAttackCollisionBox(false);
+}
+
+void APlayerCharacter::AttackBoxOverlapBegin(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex, bool FromSweep, const FHitResult &SweepResult)
+{
+    const AEnemy* enemy = Cast<AEnemy>(OtherActor);
+    if (enemy) {
+        // take damage
+        GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::White, enemy->GetName());
+    }
+}
+
+void APlayerCharacter::EnableAttackCollisionBox(bool enabled)
+{
+    if (enabled)
+    {
+        attackCollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+        attackCollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+    }
+    else
+    {
+        attackCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+        attackCollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+    }
 }

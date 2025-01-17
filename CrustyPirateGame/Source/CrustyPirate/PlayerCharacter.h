@@ -7,6 +7,7 @@
 
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/BoxComponent.h"
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -25,12 +26,18 @@ class CRUSTYPIRATE_API APlayerCharacter : public APaperZDCharacter
 {
     GENERATED_BODY()
 public:
+    
+    // MARK: Components
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     USpringArmComponent *springArm;
     
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     UCameraComponent *camera;
     
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    UBoxComponent *attackCollisionBox;
+
+    // MARK: Inputs
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     UInputMappingContext *inputMappingContext;
     
@@ -38,14 +45,16 @@ public:
     UInputAction *attackAction;
     
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    UPaperZDAnimSequence *attackAnimSequence;
-    
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
     UInputAction *jumpAction;
     
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     UInputAction *moveAction;
+
+    // MARK: Animations
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    UPaperZDAnimSequence *attackAnimSequence;
     
+    // MARK: Control Vars
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float moveSpeed;
     
@@ -79,4 +88,12 @@ public:
     void UpdateDirection(float moveDirection);
     
     void OnAttackOverrideAnimEnd(bool completed);
+    
+    UFUNCTION()
+    void AttackBoxOverlapBegin(UPrimitiveComponent *OverlappedComponent,
+                               AActor *OtherActor, UPrimitiveComponent *OtherComponent,
+                               int32 OtherBodyIndex, bool FromSweep, const FHitResult &SweepResult);
+    
+    UFUNCTION(BlueprintCallable)
+    void EnableAttackCollisionBox(bool enabled);
 };
