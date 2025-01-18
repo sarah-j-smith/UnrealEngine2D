@@ -17,6 +17,9 @@ APlayerCharacter::APlayerCharacter()
     
     attackCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Attack Collision Box"));
     attackCollisionBox->SetupAttachment(RootComponent);
+    
+    HPText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Hit Point Text"));
+    HPText->SetupAttachment(RootComponent);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -137,4 +140,9 @@ void APlayerCharacter::EnableAttackCollisionBox(bool enabled)
         attackCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
         attackCollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
     }
+}
+
+void APlayerCharacter::UpdateHitPoints(int NewHitPoints)
+{
+    //
 }

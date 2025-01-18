@@ -12,6 +12,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Components/InputComponent.h"
+#include "Components/TextRenderComponent.h"
 #include "InputActionValue.h"
 #include "GameFramework/Controller.h"
 #include "PaperZDAnimInstance.h"
@@ -36,6 +37,9 @@ public:
     
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
     UBoxComponent *attackCollisionBox;
+    
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    UTextRenderComponent *HPText;
 
     // MARK: Inputs
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -55,6 +59,9 @@ public:
     UPaperZDAnimSequence *attackAnimSequence;
     
     // MARK: Control Vars
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int hitPoints = 100;
+    
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float moveSpeed;
     
@@ -96,4 +103,6 @@ public:
     
     UFUNCTION(BlueprintCallable)
     void EnableAttackCollisionBox(bool enabled);
+    
+    void UpdateHitPoints(int NewHitPoints);
 };

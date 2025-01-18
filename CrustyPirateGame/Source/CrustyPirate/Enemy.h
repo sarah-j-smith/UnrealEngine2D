@@ -6,6 +6,7 @@
 #include "PaperZDCharacter.h"
 
 #include "Components/SphereComponent.h"
+#include "Components/TextRenderComponent.h"
 
 #include "PlayerCharacter.h"
 
@@ -20,7 +21,9 @@ class CRUSTYPIRATE_API AEnemy : public APaperZDCharacter
     GENERATED_BODY()
     
 public:
-    
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    UTextRenderComponent *HPText;
+
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     USphereComponent *playerDetectorSphere;
     
@@ -35,6 +38,9 @@ public:
     
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     bool isAlive = true;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int hitPoints = 100;
     
     AEnemy();
     
@@ -57,4 +63,6 @@ public:
     bool ShouldMoveToTarget();
     
     void UpdateDirection(float moveDirection);
+    
+    void UpdateHitPoints(int NewHitPoints);
 };
