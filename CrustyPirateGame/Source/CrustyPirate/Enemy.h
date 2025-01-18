@@ -7,6 +7,7 @@
 
 #include "Components/SphereComponent.h"
 #include "Components/TextRenderComponent.h"
+#include "PaperZDAnimInstance.h"
 
 #include "PlayerCharacter.h"
 

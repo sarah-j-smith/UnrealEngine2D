@@ -102,9 +102,11 @@ void AEnemy::ApplyDamage(int DamageAmount, float StunDuration)
         canMove = false;
         
         // Play the die animation
+        GetAnimInstance()->JumpToNode(FName("JumpDie"), FName("CrabbyStateMachine"));
     } else {
         // Is Alive
         
         // Play the take damage animation
+        GetAnimInstance()->JumpToNode(FName("JumpTakeHit"), FName("CrabbyStateMachine"));
     }
 }
