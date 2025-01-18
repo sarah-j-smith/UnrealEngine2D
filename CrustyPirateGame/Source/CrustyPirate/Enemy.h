@@ -65,4 +65,6 @@ public:
     void UpdateDirection(float moveDirection);
     
     void UpdateHitPoints(int NewHitPoints);
+    
+    void ApplyDamage(int DamageAmount, float StunDuration);
 };

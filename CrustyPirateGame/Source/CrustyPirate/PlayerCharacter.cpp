@@ -121,10 +121,10 @@ void APlayerCharacter::OnAttackOverrideAnimEnd(bool completed)
 
 void APlayerCharacter::AttackBoxOverlapBegin(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex, bool FromSweep, const FHitResult &SweepResult)
 {
-    const AEnemy* enemy = Cast<AEnemy>(OtherActor);
+    AEnemy* enemy = Cast<AEnemy>(OtherActor);
     if (enemy) {
         // take damage
-        GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::White, enemy->GetName());
+        enemy->ApplyDamage(AttackDamage, AttackStunDuration);
     }
 }
 
