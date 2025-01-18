@@ -67,7 +67,7 @@ void APlayerCharacter::Attack(const FInputActionValue &Value)
         UPaperZDAnimInstance *anim = GetAnimInstance();
         anim->PlayAnimationOverride(attackAnimSequence, FName("DefaultSlot"), 1.0f, 0.0f, OnAttackOverrideEndDelegate);
         
-        EnableAttackCollisionBox(true);
+        // The AttackCollisionBox is now enabled via AnimNotifyStates
     }
 }
 
@@ -113,7 +113,7 @@ void APlayerCharacter::OnAttackOverrideAnimEnd(bool completed)
     canAttack = true;
     canMove = true;
     
-    EnableAttackCollisionBox(false);
+    // The AttackCollisionBox is now disabled via AnimNotifyStates
 }
 
 void APlayerCharacter::AttackBoxOverlapBegin(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComponent, int32 OtherBodyIndex, bool FromSweep, const FHitResult &SweepResult)
