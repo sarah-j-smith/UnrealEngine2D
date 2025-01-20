@@ -24,7 +24,7 @@ void AEnemy::BeginPlay() {
 void AEnemy::Tick(float DeltaTime) {
     Super::Tick(DeltaTime);
     
-    if (isAlive && followTarget) {
+    if (isAlive && followTarget ) {
         float moveDirection = (followTarget->GetActorLocation().X - GetActorLocation().X) > 0.0 ? 1.0f : -1.0f;
         UpdateDirection(moveDirection);
         if (canMove && ShouldMoveToTarget()) {
@@ -108,5 +108,19 @@ void AEnemy::ApplyDamage(int DamageAmount, float StunDuration)
         
         // Play the take damage animation
         GetAnimInstance()->JumpToNode(FName("JumpTakeHit"), FName("CrabbyStateMachine"));
+        
+        Stun(StunDuration);
     }
+}
+
+void AEnemy::Stun(float DurationInSeconds) {
+    GetWorldTimerManager().SetTimer(
+        stunTimer, this,
+        &AEnemy::OnStunTimerTimeout, 1.0, false, DurationInSeconds);
+    
+    GetAnimInstance()->StopAllAnimationOverrides();
+}
+
+void AEnemy::OnStunTimerTimeout() {
+    isStunned = false;
 }

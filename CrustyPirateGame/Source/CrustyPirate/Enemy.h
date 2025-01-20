@@ -7,6 +7,7 @@
 
 #include "Components/SphereComponent.h"
 #include "Components/TextRenderComponent.h"
+#include "Engine/TimerHandle.h"
 #include "PaperZDAnimInstance.h"
 
 #include "PlayerCharacter.h"
@@ -40,8 +41,13 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     bool isAlive = true;
     
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    bool isStunned = false;
+    
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int hitPoints = 100;
+    
+    FTimerHandle stunTimer;
     
     AEnemy();
     
@@ -68,4 +74,8 @@ public:
     void UpdateHitPoints(int NewHitPoints);
     
     void ApplyDamage(int DamageAmount, float StunDuration);
+    
+    void Stun(float DurationInSeconds);
+    
+    void OnStunTimerTimeout();
 };
