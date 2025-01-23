@@ -3,6 +3,7 @@
 
 #include "Enemy.h"
 
+
 AEnemy::AEnemy() {
     PrimaryActorTick.bCanEverTick = true;
     
@@ -10,7 +11,11 @@ AEnemy::AEnemy() {
     playerDetectorSphere->SetupAttachment(RootComponent);
     
     HPText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("HPText"));
-    HPText->SetupAttachment(RootComponent);}
+    HPText->SetupAttachment(RootComponent);
+    
+    attackCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Attack Collision Box"));
+    attackCollisionBox->SetupAttachment(RootComponent);
+}
 
 void AEnemy::BeginPlay() {
     Super::BeginPlay();
@@ -21,6 +26,10 @@ void AEnemy::BeginPlay() {
     UpdateHitPoints(hitPoints);
     
     OnAttackOverrideEndDelegate.BindUObject(this, &AEnemy::OnAttackOverrideAnimEnd);
+    
+    attackCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::AttackBoxOverlapBegin);
+    
+    EnableAttackCollisionBox(false);
 }
 
 void AEnemy::Tick(float DeltaTime) {
@@ -111,6 +120,8 @@ void AEnemy::ApplyDamage(int DamageAmount, float StunDuration)
         
         // Play the die animation
         GetAnimInstance()->JumpToNode(FName("JumpDie"), FName("CrabbyStateMachine"));
+        
+        EnableAttackCollisionBox(false);
     } else {
         // Is Alive
         
@@ -164,5 +175,31 @@ void AEnemy::OnAttackOverrideAnimEnd(bool completed)
     if (isAlive)
     {
         canMove = true;
+    }
+}
+
+void AEnemy::AttackBoxOverlapBegin(UPrimitiveComponent *OverlappedComponent,
+                           AActor *OtherActor, UPrimitiveComponent *OtherComponent,
+                           int32 OtherBodyIndex, bool FromSweep, const FHitResult &SweepResult)
+{
+    APlayerCharacter* player = Cast<APlayerCharacter>(OtherActor);
+    if (player) {
+        // take damage
+        // player->ApplyDamage(AttackDamage, AttackStunDuration);
+        GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::White, TEXT("Player take damage"));
+    }
+}
+
+void AEnemy::EnableAttackCollisionBox(bool enabled)
+{
+    if (enabled)
+    {
+        attackCollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+        attackCollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+    }
+    else
+    {
+        attackCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+        attackCollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
     }
 }

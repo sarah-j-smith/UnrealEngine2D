@@ -7,7 +7,9 @@
 
 #include "Components/SphereComponent.h"
 #include "Components/TextRenderComponent.h"
+#include "Components/BoxComponent.h"
 #include "Engine/TimerHandle.h"
+#include "TimerManager.h"
 #include "PaperZDAnimInstance.h"
 
 #include "PlayerCharacter.h"
@@ -28,6 +30,9 @@ public:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     USphereComponent *playerDetectorSphere;
+    
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    UBoxComponent *attackCollisionBox;
     
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     APlayerCharacter *followTarget;
@@ -98,4 +103,12 @@ public:
     void OnAttackCooldownTimerTimeout();
     
     void OnAttackOverrideAnimEnd(bool completed);
+    
+    UFUNCTION()
+    void AttackBoxOverlapBegin(UPrimitiveComponent *OverlappedComponent,
+                               AActor *OtherActor, UPrimitiveComponent *OtherComponent,
+                               int32 OtherBodyIndex, bool FromSweep, const FHitResult &SweepResult);
+    
+    UFUNCTION(BlueprintCallable)
+    void EnableAttackCollisionBox(bool enabled);
 };
