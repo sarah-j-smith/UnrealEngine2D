@@ -5,6 +5,8 @@
 
 #include "Enemy.h"
 
+#include "Kismet/GameplayStatics.h"
+
 APlayerCharacter::APlayerCharacter()
 {
     PrimaryActorTick.bCanEverTick = true;

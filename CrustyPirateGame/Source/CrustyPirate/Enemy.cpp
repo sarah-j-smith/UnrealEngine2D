@@ -19,17 +19,24 @@ void AEnemy::BeginPlay() {
     playerDetectorSphere->OnComponentEndOverlap.AddDynamic(this, &AEnemy::DetectorOverlapEnd);
     
     UpdateHitPoints(hitPoints);
+    
+    OnAttackOverrideEndDelegate.BindUObject(this, &AEnemy::OnAttackOverrideAnimEnd);
 }
 
 void AEnemy::Tick(float DeltaTime) {
     Super::Tick(DeltaTime);
     
-    if (isAlive && followTarget ) {
+    if (isAlive && followTarget && !isStunned) {
         float moveDirection = (followTarget->GetActorLocation().X - GetActorLocation().X) > 0.0 ? 1.0f : -1.0f;
         UpdateDirection(moveDirection);
         if (canMove && ShouldMoveToTarget()) {
             FVector worldDirection = FVector(1.0f, 0.0f, 0.0f);
             AddMovementInput(worldDirection, moveDirection);
+        }
+    } else {
+        if (followTarget->isAlive)
+        {
+            Attack();
         }
     }
 }
@@ -100,6 +107,7 @@ void AEnemy::ApplyDamage(int DamageAmount, float StunDuration)
         
         isAlive = false;
         canMove = false;
+        canAttack = false;
         
         // Play the die animation
         GetAnimInstance()->JumpToNode(FName("JumpDie"), FName("CrabbyStateMachine"));
@@ -123,4 +131,38 @@ void AEnemy::Stun(float DurationInSeconds) {
 
 void AEnemy::OnStunTimerTimeout() {
     isStunned = false;
+}
+
+void AEnemy::Attack()
+{
+    if (isAlive && !isStunned && canAttack)
+    {
+        canAttack = false;
+        canMove = false;
+        
+        UPaperZDAnimInstance *anim = GetAnimInstance();
+        anim->PlayAnimationOverride(attackAnimSequence, FName("DefaultSlot"), 1.0f, 0.0f, OnAttackOverrideEndDelegate);
+        
+        // Set cooldown timer
+        GetWorldTimerManager().SetTimer(
+            attackCooldownTimer, this,
+            &AEnemy::OnAttackOverrideAnimEnd, 1.0,
+            false, attackCooldownInSeconds);
+    }
+}
+
+void AEnemy::OnAttackCooldownTimerTimeout()
+{
+    if (isAlive)
+    {
+        canAttack = true;
+    }
+}
+
+void AEnemy::OnAttackOverrideAnimEnd(bool completed)
+{
+    if (isAlive)
+    {
+        canMove = true;
+    }
 }

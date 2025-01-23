@@ -113,13 +113,17 @@ game starts.
 
 ![screenshot of blueprint](./BP_MyGameMode.png)
 
-## Use PaperZD for FSM Animation
+## Use PaperZD for FSM Animation - Basic
 
 * Extended state machine based sprite animation
 * Start by creating an AnimationSource alongside the character blueprint
 * Create animation sequences from flipbooks inside the asset browser
 * Add any sound effects in the timeline notify dopesheet
 * Create an Animation Blueprint for the character eg `AnimBP_CharacterName`
+    * Right click next to the character blue print, choose PaperZD > AnimBP
+
+![AnimBP creation](./create-anim-bp.png)
+
 * Ensure in the character Blueprint eg `BP_CharacterName` the animation component"
     * is `ComponentClass`: `PaperZDAnimationComponent`
     * `PaperZD Anim Instance class`: `AnimBP_CharacterName`
