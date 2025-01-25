@@ -3,6 +3,7 @@
 
 #include "Enemy.h"
 
+#include "Kismet/GameplayStatics.h"
 
 AEnemy::AEnemy() {
     PrimaryActorTick.bCanEverTick = true;
@@ -27,7 +28,7 @@ void AEnemy::BeginPlay() {
     
     OnAttackOverrideEndDelegate.BindUObject(this, &AEnemy::OnAttackOverrideAnimEnd);
     
-    attackCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::AttackBoxOverlapBegin);
+    attackCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::AttackBoxOverlapBegin);
     
     EnableAttackCollisionBox(false);
 }
@@ -38,14 +39,16 @@ void AEnemy::Tick(float DeltaTime) {
     if (isAlive && followTarget && !isStunned) {
         float moveDirection = (followTarget->GetActorLocation().X - GetActorLocation().X) > 0.0 ? 1.0f : -1.0f;
         UpdateDirection(moveDirection);
-        if (canMove && ShouldMoveToTarget()) {
-            FVector worldDirection = FVector(1.0f, 0.0f, 0.0f);
-            AddMovementInput(worldDirection, moveDirection);
-        }
-    } else {
-        if (followTarget->isAlive)
-        {
-            Attack();
+        if (ShouldMoveToTarget()) {
+            if (canMove) {
+                FVector worldDirection = FVector(1.0f, 0.0f, 0.0f);
+                AddMovementInput(worldDirection, moveDirection);
+            }
+        } else {
+            if (followTarget->isAlive)
+            {
+                Attack();
+            }
         }
     }
 }
@@ -70,13 +73,13 @@ void AEnemy::DetectorOverlapBegin(UPrimitiveComponent *OverlappedComponent,
     }
 }
 
-void AEnemy::DetectorOverlapEnd(
-                                UPrimitiveComponent *OverlappedComponent,
+void AEnemy::DetectorOverlapEnd(UPrimitiveComponent *OverlappedComponent,
                                 AActor *OtherActor, UPrimitiveComponent *OtherComponent,
-                                int32 OtherBodyIndex) {
+                                int32 OtherBodyIndex)
+{
     APlayerCharacter *playerCharacter = Cast<APlayerCharacter>(OtherActor);
     if (playerCharacter) {
-        followTarget = NULL;
+        followTarget = nullptr;
     }
 }
 
@@ -138,6 +141,7 @@ void AEnemy::Stun(float DurationInSeconds) {
         &AEnemy::OnStunTimerTimeout, 1.0, false, DurationInSeconds);
     
     GetAnimInstance()->StopAllAnimationOverrides();
+    EnableAttackCollisionBox(false);
 }
 
 void AEnemy::OnStunTimerTimeout() {
@@ -157,7 +161,7 @@ void AEnemy::Attack()
         // Set cooldown timer
         GetWorldTimerManager().SetTimer(
             attackCooldownTimer, this,
-            &AEnemy::OnAttackOverrideAnimEnd, 1.0,
+            &AEnemy::OnAttackCooldownTimerTimeout, 1.0,
             false, attackCooldownInSeconds);
     }
 }

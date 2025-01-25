@@ -9,7 +9,6 @@
 #include "Components/TextRenderComponent.h"
 #include "Components/BoxComponent.h"
 #include "Engine/TimerHandle.h"
-#include "TimerManager.h"
 #include "PaperZDAnimInstance.h"
 
 #include "PlayerCharacter.h"
@@ -35,7 +34,7 @@ public:
     UBoxComponent *attackCollisionBox;
     
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    APlayerCharacter *followTarget;
+    APlayerCharacter *followTarget = nullptr;
     
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     UPaperZDAnimSequence *attackAnimSequence;
@@ -54,7 +53,7 @@ public:
     
     
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-    bool canAttack = false;
+    bool canAttack = true;
     
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int hitPoints = 100;
