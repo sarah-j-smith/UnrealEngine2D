@@ -58,6 +58,11 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int hitPoints = 100;
     
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float AttackDamage = 25;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float AttackStunDuration = 0.3f;
     
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float attackCooldownInSeconds = 3.0f;

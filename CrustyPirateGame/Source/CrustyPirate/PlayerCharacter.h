@@ -111,4 +111,6 @@ public:
     void EnableAttackCollisionBox(bool enabled);
     
     void UpdateHitPoints(int NewHitPoints);
+    
+    void ApplyDamage(int DamageAmount, float StunDuration);
 };

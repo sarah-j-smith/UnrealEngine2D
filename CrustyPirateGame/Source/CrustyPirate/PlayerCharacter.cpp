@@ -144,7 +144,31 @@ void APlayerCharacter::EnableAttackCollisionBox(bool enabled)
     }
 }
 
+void APlayerCharacter::ApplyDamage(int DamageAmount, float StunDuration)
+{
+    if (!isAlive) return;
+    
+    UpdateHitPoints(hitPoints - DamageAmount);
+    
+    UPaperZDAnimInstance *anim = GetAnimInstance();
+    if (hitPoints <= 0)
+    {
+        // is dead
+        canMove = false;
+        isAlive = false;
+        canAttack = false;
+        
+        UpdateHitPoints(0);
+        
+        anim->JumpToNode(FName("JumpDie"), FName("CaptainStateMachine"));
+        EnableAttackCollisionBox(false);
+    } else {
+        // is alive still
+        anim->JumpToNode(FName("JumpTakeHit"), FName("CaptainStateMachine"));
+    }
+}
+
 void APlayerCharacter::UpdateHitPoints(int NewHitPoints)
 {
-    //
+    hitPoints = NewHitPoints;
 }

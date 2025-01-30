@@ -189,7 +189,7 @@ void AEnemy::AttackBoxOverlapBegin(UPrimitiveComponent *OverlappedComponent,
     APlayerCharacter* player = Cast<APlayerCharacter>(OtherActor);
     if (player) {
         // take damage
-        // player->ApplyDamage(AttackDamage, AttackStunDuration);
+        player->ApplyDamage(AttackDamage, AttackStunDuration);
         GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::White, TEXT("Player take damage"));
     }
 }
