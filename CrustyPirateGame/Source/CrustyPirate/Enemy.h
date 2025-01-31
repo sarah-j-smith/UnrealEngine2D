@@ -51,9 +51,11 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     bool isStunned = false;
     
-    
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
     bool canAttack = true;
+    
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    bool attackCollisionBoxEnabled = false;
     
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int hitPoints = 100;

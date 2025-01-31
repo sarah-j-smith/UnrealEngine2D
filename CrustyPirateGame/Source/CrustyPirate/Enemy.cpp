@@ -150,8 +150,11 @@ void AEnemy::OnStunTimerTimeout() {
 
 void AEnemy::Attack()
 {
+    UE_LOG(LogTemp, Warning, TEXT("##>>"));
+    
     if (isAlive && !isStunned && canAttack)
     {
+        UE_LOG(LogTemp, Warning, TEXT("############>> AEnemy::Attack"));
         canAttack = false;
         canMove = false;
         
@@ -176,6 +179,7 @@ void AEnemy::OnAttackCooldownTimerTimeout()
 
 void AEnemy::OnAttackOverrideAnimEnd(bool completed)
 {
+    UE_LOG(LogTemp, Warning, TEXT("AEnemy::OnAttackOverrideAnimEnd"));
     if (isAlive)
     {
         canMove = true;
@@ -196,6 +200,13 @@ void AEnemy::AttackBoxOverlapBegin(UPrimitiveComponent *OverlappedComponent,
 
 void AEnemy::EnableAttackCollisionBox(bool enabled)
 {
+//    if (enabled == attackCollisionBoxEnabled) return;
+    
+    UE_LOG(LogTemp, Warning, TEXT("AEnemy::EnableAttackCollisionBox: %s - enabled: %s"),
+                                  attackCollisionBoxEnabled ? TEXT("true") : TEXT("false"),
+                                  enabled ? TEXT("true") : TEXT("false"));
+    
+    attackCollisionBoxEnabled = enabled;
     if (enabled)
     {
         attackCollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
