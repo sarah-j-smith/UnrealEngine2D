@@ -24,6 +24,7 @@ class CRUSTYPIRATE_API AEnemy : public APaperZDCharacter
     GENERATED_BODY()
     
 public:
+    // MARK: Components
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
     UTextRenderComponent *HPText;
 
@@ -36,9 +37,11 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     APlayerCharacter *followTarget = nullptr;
     
+    // MARK: Animations
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     UPaperZDAnimSequence *attackAnimSequence;
     
+    // MARK: Control Vars
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float stopDistanceToTarget;
     
@@ -56,7 +59,8 @@ public:
     
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     bool attackCollisionBoxEnabled = false;
-    
+
+    // MARK: Damage
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int hitPoints = 100;
     

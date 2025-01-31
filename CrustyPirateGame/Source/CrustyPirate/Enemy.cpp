@@ -136,6 +136,7 @@ void AEnemy::ApplyDamage(int DamageAmount, float StunDuration)
 }
 
 void AEnemy::Stun(float DurationInSeconds) {
+    isStunned = true;
     GetWorldTimerManager().SetTimer(
         stunTimer, this,
         &AEnemy::OnStunTimerTimeout, 1.0, false, DurationInSeconds);
@@ -150,14 +151,14 @@ void AEnemy::OnStunTimerTimeout() {
 
 void AEnemy::Attack()
 {
-    UE_LOG(LogTemp, Warning, TEXT("##>>"));
-    
     if (isAlive && !isStunned && canAttack)
     {
-        UE_LOG(LogTemp, Warning, TEXT("############>> AEnemy::Attack"));
         canAttack = false;
         canMove = false;
         
+        // Play the attack animation override - this triggers an anim notify state that enables the
+        // attack collision box when the animation is in the correct frame. This box colliding with
+        // the player is what causes actual damage to be done to the player
         UPaperZDAnimInstance *anim = GetAnimInstance();
         anim->PlayAnimationOverride(attackAnimSequence, FName("DefaultSlot"), 1.0f, 0.0f, OnAttackOverrideEndDelegate);
         
@@ -179,7 +180,6 @@ void AEnemy::OnAttackCooldownTimerTimeout()
 
 void AEnemy::OnAttackOverrideAnimEnd(bool completed)
 {
-    UE_LOG(LogTemp, Warning, TEXT("AEnemy::OnAttackOverrideAnimEnd"));
     if (isAlive)
     {
         canMove = true;
@@ -194,17 +194,13 @@ void AEnemy::AttackBoxOverlapBegin(UPrimitiveComponent *OverlappedComponent,
     if (player) {
         // take damage
         player->ApplyDamage(AttackDamage, AttackStunDuration);
-        GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::White, TEXT("Player take damage"));
+//        GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::White, TEXT("Player take damage"));
     }
 }
 
 void AEnemy::EnableAttackCollisionBox(bool enabled)
 {
-//    if (enabled == attackCollisionBoxEnabled) return;
-    
-    UE_LOG(LogTemp, Warning, TEXT("AEnemy::EnableAttackCollisionBox: %s - enabled: %s"),
-                                  attackCollisionBoxEnabled ? TEXT("true") : TEXT("false"),
-                                  enabled ? TEXT("true") : TEXT("false"));
+    if (enabled == attackCollisionBoxEnabled) return;
     
     attackCollisionBoxEnabled = enabled;
     if (enabled)

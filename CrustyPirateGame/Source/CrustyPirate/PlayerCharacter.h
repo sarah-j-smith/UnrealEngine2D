@@ -15,6 +15,7 @@
 #include "Components/TextRenderComponent.h"
 #include "InputActionValue.h"
 #include "GameFramework/Controller.h"
+#include "Engine/TimerHandle.h"
 #include "PaperZDAnimInstance.h"
 
 #include "PlayerCharacter.generated.h"
@@ -58,7 +59,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     UPaperZDAnimSequence *attackAnimSequence;
     
-    // MARK: Control Vars
+    // MARK: Damage
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int hitPoints = 100;
     
@@ -68,6 +69,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float AttackStunDuration = 0.3f;
     
+    // MARK: Control Vars
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float moveSpeed;
     
@@ -75,11 +77,15 @@ public:
     bool isAlive = true;
     
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    bool isStunned = false;
+    
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     bool canMove = true;
     
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     bool canAttack = true;
     
+    FTimerHandle stunTimer;
     FZDOnAnimationOverrideEndSignature OnAttackOverrideEndDelegate;
     
     APlayerCharacter();
@@ -89,6 +95,11 @@ public:
     virtual void Tick(float DeltaTime) override;
     
     virtual void SetupPlayerInputComponent(UInputComponent *PlayerInputComponent) override;
+    
+    
+    void Stun(float DurationInSeconds);
+    
+    void OnStunTimerTimeout();
     
     void Attack(const FInputActionValue &Value);
     
