@@ -17,6 +17,8 @@
 #include "GameFramework/Controller.h"
 #include "Engine/TimerHandle.h"
 #include "PaperZDAnimInstance.h"
+#include "CrustyPirateGameInstance.h"
+#include "PlayerHUD.h"
 
 #include "PlayerCharacter.generated.h"
 
@@ -41,7 +43,16 @@ public:
     
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
     UTextRenderComponent *HPText;
-
+    
+    UPROPERTY(EditAnywhere)
+    TSubclassOf<UPlayerHUD> PlayerHUDClass;
+    
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    UPlayerHUD *PlayerHUDWidget;
+    
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    UCrustyPirateGameInstance *MyGameInstance;
+    
     // MARK: Inputs
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     UInputMappingContext *inputMappingContext;

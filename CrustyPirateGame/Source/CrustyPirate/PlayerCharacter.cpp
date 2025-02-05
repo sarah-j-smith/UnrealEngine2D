@@ -41,6 +41,24 @@ void APlayerCharacter::BeginPlay()
     attackCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::AttackBoxOverlapBegin);
     
     EnableAttackCollisionBox(false);
+    
+    if (PlayerHUDClass) {
+        APlayerController *playerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+        PlayerHUDWidget = CreateWidget<UPlayerHUD>(playerController, PlayerHUDClass);
+        if (PlayerHUDWidget)
+        {
+            PlayerHUDWidget->AddToPlayerScreen();
+            PlayerHUDWidget->SetHP(hitPoints);
+            PlayerHUDWidget->SetDiamonds(50);
+            PlayerHUDWidget->SetLevel(1);
+        }
+    }
+    
+    UGameInstance *gameInstance = GetGameInstance();
+    MyGameInstance = Cast<UCrustyPirateGameInstance>(gameInstance);
+    if (MyGameInstance) {
+        hitPoints = MyGameInstance->PlayerHP;
+    }
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -188,4 +206,6 @@ void APlayerCharacter::ApplyDamage(int DamageAmount, float StunDuration)
 void APlayerCharacter::UpdateHitPoints(int NewHitPoints)
 {
     hitPoints = NewHitPoints;
+    PlayerHUDWidget->SetHP(hitPoints);
+    MyGameInstance->UpdateHitPoints(hitPoints);
 }
