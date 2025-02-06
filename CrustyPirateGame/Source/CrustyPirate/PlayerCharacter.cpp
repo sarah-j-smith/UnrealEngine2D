@@ -209,3 +209,25 @@ void APlayerCharacter::UpdateHitPoints(int NewHitPoints)
     PlayerHUDWidget->SetHP(hitPoints);
     MyGameInstance->UpdateHitPoints(hitPoints);
 }
+
+
+void APlayerCharacter::CollectItem(CollectableType ItemType)
+{
+    UGameplayStatics::PlaySound2D(GetWorld(), ItemPickupSound);
+    
+    switch (ItemType) {
+        case CollectableType::Diamond:
+            break;
+            
+        case CollectableType::Diamond:
+            
+            break;
+            
+        case CollectableType::Diamond:
+            
+            break;
+            
+        default:
+            break;
+    }
+}

@@ -16,9 +16,13 @@
 #include "InputActionValue.h"
 #include "GameFramework/Controller.h"
 #include "Engine/TimerHandle.h"
+#include "Sound/SoundBase.h"
+
 #include "PaperZDAnimInstance.h"
 #include "CrustyPirateGameInstance.h"
 #include "PlayerHUD.h"
+
+#include "CollectableItem.h"
 
 #include "PlayerCharacter.generated.h"
 
@@ -69,6 +73,9 @@ public:
     // MARK: Animations
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     UPaperZDAnimSequence *attackAnimSequence;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    USoundBase *ItemPickupSound;
     
     // MARK: Damage
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -135,4 +142,6 @@ public:
     void UpdateHitPoints(int NewHitPoints);
     
     void ApplyDamage(int DamageAmount, float StunDuration);
+    
+    void CollectItem(CollectableType ItemType);
 };
