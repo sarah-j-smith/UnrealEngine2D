@@ -38,8 +38,8 @@ void ACollectableItem::OverlapBegin(UPrimitiveComponent *OverlappedComponent,
                            int32 OtherBodyIndex, bool FromSweep, const FHitResult &SweepResult)
 {
     APlayerCharacter *playerCharacter = Cast<APlayerCharacter>(OtherActor);
-    if (playerCharacter && playerCharacter->IsAlive) {
-//        playerCharacter->CollectItem(Type);
+    if (playerCharacter && playerCharacter->isAlive) {
+        playerCharacter->CollectItem(ItemType);
         Destroy();
     }
 }

@@ -219,11 +219,11 @@ void APlayerCharacter::CollectItem(CollectableType ItemType)
         case CollectableType::Diamond:
             break;
             
-        case CollectableType::Diamond:
+        case CollectableType::HealthPotion:
             
             break;
             
-        case CollectableType::Diamond:
+        case CollectableType::DoubleJumpUpgrade:
             
             break;
             
