@@ -5,10 +5,8 @@
 
 #include "PlayerCharacter.h"
 
-// Sets default values
 ACollectableItem::ACollectableItem()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
     CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));

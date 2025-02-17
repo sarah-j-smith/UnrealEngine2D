@@ -4,8 +4,10 @@
 #include "PlayerCharacter.h"
 
 #include "Enemy.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -42,6 +44,17 @@ void APlayerCharacter::BeginPlay()
     
     EnableAttackCollisionBox(false);
     
+    UGameInstance *gameInstance = GetGameInstance();
+    MyGameInstance = Cast<UCrustyPirateGameInstance>(gameInstance);
+    if (MyGameInstance) {
+        hitPoints = MyGameInstance->PlayerHP;
+        
+        if (MyGameInstance->IsDoubleJumpUnlocked)
+        {
+            UnlockDoubleJump();
+        }
+    }
+    
     if (PlayerHUDClass) {
         APlayerController *playerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
         PlayerHUDWidget = CreateWidget<UPlayerHUD>(playerController, PlayerHUDClass);
@@ -49,15 +62,9 @@ void APlayerCharacter::BeginPlay()
         {
             PlayerHUDWidget->AddToPlayerScreen();
             PlayerHUDWidget->SetHP(hitPoints);
-            PlayerHUDWidget->SetDiamonds(50);
-            PlayerHUDWidget->SetLevel(1);
+            PlayerHUDWidget->SetDiamonds(MyGameInstance->DiamondCount);
+            PlayerHUDWidget->SetLevel(MyGameInstance->CurrentLevelIndex);
         }
-    }
-    
-    UGameInstance *gameInstance = GetGameInstance();
-    MyGameInstance = Cast<UCrustyPirateGameInstance>(gameInstance);
-    if (MyGameInstance) {
-        hitPoints = MyGameInstance->PlayerHP;
     }
 }
 
@@ -93,6 +100,12 @@ void APlayerCharacter::Stun(float DurationInSeconds) {
 
 void APlayerCharacter::OnStunTimerTimeout() {
     isStunned = false;
+}
+
+
+void APlayerCharacter::OnRestartGameTimerTimeout()
+{
+    MyGameInstance->RestartGame();
 }
 
 void APlayerCharacter::Attack(const FInputActionValue &Value)
@@ -148,6 +161,8 @@ void APlayerCharacter::UpdateDirection(float moveDirection)
 
 void APlayerCharacter::OnAttackOverrideAnimEnd(bool completed)
 {
+    if (!isActive || !isAlive) return;
+    
     canAttack = true;
     canMove = true;
     
@@ -179,7 +194,7 @@ void APlayerCharacter::EnableAttackCollisionBox(bool enabled)
 
 void APlayerCharacter::ApplyDamage(int DamageAmount, float StunDuration)
 {
-    if (!isAlive) return;
+    if (!isAlive || !isActive) return;
     
     Stun(StunDuration);
     
@@ -197,6 +212,10 @@ void APlayerCharacter::ApplyDamage(int DamageAmount, float StunDuration)
         
         anim->JumpToNode(FName("JumpDie"), FName("CaptainStateMachine"));
         EnableAttackCollisionBox(false);
+        
+        GetWorldTimerManager().SetTimer(
+            RestartGameTimer, this,
+            &APlayerCharacter::OnRestartGameTimerTimeout, 1.0, false, GameOverDelay);
     } else {
         // is alive still
         anim->JumpToNode(FName("JumpTakeHit"), FName("CaptainStateMachine"));
@@ -210,24 +229,48 @@ void APlayerCharacter::UpdateHitPoints(int NewHitPoints)
     MyGameInstance->UpdateHitPoints(hitPoints);
 }
 
-
 void APlayerCharacter::CollectItem(CollectableType ItemType)
 {
     UGameplayStatics::PlaySound2D(GetWorld(), ItemPickupSound);
     
     switch (ItemType) {
         case CollectableType::Diamond:
+            MyGameInstance->AddDiamond(1);
+            PlayerHUDWidget->SetDiamonds(MyGameInstance->DiamondCount);
             break;
             
         case CollectableType::HealthPotion:
-            
+            // Heal player
+            // UpdateHitPoints(max(hitPoints + HealthPotionHealing, maxHitPoints));
+            UpdateHitPoints(hitPoints + HealthPotionHealing);
             break;
             
         case CollectableType::DoubleJumpUpgrade:
-            
+            if (!MyGameInstance->IsDoubleJumpUnlocked)
+            {
+                MyGameInstance->IsDoubleJumpUnlocked = true;
+                UnlockDoubleJump();
+            }
             break;
             
         default:
             break;
+    }
+}
+
+void APlayerCharacter::UnlockDoubleJump()
+{
+    JumpMaxCount = 2;
+}
+
+void APlayerCharacter::Deactivate()
+{
+    if (isActive)
+    {
+        isActive = false;
+        canMove = false;
+        canAttack = false;
+        
+        GetCharacterMovement()->StopMovementImmediately();
     }
 }

@@ -82,10 +82,19 @@ public:
     int hitPoints = 100;
     
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int maxHitPoints = 100;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int AttackDamage = 25;
     
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int HealthPotionHealing = 25;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float AttackStunDuration = 0.3f;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float GameOverDelay = 3.0f;
     
     // MARK: Control Vars
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -103,8 +112,13 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     bool canAttack = true;
     
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    bool isActive = true;
+    
     FTimerHandle stunTimer;
     FZDOnAnimationOverrideEndSignature OnAttackOverrideEndDelegate;
+    
+    FTimerHandle RestartGameTimer;
     
     APlayerCharacter();
     
@@ -118,6 +132,8 @@ public:
     void Stun(float DurationInSeconds);
     
     void OnStunTimerTimeout();
+    
+    void OnRestartGameTimerTimeout();
     
     void Attack(const FInputActionValue &Value);
     
@@ -144,4 +160,8 @@ public:
     void ApplyDamage(int DamageAmount, float StunDuration);
     
     void CollectItem(CollectableType ItemType);
+    
+    void UnlockDoubleJump();
+    
+    void Deactivate();
 };
