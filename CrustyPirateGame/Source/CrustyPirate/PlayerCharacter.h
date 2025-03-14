@@ -68,6 +68,9 @@ public:
     UInputAction *jumpAction;
     
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    UInputAction *quitAction;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
     UInputAction *moveAction;
 
     // MARK: Animations
@@ -134,6 +137,8 @@ public:
     void OnStunTimerTimeout();
     
     void OnRestartGameTimerTimeout();
+    
+    void GameQuitPressed(const FInputActionValue &Value);
     
     void Attack(const FInputActionValue &Value);
     

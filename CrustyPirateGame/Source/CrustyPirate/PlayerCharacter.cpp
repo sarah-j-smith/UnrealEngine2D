@@ -84,6 +84,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent *PlayerInputCom
         inputComponent->BindAction(jumpAction, ETriggerEvent::Started, this, &APlayerCharacter::JumpStarted);
         inputComponent->BindAction(jumpAction, ETriggerEvent::Completed, this, &APlayerCharacter::JumpEnded);
         inputComponent->BindAction(jumpAction, ETriggerEvent::Canceled, this, &APlayerCharacter::JumpEnded);
+        inputComponent->BindAction(quitAction, ETriggerEvent::Started, this,
+                                   &APlayerCharacter::GameQuitPressed);
     }
 }
 
@@ -106,6 +108,12 @@ void APlayerCharacter::OnStunTimerTimeout() {
 void APlayerCharacter::OnRestartGameTimerTimeout()
 {
     MyGameInstance->RestartGame();
+}
+
+
+void APlayerCharacter::GameQuitPressed(const FInputActionValue &Value)
+{
+    //
 }
 
 void APlayerCharacter::Attack(const FInputActionValue &Value)
