@@ -4,6 +4,7 @@
 #include "CrustyPirateGameInstance.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 void UCrustyPirateGameInstance::UpdateHitPoints(int NewHP) {
     PlayerHP = NewHP;
@@ -24,6 +25,11 @@ void UCrustyPirateGameInstance::ChangeLevel(int LevelIndex)
     UGameplayStatics::OpenLevel(GetWorld(), FName(levelStr));
 }
 
+void UCrustyPirateGameInstance::QuitGame(class APlayerController *player)
+{
+    UKismetSystemLibrary::QuitGame(GetWorld(), player, EQuitPreference::Quit, false);
+}
+
 void UCrustyPirateGameInstance::RestartGame()
 {
     DiamondCount = 0;
@@ -32,3 +38,4 @@ void UCrustyPirateGameInstance::RestartGame()
     
     ChangeLevel(1);
 }
+

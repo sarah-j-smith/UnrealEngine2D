@@ -113,7 +113,10 @@ void APlayerCharacter::OnRestartGameTimerTimeout()
 
 void APlayerCharacter::GameQuitPressed(const FInputActionValue &Value)
 {
-    //
+    APlayerController *playerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    if (MyGameInstance && playerController) {
+        MyGameInstance->QuitGame(playerController);
+    }
 }
 
 void APlayerCharacter::Attack(const FInputActionValue &Value)

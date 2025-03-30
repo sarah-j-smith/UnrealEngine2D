@@ -32,5 +32,7 @@ public:
     
     void ChangeLevel(int LevelIndex);
     
+    void QuitGame(class APlayerController *player);
+    
     void RestartGame();
 };
