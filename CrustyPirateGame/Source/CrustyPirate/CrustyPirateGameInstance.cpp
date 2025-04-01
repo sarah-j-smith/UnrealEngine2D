@@ -21,7 +21,7 @@ void UCrustyPirateGameInstance::ChangeLevel(int LevelIndex)
     
     CurrentLevelIndex = LevelIndex;
     
-    FString levelStr = FString::Printf(TEXT("Level_%d"), LevelIndex);
+    FString levelStr = FString::Printf(TEXT("Level_0%d"), LevelIndex);
     UGameplayStatics::OpenLevel(GetWorld(), FName(levelStr));
 }
 
