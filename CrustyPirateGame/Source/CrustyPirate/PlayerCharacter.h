@@ -168,5 +168,6 @@ public:
     
     void UnlockDoubleJump();
     
+    UFUNCTION(BlueprintCallable)
     void Deactivate();
 };

@@ -32,7 +32,9 @@ public:
     
     void ChangeLevel(int LevelIndex);
     
+    UFUNCTION(BlueprintCallable)
     void QuitGame(class APlayerController *player);
     
+    UFUNCTION(BlueprintCallable)
     void RestartGame();
 };
