@@ -9,6 +9,24 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
+void APlayerCharacter::SetupIosButtons()
+{
+    if (TouchscreenHUDClass) {
+        APlayerController *playerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+        TouchScreenHUDWidget = CreateWidget<UTouchscreenHUD>(playerController, TouchscreenHUDClass);
+        if (TouchScreenHUDWidget)
+        {
+            TouchScreenHUDWidget->AddToViewport(100);
+            UE_LOG(LogTemp, Warning, TEXT("binding ios buttons"));
+            TouchScreenHUDWidget->AttackButton->OnClicked.AddDynamic(this, &APlayerCharacter::AttackTrigger);
+            TouchScreenHUDWidget->JumpButton->OnPressed.AddDynamic(this, &APlayerCharacter::JumpStartTrigger);
+            TouchScreenHUDWidget->JumpButton->OnReleased.AddDynamic(this, &APlayerCharacter::JumpEndTrigger);
+            TouchScreenHUDWidget->AttackButton->SetTouchMethod(EButtonTouchMethod::DownAndUp);
+            TouchScreenHUDWidget->JumpButton->SetTouchMethod(EButtonTouchMethod::DownAndUp);
+        }
+    }
+}
+
 APlayerCharacter::APlayerCharacter()
 {
     PrimaryActorTick.bCanEverTick = true;
@@ -60,12 +78,19 @@ void APlayerCharacter::BeginPlay()
         PlayerHUDWidget = CreateWidget<UPlayerHUD>(playerController, PlayerHUDClass);
         if (PlayerHUDWidget)
         {
+            
             PlayerHUDWidget->AddToPlayerScreen();
             PlayerHUDWidget->SetHP(hitPoints);
             PlayerHUDWidget->SetDiamonds(MyGameInstance->DiamondCount);
             PlayerHUDWidget->SetLevel(MyGameInstance->CurrentLevelIndex);
         }
     }
+
+//#if PLATFORM_IOS
+    camera->SetOrthoWidth(IosOrthoWidth);
+
+    SetupIosButtons();
+//#endif
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -121,26 +146,39 @@ void APlayerCharacter::GameQuitPressed(const FInputActionValue &Value)
 
 void APlayerCharacter::Attack(const FInputActionValue &Value)
 {
-    // GEngine->AddOnScreenDebugMessage(1, 20.0, FColor::White, TEXT("Attack"), false, FVector2D(2.0, 2.0));
+    AttackTrigger();
+}
+
+void APlayerCharacter::AttackTrigger()
+{
+    UE_LOG(LogTemp, Warning, TEXT("AttackTrigger function"));
     if (isAlive && canAttack && !isStunned) {
         canAttack = false;
         canMove = false;
         
         UPaperZDAnimInstance *anim = GetAnimInstance();
         anim->PlayAnimationOverride(attackAnimSequence, FName("DefaultSlot"), 1.0f, 0.0f, OnAttackOverrideEndDelegate);
-        
-        // The AttackCollisionBox is now enabled via AnimNotifyStates
     }
 }
 
 void APlayerCharacter::JumpStarted(const FInputActionValue &Value)
+{
+    JumpStartTrigger();
+}
+
+void APlayerCharacter::JumpEnded(const FInputActionValue &Value)
+{
+    JumpEndTrigger();
+}
+
+void APlayerCharacter::JumpStartTrigger()
 {
     if (isAlive && canMove && !isStunned) {
         Jump();
     }
 }
 
-void APlayerCharacter::JumpEnded(const FInputActionValue &Value)
+void APlayerCharacter::JumpEndTrigger()
 {
     StopJumping();
 }

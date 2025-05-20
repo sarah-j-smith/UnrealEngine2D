@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/Button.h"
 
 #include "Components/TextBlock.h"
 
@@ -25,8 +26,8 @@ public:
     
     UPROPERTY(EditAnywhere, meta = (BindWidget))
     UTextBlock *LevelText;
-    
-    void SetHP(int hitPoints);
+
+	void SetHP(int hitPoints);
     
     void SetDiamonds(int amount);
     

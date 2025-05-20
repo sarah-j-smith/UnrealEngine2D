@@ -21,6 +21,7 @@
 #include "PaperZDAnimInstance.h"
 #include "CrustyPirateGameInstance.h"
 #include "PlayerHUD.h"
+#include "TouchscreenHUD.h"
 
 #include "CollectableItem.h"
 
@@ -33,6 +34,9 @@ UCLASS()
 class CRUSTYPIRATE_API APlayerCharacter : public APaperZDCharacter
 {
     GENERATED_BODY()
+
+	void SetupIosButtons();
+	
 public:
     
     // MARK: Components
@@ -50,11 +54,17 @@ public:
     
     UPROPERTY(EditAnywhere)
     TSubclassOf<UPlayerHUD> PlayerHUDClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UTouchscreenHUD> TouchscreenHUDClass;
     
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     UPlayerHUD *PlayerHUDWidget;
     
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UTouchscreenHUD *TouchScreenHUDWidget;
+    
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     UCrustyPirateGameInstance *MyGameInstance;
     
     // MARK: Inputs
@@ -79,7 +89,10 @@ public:
     
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     USoundBase *ItemPickupSound;
-    
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float IosOrthoWidth = 600.0;
+	
     // MARK: Damage
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int hitPoints = 100;
@@ -130,8 +143,7 @@ public:
     virtual void Tick(float DeltaTime) override;
     
     virtual void SetupPlayerInputComponent(UInputComponent *PlayerInputComponent) override;
-    
-    
+	
     void Stun(float DurationInSeconds);
     
     void OnStunTimerTimeout();
@@ -140,11 +152,21 @@ public:
     
     void GameQuitPressed(const FInputActionValue &Value);
     
-    void Attack(const FInputActionValue &Value);
-    
+    UFUNCTION(BlueprintCallable)
+	void Attack(const FInputActionValue &Value);
+
+	UFUNCTION()
+	void AttackTrigger();
+	
     void JumpStarted(const FInputActionValue &Value);
     
     void JumpEnded(const FInputActionValue &Value);
+
+	UFUNCTION()
+	void JumpStartTrigger();
+
+	UFUNCTION()
+	void JumpEndTrigger();
     
     void Move(const FInputActionValue &Value);
     
