@@ -124,11 +124,17 @@ public:
     
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     bool isActive = true;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	float iOSCameraOrthoWidth = 600.0f;
     
     FTimerHandle stunTimer;
     FZDOnAnimationOverrideEndSignature OnAttackOverrideEndDelegate;
     
     FTimerHandle RestartGameTimer;
+
+	FTimerHandle AttributionHideTimer;
+	float AttributionHideDelay = 10.0f;
     
     APlayerCharacter();
     
@@ -144,6 +150,8 @@ public:
     void OnStunTimerTimeout();
     
     void OnRestartGameTimerTimeout();
+
+	void OnAttributionHideTimerTimeout();
     
     void GameQuitPressed(const FInputActionValue &Value);
     

@@ -25,6 +25,9 @@ public:
     
     UPROPERTY(EditAnywhere, meta = (BindWidget))
     UTextBlock *LevelText;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	UTextBlock *MusicAttribution;
     
     void SetHP(int hitPoints);
     

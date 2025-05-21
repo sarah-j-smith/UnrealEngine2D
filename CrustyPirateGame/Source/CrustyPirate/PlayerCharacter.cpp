@@ -11,6 +11,9 @@
 
 APlayerCharacter::APlayerCharacter()
 {
+    /**
+     *  <a href="https://www.flaticon.com/free-icons/machete" title="machete icons">Machete icons created by Icongeek26 - Flaticon</a>
+     */ 
     PrimaryActorTick.bCanEverTick = true;
     
     springArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -69,6 +72,10 @@ void APlayerCharacter::SetupPlayerHUD()
             PlayerHUDWidget->SetHP(hitPoints);
             PlayerHUDWidget->SetDiamonds(MyGameInstance->DiamondCount);
             PlayerHUDWidget->SetLevel(MyGameInstance->CurrentLevelIndex);
+
+            GetWorldTimerManager().SetTimer(
+                AttributionHideTimer, this,
+                &APlayerCharacter::OnAttributionHideTimerTimeout, 1.0, false, AttributionHideDelay);
         }
     }
 
@@ -117,6 +124,11 @@ void APlayerCharacter::OnStunTimerTimeout() {
 void APlayerCharacter::OnRestartGameTimerTimeout()
 {
     MyGameInstance->RestartGame();
+}
+
+void APlayerCharacter::OnAttributionHideTimerTimeout()
+{
+    PlayerHUDWidget->MusicAttribution->SetVisibility(ESlateVisibility::Hidden);
 }
 
 
@@ -310,6 +322,8 @@ void APlayerCharacter::Deactivate()
 
 void APlayerCharacter::IosSetup()
 {
+    camera->SetOrthoWidth(iOSCameraOrthoWidth);
+    
     if (ControlsHUDClass) {
         APlayerController *playerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
         ControlsHUDWidget = CreateWidget<UControlsHUD>(playerController, ControlsHUDClass);
