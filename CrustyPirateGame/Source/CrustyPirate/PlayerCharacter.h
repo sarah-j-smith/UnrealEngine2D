@@ -23,6 +23,7 @@
 #include "PlayerHUD.h"
 
 #include "CollectableItem.h"
+#include "ControlsHUD.h"
 
 #include "PlayerCharacter.generated.h"
 
@@ -54,7 +55,13 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     UPlayerHUD *PlayerHUDWidget;
     
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UControlsHUD> ControlsHUDClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UControlsHUD *ControlsHUDWidget;
+    
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     UCrustyPirateGameInstance *MyGameInstance;
     
     // MARK: Inputs
@@ -141,9 +148,12 @@ public:
     void GameQuitPressed(const FInputActionValue &Value);
     
     void Attack(const FInputActionValue &Value);
-    
+    UFUNCTION() void AttackTrigger();
+
+    UFUNCTION() void JumpStartTrigger();
     void JumpStarted(const FInputActionValue &Value);
-    
+
+    UFUNCTION() void JumpEndTrigger();
     void JumpEnded(const FInputActionValue &Value);
     
     void Move(const FInputActionValue &Value);
@@ -170,4 +180,7 @@ public:
     
     UFUNCTION(BlueprintCallable)
     void Deactivate();
+
+	void SetupPlayerHUD();
+	void IosSetup();
 };

@@ -54,7 +54,12 @@ void APlayerCharacter::BeginPlay()
             UnlockDoubleJump();
         }
     }
-    
+
+    SetupPlayerHUD();
+}
+
+void APlayerCharacter::SetupPlayerHUD()
+{
     if (PlayerHUDClass) {
         APlayerController *playerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
         PlayerHUDWidget = CreateWidget<UPlayerHUD>(playerController, PlayerHUDClass);
@@ -66,6 +71,10 @@ void APlayerCharacter::BeginPlay()
             PlayerHUDWidget->SetLevel(MyGameInstance->CurrentLevelIndex);
         }
     }
+
+#if PLATFORM_IOS
+    IosSetup();
+#endif
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -121,26 +130,39 @@ void APlayerCharacter::GameQuitPressed(const FInputActionValue &Value)
 
 void APlayerCharacter::Attack(const FInputActionValue &Value)
 {
-    // GEngine->AddOnScreenDebugMessage(1, 20.0, FColor::White, TEXT("Attack"), false, FVector2D(2.0, 2.0));
+    AttackTrigger();
+}
+
+void APlayerCharacter::AttackTrigger()
+{
+    UE_LOG(LogTemp, Warning, TEXT("AttackTrigger function"));
     if (isAlive && canAttack && !isStunned) {
         canAttack = false;
         canMove = false;
         
         UPaperZDAnimInstance *anim = GetAnimInstance();
         anim->PlayAnimationOverride(attackAnimSequence, FName("DefaultSlot"), 1.0f, 0.0f, OnAttackOverrideEndDelegate);
-        
-        // The AttackCollisionBox is now enabled via AnimNotifyStates
     }
 }
 
 void APlayerCharacter::JumpStarted(const FInputActionValue &Value)
+{
+    JumpStartTrigger();
+}
+
+void APlayerCharacter::JumpEnded(const FInputActionValue &Value)
+{
+    JumpEndTrigger();
+}
+
+void APlayerCharacter::JumpStartTrigger()
 {
     if (isAlive && canMove && !isStunned) {
         Jump();
     }
 }
 
-void APlayerCharacter::JumpEnded(const FInputActionValue &Value)
+void APlayerCharacter::JumpEndTrigger()
 {
     StopJumping();
 }
@@ -283,5 +305,29 @@ void APlayerCharacter::Deactivate()
         canAttack = false;
         
         GetCharacterMovement()->StopMovementImmediately();
+    }
+}
+
+void APlayerCharacter::IosSetup()
+{
+    if (ControlsHUDClass) {
+        APlayerController *playerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+        ControlsHUDWidget = CreateWidget<UControlsHUD>(playerController, ControlsHUDClass);
+        if (ControlsHUDWidget)
+        {
+            ControlsHUDWidget->AddToViewport(100);
+            UE_LOG(LogTemp, Display, TEXT("binding ios buttons"));
+            ControlsHUDWidget->AttackButton->OnClicked.AddDynamic(this, &APlayerCharacter::AttackTrigger);
+            ControlsHUDWidget->JumpButton->OnPressed.AddDynamic(this, &APlayerCharacter::JumpStartTrigger);
+            ControlsHUDWidget->JumpButton->OnReleased.AddDynamic(this, &APlayerCharacter::JumpEndTrigger);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Could not create ControlsHUDWidget!"));
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Could not bind iOS HUD buttons. Did you forget to set ControlsHUDClass in PlayerCharacter blueprint?"));
     }
 }
