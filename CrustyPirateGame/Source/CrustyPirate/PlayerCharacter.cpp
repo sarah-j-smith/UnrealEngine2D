@@ -11,9 +11,6 @@
 
 APlayerCharacter::APlayerCharacter()
 {
-    /**
-     *  <a href="https://www.flaticon.com/free-icons/machete" title="machete icons">Machete icons created by Icongeek26 - Flaticon</a>
-     */ 
     PrimaryActorTick.bCanEverTick = true;
     
     springArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -80,7 +77,7 @@ void APlayerCharacter::SetupPlayerHUD()
     }
 
 #if PLATFORM_IOS
-    IosSetup();
+    camera->SetOrthoWidth(iOSCameraOrthoWidth);
 #endif
 }
 
@@ -142,11 +139,6 @@ void APlayerCharacter::GameQuitPressed(const FInputActionValue &Value)
 
 void APlayerCharacter::Attack(const FInputActionValue &Value)
 {
-    AttackTrigger();
-}
-
-void APlayerCharacter::AttackTrigger()
-{
     UE_LOG(LogTemp, Warning, TEXT("AttackTrigger function"));
     if (isAlive && canAttack && !isStunned) {
         canAttack = false;
@@ -159,22 +151,12 @@ void APlayerCharacter::AttackTrigger()
 
 void APlayerCharacter::JumpStarted(const FInputActionValue &Value)
 {
-    JumpStartTrigger();
-}
-
-void APlayerCharacter::JumpEnded(const FInputActionValue &Value)
-{
-    JumpEndTrigger();
-}
-
-void APlayerCharacter::JumpStartTrigger()
-{
     if (isAlive && canMove && !isStunned) {
         Jump();
     }
 }
 
-void APlayerCharacter::JumpEndTrigger()
+void APlayerCharacter::JumpEnded(const FInputActionValue &Value)
 {
     StopJumping();
 }
@@ -317,31 +299,5 @@ void APlayerCharacter::Deactivate()
         canAttack = false;
         
         GetCharacterMovement()->StopMovementImmediately();
-    }
-}
-
-void APlayerCharacter::IosSetup()
-{
-    camera->SetOrthoWidth(iOSCameraOrthoWidth);
-    
-    if (ControlsHUDClass) {
-        APlayerController *playerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-        ControlsHUDWidget = CreateWidget<UControlsHUD>(playerController, ControlsHUDClass);
-        if (ControlsHUDWidget)
-        {
-            ControlsHUDWidget->AddToViewport(100);
-            UE_LOG(LogTemp, Display, TEXT("binding ios buttons"));
-            ControlsHUDWidget->AttackButton->OnClicked.AddDynamic(this, &APlayerCharacter::AttackTrigger);
-            ControlsHUDWidget->JumpButton->OnPressed.AddDynamic(this, &APlayerCharacter::JumpStartTrigger);
-            ControlsHUDWidget->JumpButton->OnReleased.AddDynamic(this, &APlayerCharacter::JumpEndTrigger);
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Could not create ControlsHUDWidget!"));
-        }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Could not bind iOS HUD buttons. Did you forget to set ControlsHUDClass in PlayerCharacter blueprint?"));
     }
 }

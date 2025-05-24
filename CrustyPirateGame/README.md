@@ -96,3 +96,9 @@ void AEnemy::OnAttackOverrideAnimEnd(bool completed)
     // Do things when the animation ends
 }
 ```
+
+## Attribution
+
+* [male-grunt wav file](https://freesound.org/s/621365/)
+
+Male Grunt 6 - WITH reverb.wav by WelvynZPorterSamples -- License: Creative Commons 0

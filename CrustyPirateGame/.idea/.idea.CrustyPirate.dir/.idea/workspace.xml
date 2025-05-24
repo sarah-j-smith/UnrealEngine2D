@@ -8,23 +8,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0210ca67-aea7-402e-b67c-9085242735d3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Source/CrustyPirate/TouchLeftRightInputModifier.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/CrustyPirate/TouchLeftRightInputModifier.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CrustyPirate.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CrustyPirate.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultInput.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultInput.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Assets/Sound/coin1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Assets/Sound/coin1.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Assets/Sound/hit.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Assets/Sound/hit.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Assets/Sound/swish-10.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Assets/Sound/swish-10.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Characters/AnimSequences/CaptainJump.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Characters/AnimSequences/CaptainJump.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Characters/AnimationSource_Captain.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Characters/AnimationSource_Captain.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Blueprints/Characters/BP_PlayerCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Characters/BP_PlayerCharacter.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Characters/WidgetBP_PlayerHUD.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Characters/WidgetBP_PlayerHUD.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inputs/InputMappingContext_CrustyPirate.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inputs/InputMappingContext_CrustyPirate.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Other/CrustyPirateTouchInterface.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Other/CrustyPirateTouchInterface.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Levels/Level_01.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/Level_01.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CrustyPirate.uproject" beforeDir="false" afterPath="$PROJECT_DIR$/CrustyPirate.uproject" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/CrustyPirate/ControlsHUD.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/CrustyPirate/ControlsHUD.h" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/CrustyPirate/PlayerCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/CrustyPirate/PlayerCharacter.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/CrustyPirate/PlayerCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/CrustyPirate/PlayerCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/CrustyPirate/PlayerHUD.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/CrustyPirate/PlayerHUD.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -188,6 +179,8 @@
       <workItem from="1747788201736" duration="4549000" />
       <workItem from="1747797437510" duration="1832000" />
       <workItem from="1747799749929" duration="5592000" />
+      <workItem from="1747872567239" duration="3198000" />
+      <workItem from="1747912401223" duration="1376000" />
     </task>
     <servers />
   </component>
