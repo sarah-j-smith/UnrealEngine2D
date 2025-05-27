@@ -1,0 +1,65 @@
+# Adventure Game in Unreal Engine
+
+This is my work from following the excellent Lesser Dog [Point and Click 2D Adventure Game tutorial](https://www.youtube.com/watch?v=sEy3c5JcLys&t=7s) on Youtube.
+
+My Dev Environment:
+
+* Mac M3
+* Rider
+* Unreal 5.5
+
+![Screenshot from Ch 1](Ep1-screenshot.png)
+
+* Screenshot of state at end of Episode 1.
+* The black area at the bottom will have Lucas Arts style text
+* 
+## Math Nodes
+
+* Most of the tutorial went as per Lesser Dogs excellent guidance.
+* In Unreal 5 you need to use the `-` and `+` nodes which are generic per type
+* The `AddFloat` or whatever typed nodes are not available in UE5 by default
+* although you can return to them via a config
+
+![BP Adventure Cam script](bp-adventure-cam-blueprint-script.png)
+
+* Screenshot of the `BP_AdventureCam` blueprint `GetCameraConfines` function
+* The `-` and `+` nodes are at the right of the screenshot
+
+## Nav Mesh Problems
+
+* I had a lot of problems with generating and having my nav mesh show up
+* This comment from [@sentinel2952](https://www.youtube.com/@sentinel2592) helped me track down the solution:
+
+> If you are in ue5 (I'm in 5.4) and having trouble generating the navmesh from the brush at the end, 
+> you can save the brush as a static mesh, then open the new static mesh asset and generate collisions 
+> and then set the collision complexity to "use complex as simple".
+
+![Activate brush editing mode](images/activate-brush-editing.png)
+
+* Activate brush-editing mode - use Return or Enter to close the shape.
+* Do not add a Nav bounds volume at this time
+
+![Create static mesh](images/create-static-mesh.png)
+
+* Select the brush in the hierarchy / scene outliner and in the detail panel click _Create Static Mesh_
+
+![Generate collisions](images/generate-collision.png)
+
+* Locate the mesh you created in the previous step, double-click to open in a new editor tab
+* Select _Auto Convex Collision_ from the Collision menu to generate a collision mesh
+
+![Complex as simple](images/complex-as-simple.png)
+
+* Change this drop-down in the details panel in the static mesh editor tab to _Use Complex Collision as Simple_
+
+* After this go back to the main editor window, and add the Nav Bounds volume, and continue as per Lesser Dogs instructions
+
+## Player Character Falling
+
+At the end of the first episode on running the project with the player character it fell constantly. In 
+my case the fix for this is:
+
+* change from top to side view (eg "right") 
+* make sure the character mesh is above the red line of the background image
+* make sure the character is inside the nav mesh bounds
+
