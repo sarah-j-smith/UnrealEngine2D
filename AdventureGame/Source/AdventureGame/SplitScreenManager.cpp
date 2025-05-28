@@ -18,7 +18,12 @@ void ASplitScreenManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UGameViewportClient *Viewport = GetWorld()->GetGameViewport();
+	UWorld* OurWorld = GetWorld();
+	if (!OurWorld) return;
+
+	UGameViewportClient *Viewport = OurWorld->GetGameViewport();
+	if (!Viewport) return;
+	
 	FSplitscreenData ScreenLayout;
 	auto Screen1 = FPerPlayerSplitscreenData(1, 0.725f, 0, 0);
 	ScreenLayout.PlayerData.Add(Screen1);

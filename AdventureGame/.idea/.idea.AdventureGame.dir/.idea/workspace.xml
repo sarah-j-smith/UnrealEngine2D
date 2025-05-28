@@ -8,12 +8,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e7d87409-0359-4ca5-b933-df4b7b2a98d8" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEditor.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEditor.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureCam.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureCam.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AdventureGame.uproject" beforeDir="false" afterPath="$PROJECT_DIR$/AdventureGame.uproject" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureChar.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureChar.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureGameMode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureGameMode.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Levels/TowerExterior.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Levels/TowerExterior.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureGame.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureGame.Build.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/SplitScreenManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/SplitScreenManager.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,9 +31,19 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/math.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Plugins/Experimental/TextureGraph/Source/TextureGraphEngine/TextureGraphEngine.Build.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Developer/DerivedDataCache/DerivedDataCache.Build.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Developer/MassEntityTestSuite/MassEntityTestSuite.Build.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Developer/Virtualization/Virtualization.Build.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/ContentBrowser/Public/ContentBrowserMenuContexts.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/ContentBrowserData/Public/ContentBrowserDataSource.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/UATHelper/UATHelperModule.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/UnrealEd/Classes/Animation/EditorParentPlayerListObj.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/GameFramework/Character.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/UnrealGame.Target.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/AdventureGame/SplitScreenManager.cpp" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
@@ -143,7 +157,8 @@
       <workItem from="1748235851915" duration="3227000" />
       <workItem from="1748309183480" duration="1805000" />
       <workItem from="1748311967661" duration="1204000" />
-      <workItem from="1748313211517" duration="462000" />
+      <workItem from="1748313211517" duration="8006000" />
+      <workItem from="1748400771443" duration="6751000" />
     </task>
     <servers />
   </component>
