@@ -8,7 +8,7 @@ My Dev Environment:
 * Rider
 * Unreal 5.5
 
-![Screenshot from Ch 1](Ep1-screenshot.png)
+![Screenshot from Ch 1](Docs/images/Ep1-screenshot.png)
 
 * Screenshot of state at end of Episode 1.
 * The black area at the bottom will have Lucas Arts style text
@@ -20,7 +20,7 @@ My Dev Environment:
 * The `AddFloat` or whatever typed nodes are not available in UE5 by default
 * although you can return to them via a config
 
-![BP Adventure Cam script](bp-adventure-cam-blueprint-script.png)
+![BP Adventure Cam script](Docs/images/bp-adventure-cam-blueprint-script.png)
 
 * Screenshot of the `BP_AdventureCam` blueprint `GetCameraConfines` function
 * The `-` and `+` nodes are at the right of the screenshot
@@ -34,21 +34,21 @@ My Dev Environment:
 > you can save the brush as a static mesh, then open the new static mesh asset and generate collisions 
 > and then set the collision complexity to "use complex as simple".
 
-![Activate brush editing mode](images/activate-brush-editing.png)
+![Activate brush editing mode](Docs/images/activate-brush-editing.png)
 
 * Activate brush-editing mode - use Return or Enter to close the shape.
 * Do not add a Nav bounds volume at this time
 
-![Create static mesh](images/create-static-mesh.png)
+![Create static mesh](Docs/images/create-static-mesh.png)
 
 * Select the brush in the hierarchy / scene outliner and in the detail panel click _Create Static Mesh_
 
-![Generate collisions](images/generate-collision.png)
+![Generate collisions](Docs/images/generate-collision.png)
 
 * Locate the mesh you created in the previous step, double-click to open in a new editor tab
 * Select _Auto Convex Collision_ from the Collision menu to generate a collision mesh
 
-![Complex as simple](images/complex-as-simple.png)
+![Complex as simple](Docs/images/complex-as-simple.png)
 
 * Change this drop-down in the details panel in the static mesh editor tab to _Use Complex Collision as Simple_
 
@@ -63,3 +63,17 @@ my case the fix for this is:
 * make sure the character mesh is above the red line of the background image
 * make sure the character is inside the nav mesh bounds
 
+# Customisations 
+
+I wanted to change to using Enhanced Input so that I could more easilty switch to mobile, and also
+to use C++ for the bulk of the logic as the blueprints are very complex and hard to follow in the Lesser Dog tutorial. See the source code here:
+
+* [AdventureCharacter.cpp](Source/AdventureGame/AdventureCharacter.cpp)
+
+...and the how to for Inputs here: 
+
+* [Inputs How to](../Docs/HowTo.md#create-inputs)
+
+Also I wanted to have animation states handled using Paper ZD.  See the doc here for this.
+
+* [Paper ZD animation states](Docs/AnimationStateMachine.md)

@@ -27,14 +27,22 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	// MARK: Gameplay
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	FVector TargetPlayerLocation;
+	FVector TargetPlayerLocation = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inputs)
-	UInputAction* PointAndClickInput;
+	UInputAction* PointAndClickInput = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inputs)
-	UInputMappingContext* InputMappingContext;
+	UInputMappingContext* InputMappingContext = nullptr;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Gameplay)
+	FVector2D LastNonZeroMovement = FVector2D::ZeroVector;
+	FVector2D LastVelocity = FVector2D::ZeroVector;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay)
+	bool CharacterSpriteIsFacingRight = true;
+	
 	void HandlePointAndClick(const FInputActionValue& Value);
 };
