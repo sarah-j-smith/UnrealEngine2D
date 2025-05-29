@@ -8,52 +8,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e7d87409-0359-4ca5-b933-df4b7b2a98d8" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/AdventureCharacterAnimSource.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/AdventureCharacterAnimSource.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/AnimSequences/IdleDownAnimationSequence.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/AnimSequences/IdleSideAnimationSequence.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/AnimSequences/IdleUpAnimationSequence.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/AnimSequences/WalkDownAnimationSequence.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/AnimSequences/WalkSideAnimationSequence.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/AnimSequences/WalkUpAnimationSequence.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureAnimBP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureAnimBP.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureCam.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureCam.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureChar.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureChar.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureCharacter.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Flipbooks/PlayerCharacter/TempGuy_IdleDown.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Flipbooks/PlayerCharacter/TempGuy_IdleDown.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Flipbooks/PlayerCharacter/TempGuy_IdleSide.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Flipbooks/PlayerCharacter/TempGuy_IdleSide.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Flipbooks/PlayerCharacter/TempGuy_IdleUp.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Flipbooks/PlayerCharacter/TempGuy_IdleUp.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Flipbooks/PlayerCharacter/TempGuy_WalkDown.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Flipbooks/PlayerCharacter/TempGuy_WalkDown.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Flipbooks/PlayerCharacter/TempGuy_WalkSide.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Flipbooks/PlayerCharacter/TempGuy_WalkUp.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Flipbooks/PlayerCharacter/TempGuy_WalkUp.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureGameMode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureGameMode.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Levels/TowerExterior.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Levels/TowerExterior.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy_Sprite_0.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy_Sprite_1.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy_Sprite_10.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy_Sprite_11.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy_Sprite_12.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy_Sprite_13.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy_Sprite_14.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy_Sprite_15.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy_Sprite_16.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy_Sprite_17.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy_Sprite_2.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy_Sprite_3.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy_Sprite_4.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy_Sprite_5.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy_Sprite_6.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy_Sprite_7.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy_Sprite_8.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/TempGuy_Sprite_9.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ep1-screenshot.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bp-adventure-cam-blueprint-script.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/activate-brush-editing.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/complex-as-simple.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/create-static-mesh.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/generate-collision.png" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -199,7 +157,7 @@
       <workItem from="1748309183480" duration="1805000" />
       <workItem from="1748311967661" duration="1204000" />
       <workItem from="1748313211517" duration="8006000" />
-      <workItem from="1748400771443" duration="16047000" />
+      <workItem from="1748400771443" duration="16645000" />
     </task>
     <servers />
   </component>
