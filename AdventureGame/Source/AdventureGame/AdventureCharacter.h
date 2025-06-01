@@ -10,6 +10,8 @@
 
 #include "AdventureCharacter.generated.h"
 
+class UAdventureGameHUD;
+
 /**
  * 
  */
@@ -39,10 +41,11 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Gameplay)
 	FVector2D LastNonZeroMovement = FVector2D::ZeroVector;
-	FVector2D LastVelocity = FVector2D::ZeroVector;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay)
-	bool CharacterSpriteIsFacingRight = true;
+	FVector2D LastVelocity = FVector2D::ZeroVector;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	FIntRect GamePlayArea;
 	
 	void HandlePointAndClick(const FInputActionValue& Value);
 };

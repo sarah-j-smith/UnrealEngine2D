@@ -20,13 +20,7 @@ void AAdventureGameModeBase::SetupHUD()
 		if (AdventureHUDWidget)
 		{
 			AdventureHUDWidget->AddToViewport();
-			// PlayerHUDWidget->SetHP(hitPoints);
-			// PlayerHUDWidget->SetDiamonds(MyGameInstance->DiamondCount);
-			// PlayerHUDWidget->SetLevel(MyGameInstance->CurrentLevelIndex);
-
-			// GetWorldTimerManager().SetTimer(
-			// 	AttributionHideTimer, this,
-			// 	&APlayerCharacter::OnAttributionHideTimerTimeout, 1.0, false, AttributionHideDelay);
+			UE_LOG(LogInput, Warning, TEXT("AddToViewport"));
 		}
 	}
 

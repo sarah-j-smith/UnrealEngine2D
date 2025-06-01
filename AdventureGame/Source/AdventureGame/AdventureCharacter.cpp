@@ -1,6 +1,8 @@
 // (c) 2025 Sarah Smith
 
 #include "AdventureCharacter.h"
+
+#include "AdventureGameHUD.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
@@ -79,6 +81,14 @@ void AAdventureCharacter::HandlePointAndClick(const FInputActionValue& Value)
 		isPressed = PlayerController->DeprojectMousePositionToWorld(MouseWorldLocation, MouseWorldDirection);
 	}
 
+	// Do not set the Target Player Location if the mouse is over the UI - not the play area.
+	if (!GamePlayArea.Contains(FIntPoint(MouseWorldLocation.X, MouseWorldLocation.Y)))
+	{
+		UE_LOG(LogInput, Warning, TEXT("HandlePointAndClick ignoring mouse click: %f %f %f"), MouseWorldLocation.X, MouseWorldLocation.Y,
+		   MouseWorldLocation.Z);
+		return;
+	};
+	
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
 	FVector CapsuleLocation = CapsuleComp->GetComponentLocation();
 	TargetPlayerLocation = FVector(floorf(MouseWorldLocation.X), floorf(MouseWorldLocation.Y), CapsuleLocation.Z);
