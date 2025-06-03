@@ -10,6 +10,7 @@
 
 #include "AdventureCharacter.generated.h"
 
+class AFollowCamera;
 class UAdventureGameHUD;
 
 /**
@@ -39,13 +40,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inputs)
 	UInputMappingContext* InputMappingContext = nullptr;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Gameplay)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
 	FVector2D LastNonZeroMovement = FVector2D::ZeroVector;
 	
 	FVector2D LastVelocity = FVector2D::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	FIntRect GamePlayArea;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AFollowCamera> CameraActorToSpawn;
 	
 	void HandlePointAndClick(const FInputActionValue& Value);
+
+	void SetupFollowCamera();
 };

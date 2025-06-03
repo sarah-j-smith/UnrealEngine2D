@@ -8,50 +8,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e7d87409-0359-4ca5-b933-df4b7b2a98d8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/InteractionHUD.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/InteractionHUD.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/InventoryUI.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/InventoryUI.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/VerbsUI.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/VerbsUI.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/FollowCamera.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/FollowCamera.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureCam.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureCam.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureCharacter.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureGameMode.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureGameModeBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureGameModeBase.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/Widgets/BP_AdventureGameHUD.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/Widgets/BP_AdventureGameHUD.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/Widgets/WBP_HUD.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Flipbooks/AdventureCharacter/Adv_Walk_Front_Back_Flipbook.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Flipbooks/AdventureCharacter/Adv_Walk_Front_Back_Flipbook.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Flipbooks/AdventureCharacter/Adv_Walk_Left_Flipbook.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Flipbooks/AdventureCharacter/Adv_Walk_Left_Flipbook.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Flipbooks/AdventureCharacter/Adv_Walk_Right_Flipbook.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Flipbooks/AdventureCharacter/Adv_Walk_Right_Flipbook.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Levels/TowerExterior.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Levels/TowerExterior.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Close_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Close_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Close_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Close_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/DownArrow_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/DownArrow_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/DownArrow_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/DownArrow_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Give_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Give_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Give_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Give_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Lookat_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Lookat_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Lookat_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Lookat_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Open_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Open_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Open_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Open_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Pickup_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Pickup_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Pickup_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Pickup_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Pull_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Pull_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Pull_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Pull_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Push_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Push_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Push_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Push_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Talkto_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Talkto_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Talkto_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Talkto_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/UpArrow_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/UpArrow_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/UpArrow_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/UpArrow_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Use_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Use_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Use_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Use_Sel.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameHUD.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameHUD.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameHUD.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameHUD.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameModeBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameModeBase.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -182,14 +144,6 @@
       <option name="DEFAULT_PROJECT_PATH" value="$PROJECT_DIR$/AdventureGame.uproject" />
       <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/AdventureGame.uproject" />
       <option name="AUTO_SELECT_PRIORITY" value="10010" />
-      <method v="2">
-        <option name="Build" />
-      </method>
-    </configuration>
-    <configuration default="true" type="Uproject" factoryName="rider.uproject">
-      <option name="DEFAULT_PROJECT_PATH" value="" />
-      <option name="PROJECT_FILE_PATH" value="" />
-      <option name="AUTO_SELECT_PRIORITY" value="0" />
       <method v="2">
         <option name="Build" />
       </method>
