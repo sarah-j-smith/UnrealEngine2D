@@ -8,12 +8,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e7d87409-0359-4ca5-b933-df4b7b2a98d8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/FollowCamera.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/FollowCamera.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AdventureGame.uproject.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/AdventureGame.uproject.DotSettings.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureCharacter.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_FollowCamera.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_FollowCamera.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Levels/TowerExterior.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Levels/TowerExterior.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,14 +41,59 @@
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Persona/Private/SAnimationBlendSpaceGridWidget.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/UATHelper/UATHelperModule.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/UnrealEd/Classes/Animation/EditorParentPlayerListObj.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Public/Templates/SubclassOf.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Public/UObject/Object.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/Camera/PlayerCameraManager.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/Engine/World.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/GameFramework/Character.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/GameFramework/Pawn.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/Kismet/KismetMathLibrary.inl" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/HeadMountedDisplay/HeadMountedDisplay.Build.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Private/Slate/SObjectWidget.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Public/Blueprint/UserWidget.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/UnrealGame.Target.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AdventureGame/SplitScreenManager.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
@@ -63,7 +108,7 @@
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;Uproject.AdventureGame.executor&quot;: &quot;Run&quot;,
+    &quot;Uproject.AdventureGame.executor&quot;: &quot;Debug&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -192,6 +237,11 @@
           <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
           <option name="timeStamp" value="3" />
         </breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.cpp</url>
+          <line>103</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>

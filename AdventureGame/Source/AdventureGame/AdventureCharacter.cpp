@@ -106,6 +106,12 @@ void AAdventureCharacter::SetupFollowCamera()
 
 	FVector SpawnLocation(CapsuleLocation.X, CapsuleLocation.Y, 0.0);
 
+	if (CameraActorToSpawn.GetDefaultObject() == nullptr)
+	{
+		UE_LOG(LogActor, Warning, TEXT("FAIL: Cannot SetupFollowCamera - CameraActorToSpawn is not defined"));
+		return;
+	}
+
 	AFollowCamera* Camera = GetWorld()->SpawnActor<AFollowCamera>(
 		CameraActorToSpawn,
 		SpawnLocation,
