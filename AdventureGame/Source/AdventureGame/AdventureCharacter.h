@@ -5,13 +5,10 @@
 #include "CoreMinimal.h"
 #include "PaperZDCharacter.h"
 
-#include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "FollowCamera.h"
 
 #include "AdventureCharacter.generated.h"
-
-class AFollowCamera;
-class UAdventureGameHUD;
 
 /**
  * 
@@ -48,7 +45,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	FIntRect GamePlayArea;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TSubclassOf<AFollowCamera> CameraActorToSpawn;
 	
 	void HandlePointAndClick(const FInputActionValue& Value);

@@ -3,11 +3,6 @@
 
 #include "FollowCamera.h"
 
-#include "Components/SphereComponent.h"
-#include "GameFramework/SpringArmComponent.h"
-#include "Camera/CameraComponent.h"
-#include "Components/BoxComponent.h"
-
 AFollowCamera::AFollowCamera()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -31,7 +26,10 @@ void AFollowCamera::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CameraConfines->SetBoxExtent(ConfinesOfCamera);
+	if (IsValid(CameraConfines))
+	{
+		CameraConfines->SetBoxExtent(ConfinesOfCamera);
+	}
 }
 
 // Called every frame

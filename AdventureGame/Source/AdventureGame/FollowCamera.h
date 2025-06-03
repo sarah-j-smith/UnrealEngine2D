@@ -4,13 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "FollowCamera.generated.h"
+#include "Components/SphereComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
+#include "Components/BoxComponent.h"
 
-class AAdventureCharacter;
-class USphereComponent;
-class UCameraComponent;
-class USpringArmComponent;
-class UBoxComponent;
+#include "FollowCamera.generated.h"
 
 UCLASS()
 class ADVENTUREGAME_API AFollowCamera : public AActor
@@ -45,6 +44,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Camera")
 	FVector ConfinesOfCamera;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera")
-	AAdventureCharacter *PlayerCharacter;
+	// UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera")
+	// AAdventureCharacter *PlayerCharacter;
 };

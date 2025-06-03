@@ -2,12 +2,11 @@
 
 #include "AdventureCharacter.h"
 
-#include "AdventureGameHUD.h"
-#include "FollowCamera.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
+#include "EnhancedInputComponent.h"
 
 bool HasChangedMuch(const FVector2D& Current, const FVector2D& Previous)
 {
@@ -102,26 +101,31 @@ void AAdventureCharacter::HandlePointAndClick(const FInputActionValue& Value)
 void AAdventureCharacter::SetupFollowCamera()
 {
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
+	if (!CapsuleComp)
+	{
+		UE_LOG(LogActor, Warning, TEXT("FAIL: Cannot SetupFollowCamera - UCapsuleComponent is not defined"));
+		return;
+	}
+	
 	FVector CapsuleLocation = CapsuleComp->GetComponentLocation();
-
 	FVector SpawnLocation(CapsuleLocation.X, CapsuleLocation.Y, 0.0);
 
-	if (CameraActorToSpawn.GetDefaultObject() == nullptr)
+	if (!IsValid(CameraActorToSpawn) || CameraActorToSpawn.GetDefaultObject() == nullptr)
 	{
 		UE_LOG(LogActor, Warning, TEXT("FAIL: Cannot SetupFollowCamera - CameraActorToSpawn is not defined"));
 		return;
 	}
 
-	AFollowCamera* Camera = GetWorld()->SpawnActor<AFollowCamera>(
-		CameraActorToSpawn,
-		SpawnLocation,
-		FRotator::ZeroRotator);
-
-	Camera->PlayerCharacter = this;
-	
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
-	{
-		// "Possess" the root of the camera actor as the target.
-		PlayerController->SetViewTarget(Camera);
-	}
+	// AFollowCamera* Camera = GetWorld()->SpawnActor<AFollowCamera>(
+	// 	CameraActorToSpawn,
+	// 	SpawnLocation,
+	// 	FRotator::ZeroRotator);
+	//
+	// Camera->PlayerCharacter = this;
+	//
+	// if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	// {
+	// 	// "Possess" the root of the camera actor as the target.
+	// 	PlayerController->SetViewTarget(Camera);
+	// }
 }
