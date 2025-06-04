@@ -15,6 +15,7 @@ bool HasChangedMuch(const FVector2D& Current, const FVector2D& Previous)
 
 AAdventureCharacter::AAdventureCharacter()
 {
+	CreateCameraDelegate.BindUObject(this, &AAdventureCharacter::SetupCamera);
 }
 
 void AAdventureCharacter::BeginPlay()
@@ -34,7 +35,7 @@ void AAdventureCharacter::BeginPlay()
 		}
 	}
 
-	SetupFollowCamera();
+	GetWorldTimerManager().SetTimerForNextTick(CreateCameraDelegate);
 }
 
 void AAdventureCharacter::Tick(float DeltaTime)
@@ -98,7 +99,7 @@ void AAdventureCharacter::HandlePointAndClick(const FInputActionValue& Value)
 	       MouseWorldLocation.Z);
 }
 
-void AAdventureCharacter::SetupFollowCamera()
+void AAdventureCharacter::SetupCamera()
 {
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
 	if (!CapsuleComp)
@@ -108,7 +109,7 @@ void AAdventureCharacter::SetupFollowCamera()
 	}
 	
 	FVector CapsuleLocation = CapsuleComp->GetComponentLocation();
-	FVector SpawnLocation(CapsuleLocation.X, CapsuleLocation.Y, 0.0);
+	FVector SpawnLocation(CapsuleLocation.X, 0.0, 0.0);
 
 	if (!IsValid(CameraActorToSpawn) || CameraActorToSpawn.GetDefaultObject() == nullptr)
 	{
@@ -116,16 +117,16 @@ void AAdventureCharacter::SetupFollowCamera()
 		return;
 	}
 
-	// AFollowCamera* Camera = GetWorld()->SpawnActor<AFollowCamera>(
-	// 	CameraActorToSpawn,
-	// 	SpawnLocation,
-	// 	FRotator::ZeroRotator);
-	//
-	// Camera->PlayerCharacter = this;
-	//
-	// if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
-	// {
-	// 	// "Possess" the root of the camera actor as the target.
-	// 	PlayerController->SetViewTarget(Camera);
-	// }
+	AFollowCamera* Camera = GetWorld()->SpawnActor<AFollowCamera>(
+		CameraActorToSpawn,
+		SpawnLocation,
+		FRotator::ZeroRotator);
+	
+	Camera->PlayerCharacter = this;
+	
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		// "Possess" the root of the camera actor as the target.
+		PlayerController->SetViewTarget(Camera);
+	}
 }

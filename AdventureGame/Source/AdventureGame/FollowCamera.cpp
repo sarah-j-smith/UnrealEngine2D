@@ -2,6 +2,8 @@
 
 
 #include "FollowCamera.h"
+#include "AdventureCharacter.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AFollowCamera::AFollowCamera()
 {
@@ -26,10 +28,7 @@ void AFollowCamera::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (IsValid(CameraConfines))
-	{
-		CameraConfines->SetBoxExtent(ConfinesOfCamera);
-	}
+	SetupCameraConfines();
 }
 
 // Called every frame
@@ -37,5 +36,55 @@ void AFollowCamera::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	FollowPlayer(DeltaTime);
+}
+
+void AFollowCamera::SetupCameraConfines() const
+{
+	if (!IsValid(CameraConfines))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to setup camera confines - CameraConfines not valid"));
+		return;
+	}
+
+	if (ConfinesOfCamera == FVector::ZeroVector)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Camera confines have not been set!"));
+		return;
+	}
+	CameraConfines->SetBoxExtent(ConfinesOfCamera);
+}
+
+void AFollowCamera::FollowPlayer(float DeltaTime)
+{
+	if (!IsValid(PlayerCharacter)) return;
+	if (!IsValid(CameraConfines)) return;
+	if (!IsValid(CameraComponent)) return;
+	
+	const FVector ConfinesBoxMax = CameraConfines->Bounds.Origin + CameraConfines->Bounds.BoxExtent;
+	const FVector ConfinesBoxMin = CameraConfines->Bounds.Origin - CameraConfines->Bounds.BoxExtent;
+
+	float HalfCamWidth = CameraComponent->OrthoWidth * 0.5f;
+	float HalfCamHeight = (CameraComponent->OrthoWidth / CameraComponent->AspectRatio) * 0.5;
+
+	FVector ConfineMax;
+	FVector ConfineMin;
+	ConfineMax.X = ConfinesBoxMax.X - HalfCamWidth;
+	ConfineMax.Y = ConfinesBoxMax.Y - HalfCamHeight;
+	ConfineMin.X = ConfinesBoxMin.X + HalfCamWidth;
+	ConfineMin.Y = ConfinesBoxMin.Y + HalfCamHeight;
+
+	FVector PlayerCharacterPosition = PlayerCharacter->GetActorLocation();
+	FVector CamTargetPosition;
+	CamTargetPosition.X = UKismetMathLibrary::FClamp(PlayerCharacterPosition.X, ConfineMin.X, ConfineMax.X);
+	CamTargetPosition.Y = UKismetMathLibrary::FClamp(PlayerCharacterPosition.Y, ConfineMin.Y, ConfineMax.Y);
+	FVector CameraCurrentPosition = GetActorLocation();
+	FVector CameraNewPosition;
+	CameraNewPosition.X = UKismetMathLibrary::FInterpTo(CameraCurrentPosition.X,
+		CamTargetPosition.X, DeltaTime, FollowSpeed);
+	CameraNewPosition.Y = UKismetMathLibrary::FInterpTo(CameraCurrentPosition.Y,
+	CamTargetPosition.Y, DeltaTime, FollowSpeed);
+	
+	SetActorLocation(CameraNewPosition);
 }
 

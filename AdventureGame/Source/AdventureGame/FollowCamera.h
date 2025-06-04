@@ -11,6 +11,8 @@
 
 #include "FollowCamera.generated.h"
 
+class AAdventureCharacter;
+
 UCLASS()
 class ADVENTUREGAME_API AFollowCamera : public AActor
 {
@@ -25,12 +27,25 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
+	/**
+	 * Camera base. This is moved to change the location of the camera.
+	 * The camera should not be moved directly as that would disable any
+	 * spring arm effects.
+	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Geometry")
 	USphereComponent *FollowCameraBase;
 
+	/**
+	 * Camera should be set to orthographic, with fixed aspect ratio
+	 * of the game scene width divided by the game scene height, eg 2.21.
+	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Camera")
 	UCameraComponent *CameraComponent;
 
+	/**
+	 * Camera Arm - use this to set the rotation and position of the camera,
+	 * and effects like camera lag.
+	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Camera")
 	USpringArmComponent *SpringArmComponent;
 
@@ -44,6 +59,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Camera")
 	FVector ConfinesOfCamera;
 
-	// UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera")
-	// AAdventureCharacter *PlayerCharacter;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Camera")
+	float FollowSpeed = 12.0f;
+	
+	AAdventureCharacter *PlayerCharacter;
+
+	void SetupCameraConfines() const;
+	
+	void FollowPlayer(float DeltaTime);
 };

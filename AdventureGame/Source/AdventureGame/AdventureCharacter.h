@@ -27,6 +27,8 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	FTimerDelegate CreateCameraDelegate;
+
 	// MARK: Gameplay
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	FVector TargetPlayerLocation = FVector::ZeroVector;
@@ -50,5 +52,6 @@ public:
 	
 	void HandlePointAndClick(const FInputActionValue& Value);
 
-	void SetupFollowCamera();
+	UFUNCTION()
+	void SetupCamera();
 };
