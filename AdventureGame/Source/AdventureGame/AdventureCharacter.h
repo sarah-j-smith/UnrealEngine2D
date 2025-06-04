@@ -44,6 +44,8 @@ public:
 	
 	FVector2D LastVelocity = FVector2D::ZeroVector;
 
+	FVector2D LastMouseClick = FVector2D(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	FIntRect GamePlayArea;
 

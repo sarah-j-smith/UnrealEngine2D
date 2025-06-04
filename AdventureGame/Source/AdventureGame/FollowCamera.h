@@ -32,28 +32,28 @@ public:
 	 * The camera should not be moved directly as that would disable any
 	 * spring arm effects.
 	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Geometry")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Geometry")
 	USphereComponent *FollowCameraBase;
 
 	/**
 	 * Camera should be set to orthographic, with fixed aspect ratio
 	 * of the game scene width divided by the game scene height, eg 2.21.
 	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Camera")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Camera")
 	UCameraComponent *CameraComponent;
 
 	/**
 	 * Camera Arm - use this to set the rotation and position of the camera,
 	 * and effects like camera lag.
 	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Camera")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Camera")
 	USpringArmComponent *SpringArmComponent;
 
 	/**
 	 * Box containing the limits for the camera. Camera viewport must be contained
 	 * within this volume.
 	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Geometry")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Geometry")
 	UBoxComponent *CameraConfines;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Camera")

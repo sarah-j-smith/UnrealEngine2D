@@ -15,6 +15,8 @@ class ADVENTUREGAME_API AAdventureGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 public:
+	AAdventureGameModeBase();
+	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UAdventureGameHUD> AdventureHUDClass;
 
@@ -22,6 +24,8 @@ public:
 	UAdventureGameHUD *AdventureHUDWidget;
 
 	virtual void BeginPlay() override;
+
+	FTimerDelegate SetupHUDTimerDelegate;
 	
 	void SetupHUD();
 };

@@ -7,6 +7,7 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
 #include "EnhancedInputComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 bool HasChangedMuch(const FVector2D& Current, const FVector2D& Previous)
 {
@@ -67,23 +68,33 @@ void AAdventureCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 
 void AAdventureCharacter::HandlePointAndClick(const FInputActionValue& Value)
 {
-	float locationX, locationY;
-	FVector MouseWorldLocation, MouseWorldDirection;
+	float LocationX, LocationY;
+	FVector MouseWorldLocation;
 
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	bool isPressed = PlayerController->GetMousePosition(locationX, locationY);
-	if (!isPressed)
+	const APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	bool bIsPressed = PlayerController->GetMousePosition(LocationX, LocationY);
+	if (!bIsPressed)
 	{
 		// No mouse device?  Maybe its a touch device
-		PlayerController->GetInputTouchState(ETouchIndex::Type::Touch1, locationX, locationY, isPressed);
+		PlayerController->GetInputTouchState(ETouchIndex::Type::Touch1, LocationX, LocationY, bIsPressed);
 	}
-	if (isPressed)
+	if (bIsPressed)
 	{
-		PlayerController->DeprojectScreenPositionToWorld(locationX, locationY, MouseWorldLocation, MouseWorldDirection);
+		if (UKismetMathLibrary::NearlyEqual_FloatFloat(LastMouseClick.X, LocationX)
+			&& UKismetMathLibrary::NearlyEqual_FloatFloat(LastMouseClick.Y, LocationY))
+		{
+			UE_LOG(LogInput, Warning, TEXT("HandlePointAndClick ignoring duplicate mouse click: %f %f"), LocationX, LocationY);
+			return;
+		}
+		LastMouseClick.X = LocationX;
+		LastMouseClick.Y = LocationY;
+		UE_LOG(LogInput, Warning, TEXT("HandlePointAndClick got click: %f %f"), LocationX, LocationY);
+		FVector MouseWorldDirection;
+		PlayerController->DeprojectScreenPositionToWorld(LocationX, LocationY, MouseWorldLocation, MouseWorldDirection);
 	}
 
 	// Do not set the Target Player Location if the mouse is over the UI - not the play area.
-	if (!isPressed || !GamePlayArea.Contains(FIntPoint(MouseWorldLocation.X, MouseWorldLocation.Y)))
+	if (!bIsPressed || !GamePlayArea.Contains(FIntPoint(MouseWorldLocation.X, MouseWorldLocation.Y)))
 	{
 		UE_LOG(LogInput, Warning, TEXT("HandlePointAndClick ignoring mouse click: %f %f %f"), MouseWorldLocation.X,
 		       MouseWorldLocation.Y,

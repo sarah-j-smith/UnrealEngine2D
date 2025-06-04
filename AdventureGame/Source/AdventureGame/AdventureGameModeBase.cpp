@@ -5,26 +5,27 @@
 
 #include "Kismet/GameplayStatics.h"
 
+AAdventureGameModeBase::AAdventureGameModeBase()
+{
+	SetupHUDTimerDelegate.BindUObject(this, &AAdventureGameModeBase::SetupHUD);
+}
+
 void AAdventureGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetupHUD();
+	GetWorldTimerManager().SetTimerForNextTick(SetupHUDTimerDelegate);
 }
 
 void AAdventureGameModeBase::SetupHUD()
 {
 	if (AdventureHUDClass) {
-		APlayerController *playerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-		AdventureHUDWidget = CreateWidget<UAdventureGameHUD>(playerController, AdventureHUDClass);
+		APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		AdventureHUDWidget = CreateWidget<UAdventureGameHUD>(PlayerController, AdventureHUDClass);
 		if (AdventureHUDWidget)
 		{
 			AdventureHUDWidget->AddToViewport();
 			UE_LOG(LogInput, Warning, TEXT("AddToViewport"));
 		}
 	}
-
-#if PLATFORM_IOS
-	// camera->SetOrthoWidth(iOSCameraOrthoWidth);
-#endif
 }
