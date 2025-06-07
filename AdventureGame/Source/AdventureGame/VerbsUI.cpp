@@ -3,6 +3,9 @@
 
 #include "VerbsUI.h"
 
+#include "AdventurePlayerController.h"
+#include "Kismet/GameplayStatics.h"
+
 
 void UVerbsUI::NativeOnInitialized()
 {
@@ -17,6 +20,8 @@ void UVerbsUI::NativeOnInitialized()
 	Use->OnClicked.AddDynamic(this, &UVerbsUI::UseTriggered);
 	Push->OnClicked.AddDynamic(this, &UVerbsUI::PushTriggered);
 	Pull->OnClicked.AddDynamic(this, &UVerbsUI::PullTriggered);
+
+	AssignNormalStyles();
 }
 
 void UVerbsUI::CloseTriggered()
@@ -81,28 +86,28 @@ void UVerbsUI::ClearActiveButton()
 		Close->SetStyle(CloseNormalStyle);
 		break;
 	case EVerbType::Open:
-		Open->SetStyle(OpenSelectedStyle);
+		Open->SetStyle(OpenNormalStyle);
 		break;
 	case EVerbType::Give:
-		Close->SetStyle(GiveNormalStyle);
+		Give->SetStyle(GiveNormalStyle);
 		break;
 	case EVerbType::PickUp:
-		Close->SetStyle(PickUpNormalStyle);
+		PickUp->SetStyle(PickUpNormalStyle);
 		break;
 	case EVerbType::TalkTo:
-		Close->SetStyle(CloseNormalStyle);
+		TalkTo->SetStyle(TalkToNormalStyle);
 		break;
 	case EVerbType::LookAt:
-		Close->SetStyle(CloseNormalStyle);
+		LookAt->SetStyle(LookAtNormalStyle);
 		break;
 	case EVerbType::Use:
-		Close->SetStyle(CloseNormalStyle);
+		Use->SetStyle(UseNormalStyle);
 		break;
 	case EVerbType::Push:
-		Close->SetStyle(CloseNormalStyle);
+		Push->SetStyle(PushNormalStyle);
 		break;
 	case EVerbType::Pull:
-		Close->SetStyle(CloseNormalStyle);
+		Pull->SetStyle(PullNormalStyle);
 		break;
 	case EVerbType::None:
 	case EVerbType::WalkTo:
@@ -116,45 +121,58 @@ void UVerbsUI::SetButtonActive(EVerbType VerbType)
 	switch (VerbType)
 	{
 	case EVerbType::Close:
-		CloseNormalStyle = FButtonStyle(Close->GetStyle());
 		Close->SetStyle(CloseSelectedStyle);
 		break;
 	case EVerbType::Open:
-		OpenNormalStyle = FButtonStyle(Open->GetStyle());
 		Open->SetStyle(OpenSelectedStyle);
 		break;
 	case EVerbType::Give:
-		CloseNormalStyle = FButtonStyle(Close->GetStyle());
-		Close->SetStyle(CloseSelectedStyle);
+		Give->SetStyle(GiveSelectedStyle);
 		break;
 	case EVerbType::PickUp:
-		CloseNormalStyle = FButtonStyle(Close->GetStyle());
-		Close->SetStyle(CloseSelectedStyle);
+		PickUp->SetStyle(PickUpSelectedStyle);
 		break;
 	case EVerbType::TalkTo:
-		CloseNormalStyle = FButtonStyle(Close->GetStyle());
-		Close->SetStyle(CloseSelectedStyle);
+		TalkTo->SetStyle(TalkToSelectedStyle);
 		break;
 	case EVerbType::LookAt:
-		CloseNormalStyle = FButtonStyle(Close->GetStyle());
-		Close->SetStyle(CloseSelectedStyle);
+		LookAt->SetStyle(LookAtSelectedStyle);
 		break;
 	case EVerbType::Use:
-		CloseNormalStyle = FButtonStyle(Close->GetStyle());
-		Close->SetStyle(CloseSelectedStyle);
+		Use->SetStyle(UseSelectedStyle);
 		break;
 	case EVerbType::Push:
-		CloseNormalStyle = FButtonStyle(Close->GetStyle());
-		Close->SetStyle(CloseSelectedStyle);
+		Push->SetStyle(PushSelectedStyle);
 		break;
 	case EVerbType::Pull:
-		CloseNormalStyle = FButtonStyle(Close->GetStyle());
-		Close->SetStyle(CloseSelectedStyle);
+		Pull->SetStyle(PullSelectedStyle);
 		break;
 	case EVerbType::None:
 	case EVerbType::WalkTo:
 		break;
 	}
 	CurrentVerb = VerbType;
+
+	SetActiveVerb();
+}
+
+void UVerbsUI::AssignNormalStyles()
+{
+	CloseNormalStyle = FButtonStyle(Close->GetStyle());
+	OpenNormalStyle = FButtonStyle(Open->GetStyle());
+	GiveNormalStyle = FButtonStyle(Give->GetStyle());
+	LookAtNormalStyle = FButtonStyle(LookAt->GetStyle());
+	TalkToNormalStyle = FButtonStyle(TalkTo->GetStyle());
+	PickUpNormalStyle = FButtonStyle(PickUp->GetStyle());
+	UseNormalStyle = FButtonStyle(Use->GetStyle());
+	PushNormalStyle = FButtonStyle(Push->GetStyle());
+	PullNormalStyle = FButtonStyle(Open->GetStyle());
+}
+
+void UVerbsUI::SetActiveVerb() const
+{
+	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
+	AdventurePlayerController->CurrentVerb = CurrentVerb;
 }
 

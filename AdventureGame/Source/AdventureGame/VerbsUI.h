@@ -123,6 +123,10 @@ public:
 
 	void SetButtonActive(EVerbType VerbType);
 
+	void AssignNormalStyles();
+
+	void SetActiveVerb() const;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Button Controls")
 	EVerbType CurrentVerb;
 };
