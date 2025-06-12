@@ -2,12 +2,12 @@
 
 #include "AdventureCharacter.h"
 
+#include "AdventureGame.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
 #include "EnhancedInputComponent.h"
-#include "Kismet/KismetMathLibrary.h"
 
 bool HasChangedMuch(const FVector2D& Current, const FVector2D& Previous)
 {
@@ -25,8 +25,9 @@ void AAdventureCharacter::BeginPlay()
 
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
 	TargetPlayerLocation = CapsuleComp->GetComponentLocation();
-	
-	if (const APlayerController* PlayerController = Cast<APlayerController>(Controller))
+
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (IsValid(PlayerController))
 	{
 		UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
 			PlayerController->GetLocalPlayer());
@@ -43,6 +44,7 @@ void AAdventureCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// This is used just to feed in the PaperZD Set direction for the sprite facing
 	const UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
 	FVector2D Velocity = FVector2D(MovementComponent->Velocity.X, MovementComponent->Velocity.Y);
 	if (HasChangedMuch(Velocity, LastVelocity))
@@ -58,7 +60,7 @@ void AAdventureCharacter::Tick(float DeltaTime)
 void AAdventureCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	
+
 	if (UEnhancedInputComponent* InputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		InputComponent->BindAction(PointAndClickInput, ETriggerEvent::Triggered, this,
@@ -68,63 +70,53 @@ void AAdventureCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 
 void AAdventureCharacter::HandlePointAndClick(const FInputActionValue& Value)
 {
-	float LocationX, LocationY;
-	FVector MouseWorldLocation;
+	GetAdventurePlayerController()->HandlePointAndClickInput();
+}
 
-	const APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	bool bIsPressed = PlayerController->GetMousePosition(LocationX, LocationY);
-	if (!bIsPressed)
-	{
-		// No mouse device?  Maybe its a touch device
-		PlayerController->GetInputTouchState(ETouchIndex::Type::Touch1, LocationX, LocationY, bIsPressed);
-	}
-	if (bIsPressed)
-	{
-		if (UKismetMathLibrary::NearlyEqual_FloatFloat(LastMouseClick.X, LocationX)
-			&& UKismetMathLibrary::NearlyEqual_FloatFloat(LastMouseClick.Y, LocationY))
-		{
-			UE_LOG(LogInput, Warning, TEXT("HandlePointAndClick ignoring duplicate mouse click: %f %f"), LocationX, LocationY);
-			return;
-		}
-		LastMouseClick.X = LocationX;
-		LastMouseClick.Y = LocationY;
-		UE_LOG(LogInput, Warning, TEXT("HandlePointAndClick got click: %f %f"), LocationX, LocationY);
-		FVector MouseWorldDirection;
-		PlayerController->DeprojectScreenPositionToWorld(LocationX, LocationY, MouseWorldLocation, MouseWorldDirection);
-	}
-
-	// Do not set the Target Player Location if the mouse is over the UI - not the play area.
-	if (!bIsPressed || !GamePlayArea.Contains(FIntPoint(MouseWorldLocation.X, MouseWorldLocation.Y)))
-	{
-		UE_LOG(LogInput, Warning, TEXT("HandlePointAndClick ignoring mouse click: %f %f %f"), MouseWorldLocation.X,
-		       MouseWorldLocation.Y,
-		       MouseWorldLocation.Z);
-		return;
-	};
-
+void AAdventureCharacter::SetPosition(const FVector& NewPosition)
+{
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
 	FVector CapsuleLocation = CapsuleComp->GetComponentLocation();
-	TargetPlayerLocation = FVector(floorf(MouseWorldLocation.X), floorf(MouseWorldLocation.Y), CapsuleLocation.Z);
+	TargetPlayerLocation = FVector(floorf(NewPosition.X), floorf(NewPosition.Y), CapsuleLocation.Z);
+}
 
-	UE_LOG(LogInput, Warning, TEXT("Mouse click: %f %f %f"), MouseWorldLocation.X, MouseWorldLocation.Y,
-	       MouseWorldLocation.Z);
+void AAdventureCharacter::SetFacingDirection(EWalkDirection Direction)
+{
+	switch (Direction)
+	{
+	case EWalkDirection::Left:
+		LastNonZeroMovement = FVector2D(-1.0f, 0.0f);
+		break;
+	case EWalkDirection::Right:
+		LastNonZeroMovement = FVector2D(1.0f, 0.0f);
+		break;
+	case EWalkDirection::Up:
+		LastNonZeroMovement = FVector2D(0.0f, -1.0f);
+		break;
+	case EWalkDirection::Down:
+		LastNonZeroMovement = FVector2D(0.0f, 1.0f);
+	default:
+		UE_LOG(LogAdventureGame, Warning, TEXT("Unsupported case in SetFacingDirection"));
+		break;
+	}
 }
 
 void AAdventureCharacter::SetupCamera()
 {
+	UE_LOG(LogAdventureGame, Warning, TEXT("SetupCamera"));
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
 	if (!CapsuleComp)
 	{
-		UE_LOG(LogActor, Warning, TEXT("FAIL: Cannot SetupFollowCamera - UCapsuleComponent is not defined"));
+		UE_LOG(LogAdventureGame, Warning, TEXT("FAIL: Cannot SetupFollowCamera - UCapsuleComponent is not defined"));
 		return;
 	}
-	
+
 	FVector CapsuleLocation = CapsuleComp->GetComponentLocation();
 	FVector SpawnLocation(CapsuleLocation.X, 0.0, 0.0);
 
 	if (!IsValid(CameraActorToSpawn) || CameraActorToSpawn.GetDefaultObject() == nullptr)
 	{
-		UE_LOG(LogActor, Warning, TEXT("FAIL: Cannot SetupFollowCamera - CameraActorToSpawn is not defined"));
+		UE_LOG(LogAdventureGame, Warning, TEXT("FAIL: Cannot SetupFollowCamera - CameraActorToSpawn is not defined"));
 		return;
 	}
 
@@ -132,12 +124,20 @@ void AAdventureCharacter::SetupCamera()
 		CameraActorToSpawn,
 		SpawnLocation,
 		FRotator::ZeroRotator);
-	
+
 	Camera->PlayerCharacter = this;
-	
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	PlayerController->SetViewTarget(Camera);
+}
+
+AAdventurePlayerController* AAdventureCharacter::GetAdventurePlayerController() const
+{
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	AAdventurePlayerController* AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
+	if (!AdventurePlayerController)
 	{
-		// "Possess" the root of the camera actor as the target.
-		PlayerController->SetViewTarget(Camera);
+		UE_LOG(LogAdventureGame, Warning, TEXT("Failed to get AAdventurePlayerController"));
 	}
+	return AdventurePlayerController;
 }
