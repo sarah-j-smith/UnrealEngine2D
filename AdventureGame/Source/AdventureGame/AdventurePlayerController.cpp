@@ -48,6 +48,7 @@ void AAdventurePlayerController::BeginPlay()
 	}
 	
 	SetupHUD();
+	SetupAIController();
 }
 
 void AAdventurePlayerController::SetupHUD()
@@ -79,6 +80,7 @@ void AAdventurePlayerController::SetupAIController()
 
 void AAdventurePlayerController::HandlePointAndClickInput()
 {
+	UE_LOG(LogAdventureGame, Warning, TEXT(">>>>> HandlePointAndClick"));
 	const auto HitResult = GetClicked();
 	if (HitResult != ClickResult::WalkToLocation)
 	{
@@ -186,7 +188,7 @@ bool AAdventurePlayerController::IsDuplicateClick(float LocationX, float Locatio
 
 bool AAdventurePlayerController::IsOutsideGamePlayArea(FVector MouseWorldLocation)
 {
-	if (!GamePlayArea.Contains(FIntPoint(MouseWorldLocation.X, MouseWorldLocation.Y)))
+	if (IsMouseOverUI)
 	{
 		UE_LOG(LogAdventureGame, Warning, TEXT("HandlePointAndClick ignoring mouse click outside GamePlayArea: %f %f %f"),
 			   MouseWorldLocation.X,

@@ -16,6 +16,5 @@ class ADVENTUREGAME_API UInteractionHUD : public UUserWidget
 public:
 
 private:
-	bool IsMouseOverUI();
 	
 };

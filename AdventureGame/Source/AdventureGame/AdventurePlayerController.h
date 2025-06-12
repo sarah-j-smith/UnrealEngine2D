@@ -70,6 +70,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UAdventureGameHUD *AdventureHUDWidget;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gameplay")
+	bool IsMouseOverUI = false;
 	
 private:
 	 ClickResult GetClicked();
