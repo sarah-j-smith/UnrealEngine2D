@@ -9,5 +9,5 @@ void UAdventureGameHUD::NativeOnInitialized()
 {
 	PlayerCharacter = GetOwningPlayerPawn<AAdventureCharacter>();
 
-	UE_LOG(LogInput, Warning, TEXT("NativeOnInitialized"));
+	UE_LOG(LogInput, Warning, TEXT("UAdventureGameHUD::NativeOnInitialized"));
 }

@@ -8,6 +8,7 @@
 #include "AdventureGame.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Navigation/PathFollowingComponent.h"
 
@@ -15,6 +16,8 @@ AAdventurePlayerController::AAdventurePlayerController()
 {
 	SetShowMouseCursor(true);
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
+	
+	UE_LOG(LogAdventureGame, Log, TEXT("Construct: AAdventurePlayerController"));
 }
 
 void AAdventurePlayerController::MouseEnterHotSpot(AHotSpot* HotSpot)
@@ -33,6 +36,9 @@ void AAdventurePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+		
+	UE_LOG(LogAdventureGame, Log, TEXT("BeginPlay: AAdventurePlayerController"));
+
 	APawn* PlayerPawn = GetPawn();
 	PlayerCharacter = Cast<AAdventureCharacter>(PlayerPawn);
 	if (!IsValid(PlayerCharacter))
@@ -40,17 +46,35 @@ void AAdventurePlayerController::BeginPlay()
 		UE_LOG(LogAdventureGame, Warning, TEXT("%hs - PlayerCharacter not defined"), __FILE__);
 		return;
 	}
+	
+	SetupHUD();
+}
 
-	AController* PlayerController = PlayerCharacter->GetController();
-	AAdventureAIController* AIController = Cast<AAdventureAIController>(PlayerController);
-	if (IsValid(AIController))
-	{
-		AIController->MoveCompletedDelegate.AddDynamic(this, &AAdventurePlayerController::HandleMovementComplete);
+void AAdventurePlayerController::SetupHUD()
+{
+	if (AdventureHUDClass) {
+		AdventureHUDWidget = CreateWidget<UAdventureGameHUD>(this, AdventureHUDClass);
+		if (AdventureHUDWidget)
+		{
+			AdventureHUDWidget->AddToViewport();
+			UE_LOG(LogAdventureGame, Warning, TEXT("AAdventureGameModeBase::SetupHUD - AddToViewport"));
+		}
 	}
-	else
+}
+
+void AAdventurePlayerController::SetupAIController()
+{
+	AActor *AIControllerActor = UGameplayStatics::GetActorOfClass(GetWorld(), AAdventureAIController::StaticClass());
+	AAdventureAIController *AdventureAIController = Cast<AAdventureAIController>(AIControllerActor);
+	if (!IsValid(AdventureAIController))
 	{
-		UE_LOG(LogAdventureGame, Warning, TEXT("Expected possessing controller to be AI controller"));
+		UE_LOG(LogAdventureGame, Warning, TEXT("AAdventurePlayerController::SetupAIController - controller not valid"));
 	}
+	
+	APawn *PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	AAdventureCharacter *PlayerCharacter = Cast<AAdventureCharacter>(PlayerPawn);
+	AdventureAIController->Possess(PlayerCharacter);
+	AdventureAIController->MoveCompletedDelegate.AddDynamic(this, &AAdventurePlayerController::HandleMovementComplete);
 }
 
 void AAdventurePlayerController::HandlePointAndClickInput()

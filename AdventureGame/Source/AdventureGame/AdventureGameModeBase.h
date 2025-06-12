@@ -17,15 +17,5 @@ class ADVENTUREGAME_API AAdventureGameModeBase : public AGameModeBase
 public:
 	AAdventureGameModeBase();
 	
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UAdventureGameHUD> AdventureHUDClass;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	UAdventureGameHUD *AdventureHUDWidget;
-
 	virtual void BeginPlay() override;
-
-	FTimerDelegate SetupHUDTimerDelegate;
-	
-	void SetupHUD();
 };

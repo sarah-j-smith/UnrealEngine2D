@@ -8,27 +8,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e7d87409-0359-4ca5-b933-df4b7b2a98d8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureAIController.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureAIController.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/HotSpot.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/HotSpot.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/VerbInteractions.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/VerbInteractions.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/WalkDirection.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AdventureGame.uproject" beforeDir="false" afterPath="$PROJECT_DIR$/AdventureGame.uproject" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AdventureGame.uproject.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/AdventureGame.uproject.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureCharacter.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureController.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureGameModeBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_AdventureGameModeBase.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Levels/AdventureData.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Levels/AdventureData.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Levels/TowerExterior.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Levels/TowerExterior.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureAIController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureAIController.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureAIController.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureAIController.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameHUD.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameHUD.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameModeBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameModeBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameModeBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameModeBase.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventurePlayerController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventurePlayerController.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventurePlayerController.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventurePlayerController.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/InteractionHUD.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/InteractionHUD.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -284,7 +274,7 @@
       <workItem from="1749601022648" duration="7526000" />
       <workItem from="1749611607586" duration="2607000" />
       <workItem from="1749615232489" duration="17102000" />
-      <workItem from="1749705553409" duration="859000" />
+      <workItem from="1749705553409" duration="6983000" />
     </task>
     <servers />
   </component>

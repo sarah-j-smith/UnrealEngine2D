@@ -37,9 +37,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	EVerbType CurrentVerb = EVerbType::None;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
-	UAdventureGameHUD *HUD;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	AAdventureCharacter *PlayerCharacter;
 
@@ -64,7 +61,15 @@ public:
 
 	void ClearCurrentPath();
 
-	
+	void SetupHUD();
+
+	void SetupAIController();
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UAdventureGameHUD> AdventureHUDClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UAdventureGameHUD *AdventureHUDWidget;
 	
 private:
 	 ClickResult GetClicked();

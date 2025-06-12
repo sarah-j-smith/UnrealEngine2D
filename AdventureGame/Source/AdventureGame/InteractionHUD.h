@@ -13,5 +13,9 @@ UCLASS()
 class ADVENTUREGAME_API UInteractionHUD : public UUserWidget
 {
 	GENERATED_BODY()
+public:
+
+private:
+	bool IsMouseOverUI();
 	
 };

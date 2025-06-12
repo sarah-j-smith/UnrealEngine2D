@@ -16,6 +16,8 @@ class ADVENTUREGAME_API AAdventureAIController : public AAIController
 {
 	GENERATED_BODY()
 public:
+	virtual void OnConstruction(const FTransform& Transform) override;
+	
 	virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
 
 	FMoveCompletedDelegate MoveCompletedDelegate;
