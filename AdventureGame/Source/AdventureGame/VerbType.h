@@ -20,3 +20,4 @@ enum class EVerbType: uint8
 	None   = 10 UMETA(DisplayName = "NONE"),    
 };
 
+FString VerbGetDescriptiveString(EVerbType Verb);

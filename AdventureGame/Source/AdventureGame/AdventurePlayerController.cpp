@@ -48,7 +48,7 @@ void AAdventurePlayerController::BeginPlay()
 	}
 	
 	SetupHUD();
-	SetupAIController();
+	//SetupAIController();
 }
 
 void AAdventurePlayerController::SetupHUD()
@@ -65,17 +65,21 @@ void AAdventurePlayerController::SetupHUD()
 
 void AAdventurePlayerController::SetupAIController()
 {
+	UE_LOG(LogAdventureGame, Warning, TEXT(">>>>> SetupAIController"));
 	AActor *AIControllerActor = UGameplayStatics::GetActorOfClass(GetWorld(), AAdventureAIController::StaticClass());
 	AAdventureAIController *AdventureAIController = Cast<AAdventureAIController>(AIControllerActor);
 	if (!IsValid(AdventureAIController))
 	{
 		UE_LOG(LogAdventureGame, Warning, TEXT("AAdventurePlayerController::SetupAIController - controller not valid"));
+		return;
 	}
 	
 	APawn *PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	AAdventureCharacter *PlayerCharacter = Cast<AAdventureCharacter>(PlayerPawn);
 	AdventureAIController->Possess(PlayerCharacter);
 	AdventureAIController->MoveCompletedDelegate.AddDynamic(this, &AAdventurePlayerController::HandleMovementComplete);
+
+	UE_LOG(LogAdventureGame, Warning, TEXT("<<<<<<< SetupAIController"));
 }
 
 void AAdventurePlayerController::HandlePointAndClickInput()

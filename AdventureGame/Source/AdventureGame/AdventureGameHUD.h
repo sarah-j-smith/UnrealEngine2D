@@ -3,6 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InteractionHUD.h"
+#include "InventoryUI.h"
+#include "VerbsUI.h"
 
 #include "Blueprint/UserWidget.h"
 #include "AdventureGameHUD.generated.h"
@@ -22,9 +25,21 @@ public:
 	
 	virtual void NativeOnInitialized() override;
 
+	/// Bindings
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	UInteractionHUD *InteractionUI;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	UVerbsUI *VerbsUI;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	UInventoryUI *InventoryUI;
+	
 	// virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	AAdventureCharacter *PlayerCharacter = nullptr;
 
 	AAdventurePlayerController *AdventurePlayerController = nullptr;
+
+	void SetInteractionText();
 };

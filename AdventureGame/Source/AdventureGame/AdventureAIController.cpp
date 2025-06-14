@@ -3,8 +3,16 @@
 
 #include "AdventureAIController.h"
 
+#include "AdventureCharacter.h"
 #include "AdventureGame.h"
 #include "Navigation/PathFollowingComponent.h"
+
+void AAdventureAIController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+	UE_LOG(LogAdventureGame, Warning, TEXT("AAdventureAIController::OnPossess"));
+}
 
 void AAdventureAIController::OnConstruction(const FTransform& Transform)
 {

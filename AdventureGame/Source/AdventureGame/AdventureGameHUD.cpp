@@ -21,6 +21,30 @@ void UAdventureGameHUD::NativeOnInitialized()
 	UE_LOG(LogInput, Warning, TEXT("UAdventureGameHUD::NativeOnInitialized"));
 }
 
+void UAdventureGameHUD::SetInteractionText()
+{
+	auto CurrentVerb = AdventurePlayerController->CurrentVerb;
+	auto CurrentHotspot = AdventurePlayerController->CurrentHotSpot;
+	if (CurrentVerb != EVerbType::None)
+	{
+		FString VerbStr = VerbGetDescriptiveString(CurrentVerb);
+		if (CurrentHotspot)
+		{
+			FString HotspotStr = VerbGetDescriptiveString(CurrentVerb);
+			FString hpStr = FString::Printf(TEXT("%s %s"), *VerbStr, *HotspotStr);
+			InteractionUI->SetText(hpStr);
+		}
+		else
+		{
+			InteractionUI->SetText(VerbStr);
+		}
+	}
+	else
+	{
+		InteractionUI->ResetText();
+	}
+}
+
 void UAdventureGameHUD::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);

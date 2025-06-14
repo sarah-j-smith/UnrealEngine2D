@@ -105,6 +105,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Button Controls")
 	FButtonStyle PullSelectedStyle;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Button Controls")
+	EVerbType CurrentVerb;
+
 	////// 
 	/// Button handling
 	///
@@ -118,15 +121,18 @@ public:
 	UFUNCTION() void UseTriggered();
 	UFUNCTION() void PushTriggered();
 	UFUNCTION() void PullTriggered();
+private:
 
 	void ClearActiveButton();
 
 	void SetButtonActive(EVerbType VerbType);
 
+	/**
+	 * Called during initialization to pick up the normal, unactivated style of
+	 * the buttons from the values specified in the UI builder.
+	 */
 	void AssignNormalStyles();
 
 	void SetActiveVerb() const;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Button Controls")
-	EVerbType CurrentVerb;
 };
