@@ -28,6 +28,8 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void PawnClientRestart() override;
+
 	FTimerDelegate CreateCameraDelegate;
 
 	// MARK: Gameplay

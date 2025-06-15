@@ -35,8 +35,7 @@ void AAdventurePlayerController::MouseLeaveHotSpot()
 void AAdventurePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
-		
+	
 	UE_LOG(LogAdventureGame, Log, TEXT("BeginPlay: AAdventurePlayerController"));
 
 	APawn* PlayerPawn = GetPawn();
@@ -48,7 +47,7 @@ void AAdventurePlayerController::BeginPlay()
 	}
 	
 	SetupHUD();
-	//SetupAIController();
+	SetupAIController();
 }
 
 void AAdventurePlayerController::SetupHUD()
@@ -85,6 +84,7 @@ void AAdventurePlayerController::SetupAIController()
 void AAdventurePlayerController::HandlePointAndClickInput()
 {
 	UE_LOG(LogAdventureGame, Warning, TEXT(">>>>> HandlePointAndClick"));
+	
 	const auto HitResult = GetClicked();
 	if (HitResult != ClickResult::WalkToLocation)
 	{
@@ -144,6 +144,10 @@ AAdventurePlayerController::ClickResult AAdventurePlayerController::GetClicked()
 	{
 		// Found actor clicked
 		WalkToHotpot(HotSpot);
+
+		GEngine->AddOnScreenDebugMessage(1, 20.0, FColor::White, HotSpot->GetName(),
+										 false, FVector2D(2.0, 2.0));
+		
 		return ClickResult::HitHotspot;
 	}
 
@@ -205,6 +209,10 @@ bool AAdventurePlayerController::IsOutsideGamePlayArea(FVector MouseWorldLocatio
 
 void AAdventurePlayerController::WalkToLocation(FVector WorldLocation)
 {
+	FString WalkToLocationString = FString::Printf(TEXT("WalkToLocation: %s"), *WorldLocation.ToString());
+	GEngine->AddOnScreenDebugMessage(1, 20.0, FColor::White, WalkToLocationString,
+								 false, FVector2D(2.0, 2.0));
+	
 	AAdventureAIController *AIController = GetAIController();
 	if (!AIController) return;
 	auto Result = AIController->MoveToLocation(WorldLocation, 2.0f);

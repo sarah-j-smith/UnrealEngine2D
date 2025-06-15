@@ -25,18 +25,7 @@ void AAdventureCharacter::BeginPlay()
 
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
 	TargetPlayerLocation = CapsuleComp->GetComponentLocation();
-
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (IsValid(PlayerController))
-	{
-		UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
-			PlayerController->GetLocalPlayer());
-		if (SubSystem)
-		{
-			SubSystem->AddMappingContext(InputMappingContext, 0);
-		}
-	}
-
+	
 	GetWorldTimerManager().SetTimerForNextTick(CreateCameraDelegate);
 }
 
@@ -61,10 +50,40 @@ void AAdventureCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	UE_LOG(LogAdventureGame, Warning, TEXT("*** SetupPlayerInputComponent"));
+
 	if (UEnhancedInputComponent* InputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		InputComponent->BindAction(PointAndClickInput, ETriggerEvent::Triggered, this,
+		InputComponent->BindAction(PointAndClickInput, ETriggerEvent::Completed, this,
 		                           &AAdventureCharacter::HandlePointAndClick);
+		InputComponent->BindAction(PointAndClickInput, ETriggerEvent::Triggered, this,
+								   &AAdventureCharacter::HandlePointAndClick);
+		InputComponent->BindAction(PointAndClickInput, ETriggerEvent::Started, this,
+							   &AAdventureCharacter::HandlePointAndClick);
+
+		UE_LOG(LogAdventureGame, Warning, TEXT("*** BINDINGS DONE"));
+	}
+}
+
+void AAdventureCharacter::PawnClientRestart()
+{
+	Super::PawnClientRestart();
+	
+	UE_LOG(LogAdventureGame, Warning, TEXT("*** PawnClientRestart"));
+
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (IsValid(PlayerController))
+	{
+		UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
+			PlayerController->GetLocalPlayer());
+		if (SubSystem)
+		{
+			// PawnClientRestart can run more than once in an Actor's lifetime, so start by clearing out any leftover mappings.
+			SubSystem->ClearAllMappings();
+			// Add each mapping context, along with their priority values. Higher values take priority over lower values.
+			SubSystem->AddMappingContext(InputMappingContext, 0);
+			UE_LOG(LogAdventureGame, Warning, TEXT("*** Success: [re-]bound the input mapping context"));
+		}
 	}
 }
 
