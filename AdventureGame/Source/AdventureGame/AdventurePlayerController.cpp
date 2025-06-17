@@ -57,7 +57,7 @@ void AAdventurePlayerController::BeginPlay()
 	SetupHUD();
 	TriggerUpdateInteractionText();
 	APawn *Pawn = SetupPuck(PlayerCharacter);
-	SetupAIController(Pawn);
+	SetupAIController(PlayerCharacter);
 }
 
 void AAdventurePlayerController::SetupHUD()

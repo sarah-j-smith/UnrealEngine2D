@@ -51,7 +51,8 @@ void APuck::PawnClientRestart()
 			SubSystem->ClearAllMappings();
 			// Add each mapping context, along with their priority values. Higher values take priority over lower values.
 			SubSystem->AddMappingContext(InputMappingContext, 0);
-			UE_LOG(LogAdventureGame, Log, TEXT("*** Success: APuck::PawnClientRestart [re-]bound the input mapping context"));
+			FString PCClass = PlayerController->GetClass()->GetName();
+			UE_LOG(LogAdventureGame, Log, TEXT("*** Success: APuck::PawnClientRestart [re-]bound the input mapping context to: %s"), *PCClass);
 		}
 	}
 }
