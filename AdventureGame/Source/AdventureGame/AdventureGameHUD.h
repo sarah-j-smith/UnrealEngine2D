@@ -42,4 +42,13 @@ public:
 	AAdventurePlayerController *AdventurePlayerController = nullptr;
 
 	void SetInteractionText();
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateInteractionTextEvent();
+
+	UFUNCTION(BlueprintCallable)
+	void BeginActionEvent();
+
+	UFUNCTION(BlueprintCallable)
+	void InterruptActionEvent();
 };

@@ -3,6 +3,7 @@
 
 #include "FollowCamera.h"
 #include "AdventureCharacter.h"
+#include "AdventureGame.h"
 #include "Kismet/KismetMathLibrary.h"
 
 AFollowCamera::AFollowCamera()
@@ -43,13 +44,13 @@ void AFollowCamera::SetupCameraConfines() const
 {
 	if (!IsValid(CameraConfines))
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to setup camera confines - CameraConfines not valid"));
+		UE_LOG(LogAdventureGame, Error, TEXT("Failed to setup camera confines - CameraConfines not valid"));
 		return;
 	}
 
 	if (ConfinesOfCamera == FVector::ZeroVector)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Camera confines have not been set!"));
+		UE_LOG(LogAdventureGame, Warning, TEXT("Camera confines have not been set!"));
 		return;
 	}
 	CameraConfines->SetBoxExtent(ConfinesOfCamera);

@@ -6,6 +6,7 @@
 #include "AdventureAIController.h"
 #include "AdventureCharacter.h"
 #include "AdventureGame.h"
+#include "AdvGameUtils.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -24,12 +25,19 @@ void AAdventurePlayerController::MouseEnterHotSpot(AHotSpot* HotSpot)
 {
 	GEngine->AddOnScreenDebugMessage(1, 20.0, FColor::White, HotSpot->GetName(),
 	                                 false, FVector2D(2.0, 2.0));
+	CurrentHotSpot = HotSpot;
+	TriggerUpdateInteractionText();
 }
 
 void AAdventurePlayerController::MouseLeaveHotSpot()
 {
 	GEngine->AddOnScreenDebugMessage(1, 20.0, FColor::White, TEXT("Left hotspot"),
 	                                 false, FVector2D(2.0, 2.0));
+	if (!HotspotInteraction)
+	{
+		CurrentHotSpot = nullptr;
+		TriggerUpdateInteractionText();
+	}
 }
 
 void AAdventurePlayerController::BeginPlay()
@@ -47,38 +55,51 @@ void AAdventurePlayerController::BeginPlay()
 	}
 	
 	SetupHUD();
-	SetupAIController();
+	TriggerUpdateInteractionText();
+	APawn *Pawn = SetupPuck(PlayerCharacter);
+	SetupAIController(Pawn);
 }
 
 void AAdventurePlayerController::SetupHUD()
 {
-	if (AdventureHUDClass) {
-		AdventureHUDWidget = CreateWidget<UAdventureGameHUD>(this, AdventureHUDClass);
-		if (AdventureHUDWidget)
-		{
-			AdventureHUDWidget->AddToViewport();
-			UE_LOG(LogAdventureGame, Warning, TEXT("AAdventureGameModeBase::SetupHUD - AddToViewport"));
-		}
+	check(AdventureHUDClass);
+	AdventureHUDWidget = CreateWidget<UAdventureGameHUD>(this, AdventureHUDClass);
+	if (AdventureHUDWidget)
+	{
+		AdventureHUDWidget->AddToViewport();
+		UE_LOG(LogAdventureGame, Log, TEXT("AAdventureGameModeBase::SetupHUD - AddToViewport"));
 	}
 }
 
-void AAdventurePlayerController::SetupAIController()
+APawn *AAdventurePlayerController::SetupPuck(AAdventureCharacter *PlayerCharacter)
 {
-	UE_LOG(LogAdventureGame, Warning, TEXT(">>>>> SetupAIController"));
+	check(PlayerCharacter);
+	UCapsuleComponent* CapsuleComp = PlayerCharacter->GetCapsuleComponent();
+	check(CapsuleComp);
+	FVector CapsuleLocation = CapsuleComp->GetComponentLocation();
+	FVector SpawnLocation(CapsuleLocation.X, 0.0, 0.0);
+
+	check(PuckClassToSpawn)
+	APuck* Puck = GetWorld()->SpawnActor<APuck>(
+		PuckClassToSpawn,
+		SpawnLocation,
+		FRotator::ZeroRotator);
+
+	Puck->PointAndClickDelegate.AddUObject(this, &AAdventurePlayerController::HandlePointAndClickInput);
+	return Puck;
+}
+
+void AAdventurePlayerController::SetupAIController(APawn *AttachToPawn)
+{
+	UE_LOG(LogAdventureGame, Warning, TEXT(">>>>> AAdventurePlayerController::SetupAIController"));
 	AActor *AIControllerActor = UGameplayStatics::GetActorOfClass(GetWorld(), AAdventureAIController::StaticClass());
 	AAdventureAIController *AdventureAIController = Cast<AAdventureAIController>(AIControllerActor);
-	if (!IsValid(AdventureAIController))
-	{
-		UE_LOG(LogAdventureGame, Warning, TEXT("AAdventurePlayerController::SetupAIController - controller not valid"));
-		return;
-	}
+	check(AdventureAIController);
 	
-	APawn *PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-	AAdventureCharacter *PlayerCharacter = Cast<AAdventureCharacter>(PlayerPawn);
-	AdventureAIController->Possess(PlayerCharacter);
+	AdventureAIController->Possess(AttachToPawn);
 	AdventureAIController->MoveCompletedDelegate.AddDynamic(this, &AAdventurePlayerController::HandleMovementComplete);
 
-	UE_LOG(LogAdventureGame, Warning, TEXT("<<<<<<< SetupAIController"));
+	UE_LOG(LogAdventureGame, Warning, TEXT("<<<<<<< AAdventurePlayerController::SetupAIController"));
 }
 
 void AAdventurePlayerController::HandlePointAndClickInput()
@@ -102,13 +123,17 @@ void AAdventurePlayerController::HandlePointAndClickInput()
 		GetInputTouchState(ETouchIndex::Type::Touch1, LocationX, LocationY, bIsPressed);
 	}
 	if (!bIsPressed) return;
-	if (IsDuplicateClick(LocationX, LocationY)) return;
+
+	const FVector2D ThisMouseClick { LocationX, LocationY };
+	if (!AdvGameUtils::HasChangedMuch(ThisMouseClick, LastMouseClick))
+	{
+		return;
+	}
+	LastMouseClick = ThisMouseClick;
 
 	UE_LOG(LogAdventureGame, Warning, TEXT("HandlePointAndClick got click: %f %f"), LocationX, LocationY);
 	FVector MouseWorldDirection;
 	DeprojectScreenPositionToWorld(LocationX, LocationY, MouseWorldLocation, MouseWorldDirection);
-
-	if (IsOutsideGamePlayArea(MouseWorldLocation)) return;
 
 	FVector PlayerLocation = PlayerCharacter->GetCapsuleComponent()->GetComponentLocation();
 	MouseWorldLocation.Z = PlayerLocation.Z;
@@ -180,33 +205,6 @@ void AAdventurePlayerController::WalkToHotpot(AHotSpot* HotSpot)
 	}
 }
 
-bool AAdventurePlayerController::IsDuplicateClick(float LocationX, float LocationY)
-{
-	if (UKismetMathLibrary::NearlyEqual_FloatFloat(LastMouseClick.X, LocationX)
-		&& UKismetMathLibrary::NearlyEqual_FloatFloat(LastMouseClick.Y, LocationY))
-	{
-		UE_LOG(LogAdventureGame, Verbose, TEXT("HandlePointAndClick ignoring duplicate mouse click: %f %f"), LocationX,
-		       LocationY);
-		return true;
-	}
-	LastMouseClick.X = LocationX;
-	LastMouseClick.Y = LocationY;
-	return false;
-}
-
-bool AAdventurePlayerController::IsOutsideGamePlayArea(FVector MouseWorldLocation)
-{
-	if (IsMouseOverUI)
-	{
-		UE_LOG(LogAdventureGame, Warning, TEXT("HandlePointAndClick ignoring mouse click outside GamePlayArea: %f %f %f"),
-			   MouseWorldLocation.X,
-			   MouseWorldLocation.Y,
-			   MouseWorldLocation.Z);
-		return true;
-	};
-	return false;
-}
-
 void AAdventurePlayerController::WalkToLocation(FVector WorldLocation)
 {
 	FString WalkToLocationString = FString::Printf(TEXT("WalkToLocation: %s"), *WorldLocation.ToString());
@@ -216,11 +214,13 @@ void AAdventurePlayerController::WalkToLocation(FVector WorldLocation)
 	AAdventureAIController *AIController = GetAIController();
 	if (!AIController) return;
 	auto Result = AIController->MoveToLocation(WorldLocation, 2.0f);
+	HotspotInteraction = true;
 	switch (Result)
 	{
 	case EPathFollowingRequestResult::Type::Failed:
 		UE_LOG(LogAdventureGame, Warning, TEXT("WalkToLocation request failed: %f %f"), WorldLocation.X,
 			   WorldLocation.Y);
+		HotspotInteraction = false;
 		break;
 	case EPathFollowingRequestResult::Type::RequestSuccessful:
 		UE_LOG(LogAdventureGame, Warning, TEXT("WalkToLocation request success: %f %f"), WorldLocation.X,
@@ -263,6 +263,12 @@ void AAdventurePlayerController::HandleMovementComplete(EPathFollowingResult::Ty
 	PerformInteraction();
 
 	InterruptCurrentAction();
+}
+
+void AAdventurePlayerController::AssignVerb(EVerbType NewVerb)
+{
+	CurrentVerb = NewVerb;
+	TriggerUpdateInteractionText();
 }
 
 void AAdventurePlayerController::PerformInteraction()
@@ -310,4 +316,20 @@ void AAdventurePlayerController::InterruptCurrentAction()
 	CurrentVerb = EVerbType::WalkTo;
 	CurrentHotSpot = nullptr;
 	RunInterruptedActionDelegate.ExecuteIfBound();
+	HotspotInteraction = false;
+}
+
+void AAdventurePlayerController::TriggerBeginAction()
+{
+	BeginActionDelegate.Broadcast();
+}
+
+void AAdventurePlayerController::TriggerInterruptAction()
+{
+	InterruptActionDelegate.Broadcast();
+}
+
+void AAdventurePlayerController::TriggerUpdateInteractionText()
+{
+	UpdateInteractionTextDelegate.Broadcast();
 }

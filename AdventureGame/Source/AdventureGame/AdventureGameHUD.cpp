@@ -13,12 +13,18 @@ void UAdventureGameHUD::NativeOnInitialized()
 
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
-	if (!AdventurePlayerController)
+	if (AdventurePlayerController)
+	{
+		AdventurePlayerController->BeginActionDelegate.AddUObject(this, &UAdventureGameHUD::BeginActionEvent);
+		AdventurePlayerController->UpdateInteractionTextDelegate.AddUObject(this, &UAdventureGameHUD::UpdateInteractionTextEvent);
+		AdventurePlayerController->InterruptActionDelegate.AddUObject(this, &UAdventureGameHUD::InterruptActionEvent);
+	}
+	else
 	{
 		UE_LOG(LogAdventureGame, Warning, TEXT("UAdventureGameHUD::NativeOnInitialized Failed to get AAdventurePlayerController"));
 	}
 
-	UE_LOG(LogInput, Warning, TEXT("UAdventureGameHUD::NativeOnInitialized"));
+	UE_LOG(LogAdventureGame, Log, TEXT("UAdventureGameHUD::NativeOnInitialized"));
 }
 
 void UAdventureGameHUD::SetInteractionText()
@@ -30,7 +36,7 @@ void UAdventureGameHUD::SetInteractionText()
 		FString VerbStr = VerbGetDescriptiveString(CurrentVerb);
 		if (CurrentHotspot)
 		{
-			FString HotspotStr = VerbGetDescriptiveString(CurrentVerb);
+			FString HotspotStr = CurrentHotspot->HotSpotDescription;
 			FString hpStr = FString::Printf(TEXT("%s %s"), *VerbStr, *HotspotStr);
 			InteractionUI->SetText(hpStr);
 		}
@@ -43,6 +49,22 @@ void UAdventureGameHUD::SetInteractionText()
 	{
 		InteractionUI->ResetText();
 	}
+}
+
+void UAdventureGameHUD::UpdateInteractionTextEvent()
+{
+	SetInteractionText();
+}
+
+void UAdventureGameHUD::BeginActionEvent()
+{
+	InteractionUI->HighlightText();
+}
+
+void UAdventureGameHUD::InterruptActionEvent()
+{
+	InteractionUI->ResetText();
+	VerbsUI->ClearActiveButton();
 }
 
 void UAdventureGameHUD::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

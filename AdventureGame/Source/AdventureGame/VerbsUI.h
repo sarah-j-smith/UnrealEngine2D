@@ -121,10 +121,10 @@ public:
 	UFUNCTION() void UseTriggered();
 	UFUNCTION() void PushTriggered();
 	UFUNCTION() void PullTriggered();
-private:
 
 	void ClearActiveButton();
 
+private:
 	void SetButtonActive(EVerbType VerbType);
 
 	/**

@@ -3,7 +3,6 @@
 
 #include "AdventureAIController.h"
 
-#include "AdventureCharacter.h"
 #include "AdventureGame.h"
 #include "Navigation/PathFollowingComponent.h"
 

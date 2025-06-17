@@ -3,20 +3,15 @@
 #include "AdventureCharacter.h"
 
 #include "AdventureGame.h"
+#include "AdvGameUtils.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
-#include "EnhancedInputComponent.h"
-
-bool HasChangedMuch(const FVector2D& Current, const FVector2D& Previous)
-{
-	return (fabs(Previous.X - Current.X) >= DBL_EPSILON || fabs(Previous.Y - Current.Y) >= DBL_EPSILON);
-}
 
 AAdventureCharacter::AAdventureCharacter()
 {
-	CreateCameraDelegate.BindUObject(this, &AAdventureCharacter::SetupCamera);
+	UE_LOG(LogAdventureGame, Log, TEXT("*** Construct: AAdventureCharacter - Player movement controlled by AI"));
 }
 
 void AAdventureCharacter::BeginPlay()
@@ -25,8 +20,10 @@ void AAdventureCharacter::BeginPlay()
 
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
 	TargetPlayerLocation = CapsuleComp->GetComponentLocation();
-	
-	GetWorldTimerManager().SetTimerForNextTick(CreateCameraDelegate);
+
+	UE_LOG(LogAdventureGame, Log, TEXT("*** Construct: AAdventureCharacter - Player movement controlled by AI"));
+
+	SetupCamera();
 }
 
 void AAdventureCharacter::Tick(float DeltaTime)
@@ -36,7 +33,7 @@ void AAdventureCharacter::Tick(float DeltaTime)
 	// This is used just to feed in the PaperZD Set direction for the sprite facing
 	const UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
 	FVector2D Velocity = FVector2D(MovementComponent->Velocity.X, MovementComponent->Velocity.Y);
-	if (HasChangedMuch(Velocity, LastVelocity))
+	if (AdvGameUtils::HasChangedMuch(Velocity, LastVelocity))
 	{
 		LastVelocity = Velocity;
 		if (Velocity.SquaredLength() > 0)
@@ -44,52 +41,6 @@ void AAdventureCharacter::Tick(float DeltaTime)
 			LastNonZeroMovement = Velocity;
 		}
 	}
-}
-
-void AAdventureCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	UE_LOG(LogAdventureGame, Warning, TEXT("*** SetupPlayerInputComponent"));
-
-	if (UEnhancedInputComponent* InputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-		InputComponent->BindAction(PointAndClickInput, ETriggerEvent::Completed, this,
-		                           &AAdventureCharacter::HandlePointAndClick);
-		InputComponent->BindAction(PointAndClickInput, ETriggerEvent::Triggered, this,
-								   &AAdventureCharacter::HandlePointAndClick);
-		InputComponent->BindAction(PointAndClickInput, ETriggerEvent::Started, this,
-							   &AAdventureCharacter::HandlePointAndClick);
-
-		UE_LOG(LogAdventureGame, Warning, TEXT("*** BINDINGS DONE"));
-	}
-}
-
-void AAdventureCharacter::PawnClientRestart()
-{
-	Super::PawnClientRestart();
-	
-	UE_LOG(LogAdventureGame, Warning, TEXT("*** PawnClientRestart"));
-
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (IsValid(PlayerController))
-	{
-		UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
-			PlayerController->GetLocalPlayer());
-		if (SubSystem)
-		{
-			// PawnClientRestart can run more than once in an Actor's lifetime, so start by clearing out any leftover mappings.
-			SubSystem->ClearAllMappings();
-			// Add each mapping context, along with their priority values. Higher values take priority over lower values.
-			SubSystem->AddMappingContext(InputMappingContext, 0);
-			UE_LOG(LogAdventureGame, Warning, TEXT("*** Success: [re-]bound the input mapping context"));
-		}
-	}
-}
-
-void AAdventureCharacter::HandlePointAndClick(const FInputActionValue& Value)
-{
-	GetAdventurePlayerController()->HandlePointAndClickInput();
 }
 
 void AAdventureCharacter::SetPosition(const FVector& NewPosition)
@@ -122,23 +73,13 @@ void AAdventureCharacter::SetFacingDirection(EWalkDirection Direction)
 
 void AAdventureCharacter::SetupCamera()
 {
-	UE_LOG(LogAdventureGame, Warning, TEXT("SetupCamera"));
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
-	if (!CapsuleComp)
-	{
-		UE_LOG(LogAdventureGame, Warning, TEXT("FAIL: Cannot SetupFollowCamera - UCapsuleComponent is not defined"));
-		return;
-	}
+	check(CapsuleComp);
 
 	FVector CapsuleLocation = CapsuleComp->GetComponentLocation();
 	FVector SpawnLocation(CapsuleLocation.X, 0.0, 0.0);
 
-	if (!IsValid(CameraActorToSpawn) || CameraActorToSpawn.GetDefaultObject() == nullptr)
-	{
-		UE_LOG(LogAdventureGame, Warning, TEXT("FAIL: Cannot SetupFollowCamera - CameraActorToSpawn is not defined"));
-		return;
-	}
-
+	check(CameraActorToSpawn);
 	AFollowCamera* Camera = GetWorld()->SpawnActor<AFollowCamera>(
 		CameraActorToSpawn,
 		SpawnLocation,
@@ -150,13 +91,3 @@ void AAdventureCharacter::SetupCamera()
 	PlayerController->SetViewTarget(Camera);
 }
 
-AAdventurePlayerController* AAdventureCharacter::GetAdventurePlayerController() const
-{
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	AAdventurePlayerController* AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
-	if (!AdventurePlayerController)
-	{
-		UE_LOG(LogAdventureGame, Warning, TEXT("Failed to get AAdventurePlayerController"));
-	}
-	return AdventurePlayerController;
-}

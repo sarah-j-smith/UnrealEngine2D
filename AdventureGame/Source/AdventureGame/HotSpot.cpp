@@ -40,7 +40,7 @@ void AHotSpot::BeginPlay()
 
 void AHotSpot::OnBeginCursorOver(UPrimitiveComponent *Component)
 {
-	UE_LOG(LogTemp, Log, TEXT("OnBeginCursorOver"));
+	UE_LOG(LogAdventureGame, Log, TEXT("OnBeginCursorOver"));
 	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
 	if (IsValid(AdventurePlayerController))
@@ -51,7 +51,7 @@ void AHotSpot::OnBeginCursorOver(UPrimitiveComponent *Component)
 
 void AHotSpot::OnEndCursorOver(UPrimitiveComponent *Component)
 {
-	UE_LOG(LogTemp, Log, TEXT("OnEndCursorOver"));
+	UE_LOG(LogAdventureGame, Log, TEXT("OnEndCursorOver"));
 	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
 	if (IsValid(AdventurePlayerController))
@@ -63,53 +63,53 @@ void AHotSpot::OnEndCursorOver(UPrimitiveComponent *Component)
 void AHotSpot::OnClose_Implementation()
 {
 	IVerbInteractions::OnClose_Implementation();
-	UE_LOG(LogTemp, Log, TEXT("On close"));
+	UE_LOG(LogAdventureGame, Log, TEXT("On close"));
 }
 
 void AHotSpot::OnOpen_Implementation()
 {
 	IVerbInteractions::OnOpen_Implementation();
-	UE_LOG(LogTemp, Log, TEXT("On open"));
+	UE_LOG(LogAdventureGame, Log, TEXT("On open"));
 }
 
 void AHotSpot::OnGive_Implementation()
 {
 	IVerbInteractions::OnGive_Implementation();
-	UE_LOG(LogTemp, Log, TEXT("On give"));
+	UE_LOG(LogAdventureGame, Log, TEXT("On give"));
 }
 
 void AHotSpot::OnPickUp_Implementation()
 {
 	IVerbInteractions::OnPickUp_Implementation();
-	UE_LOG(LogTemp, Log, TEXT("On Pickup"));
+	UE_LOG(LogAdventureGame, Log, TEXT("On Pickup"));
 }
 
 void AHotSpot::OnTalkTo_Implementation()
 {
 	IVerbInteractions::OnTalkTo_Implementation();
-	UE_LOG(LogTemp, Log, TEXT("On talk to"));
+	UE_LOG(LogAdventureGame, Log, TEXT("On talk to"));
 }
 
 void AHotSpot::OnLookAt_Implementation()
 {
 	IVerbInteractions::OnLookAt_Implementation();
-	UE_LOG(LogTemp, Log, TEXT("On look at"));
+	UE_LOG(LogAdventureGame, Log, TEXT("On look at"));
 }
 
 void AHotSpot::OnPull_Implementation()
 {
 	IVerbInteractions::OnPull_Implementation();
-	UE_LOG(LogTemp, Log, TEXT("On pull"));
+	UE_LOG(LogAdventureGame, Log, TEXT("On pull"));
 }
 
 void AHotSpot::OnPush_Implementation()
 {
 	IVerbInteractions::OnPush_Implementation();
-	UE_LOG(LogTemp, Log, TEXT("On push"));
+	UE_LOG(LogAdventureGame, Log, TEXT("On push"));
 }
 
 void AHotSpot::OnUse_Implementation()
 {
 	IVerbInteractions::OnUse_Implementation();
-	UE_LOG(LogTemp, Log, TEXT("On use"));
+	UE_LOG(LogAdventureGame, Log, TEXT("On use"));
 }

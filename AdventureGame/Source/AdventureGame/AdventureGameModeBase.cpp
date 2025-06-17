@@ -3,19 +3,16 @@
 
 #include "AdventureGameModeBase.h"
 
-#include "AdventureAIController.h"
-#include "AdventurePlayerController.h"
-#include "AdventureCharacter.h"
 #include "AdventureGame.h"
-
-#include "Kismet/GameplayStatics.h"
 
 AAdventureGameModeBase::AAdventureGameModeBase()
 {
-
+	UE_LOG(LogAdventureGame, Log, TEXT("*** Construct: AAdventureGameModeBase - Custom Game Mode class"));
 }
 
 void AAdventureGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UE_LOG(LogAdventureGame, Log, TEXT("*** AAdventureGameModeBase::BeginPlay"));
 }

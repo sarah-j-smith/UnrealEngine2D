@@ -5,10 +5,7 @@
 #include "CoreMinimal.h"
 #include "AdventurePlayerController.h"
 #include "PaperZDCharacter.h"
-
-#include "EnhancedInputSubsystems.h"
 #include "FollowCamera.h"
-
 #include "AdventureCharacter.generated.h"
 
 /**
@@ -26,12 +23,6 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	virtual void PawnClientRestart() override;
-
-	FTimerDelegate CreateCameraDelegate;
-
 	// MARK: Gameplay
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	FVector TargetPlayerLocation = FVector::ZeroVector;
@@ -41,28 +32,15 @@ public:
 	
 	FVector2D LastVelocity = FVector2D::ZeroVector;
 
-	// MARK: Inputs
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inputs)
-	UInputAction* PointAndClickInput = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inputs)
-	UInputMappingContext* InputMappingContext = nullptr;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	FIntRect GamePlayArea;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TSubclassOf<AFollowCamera> CameraActorToSpawn;
-	
-	void HandlePointAndClick(const FInputActionValue& Value);
 
 	void SetPosition(const FVector& NewPosition);
 
 	void SetFacingDirection(EWalkDirection Direction);
-
-	UFUNCTION()
+	
 	void SetupCamera();
-
-private:
-	AAdventurePlayerController *GetAdventurePlayerController() const;
 };
