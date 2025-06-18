@@ -13,41 +13,28 @@ void UAdventureGameHUD::NativeOnInitialized()
 
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
-	if (AdventurePlayerController)
-	{
-		AdventurePlayerController->BeginActionDelegate.AddUObject(this, &UAdventureGameHUD::BeginActionEvent);
-		AdventurePlayerController->UpdateInteractionTextDelegate.AddUObject(this, &UAdventureGameHUD::UpdateInteractionTextEvent);
-		AdventurePlayerController->InterruptActionDelegate.AddUObject(this, &UAdventureGameHUD::InterruptActionEvent);
-	}
-	else
-	{
-		UE_LOG(LogAdventureGame, Warning, TEXT("UAdventureGameHUD::NativeOnInitialized Failed to get AAdventurePlayerController"));
-	}
+	check(AdventurePlayerController);
+	AdventurePlayerController->BeginActionDelegate.AddUObject(this, &UAdventureGameHUD::BeginActionEvent);
+	AdventurePlayerController->UpdateInteractionTextDelegate.AddUObject(this, &UAdventureGameHUD::UpdateInteractionTextEvent);
+	AdventurePlayerController->InterruptActionDelegate.AddUObject(this, &UAdventureGameHUD::InterruptActionEvent);
 
-	UE_LOG(LogAdventureGame, Log, TEXT("UAdventureGameHUD::NativeOnInitialized"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameHUD::NativeOnInitialized"));
 }
 
 void UAdventureGameHUD::SetInteractionText()
 {
 	auto CurrentVerb = AdventurePlayerController->CurrentVerb;
 	auto CurrentHotspot = AdventurePlayerController->CurrentHotSpot;
-	if (CurrentVerb != EVerbType::None)
+	FString VerbStr = VerbGetDescriptiveString(CurrentVerb);
+	if (CurrentHotspot)
 	{
-		FString VerbStr = VerbGetDescriptiveString(CurrentVerb);
-		if (CurrentHotspot)
-		{
-			FString HotspotStr = CurrentHotspot->HotSpotDescription;
-			FString hpStr = FString::Printf(TEXT("%s %s"), *VerbStr, *HotspotStr);
-			InteractionUI->SetText(hpStr);
-		}
-		else
-		{
-			InteractionUI->SetText(VerbStr);
-		}
+		FString HotspotStr = CurrentHotspot->HotSpotDescription;
+		FString hpStr = FString::Printf(TEXT("%s %s"), *VerbStr, *HotspotStr);
+		InteractionUI->SetText(hpStr);
 	}
 	else
 	{
-		InteractionUI->ResetText();
+		InteractionUI->SetText(VerbStr);
 	}
 }
 
@@ -75,8 +62,8 @@ void UAdventureGameHUD::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	if (MouseIsOverUI != AdventurePlayerController->IsMouseOverUI)
 	{
 		AdventurePlayerController->IsMouseOverUI = MouseIsOverUI;
-		FString MouseIsOverUIText = MouseIsOverUI ? "true" : "false";
-		UE_LOG(LogAdventureGame, Warning, TEXT("UAdventureGameHUD::NativeTick set IsMouseOverUI %s"), *MouseIsOverUIText);
+		UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameHUD::NativeTick set IsMouseOverUI %s"),
+			*(FString(MouseIsOverUI ? "true" : "false")));
 	}
 }
 

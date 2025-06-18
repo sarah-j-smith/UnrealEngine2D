@@ -7,12 +7,12 @@
 
 AAdventureGameModeBase::AAdventureGameModeBase()
 {
-	UE_LOG(LogAdventureGame, Log, TEXT("*** Construct: AAdventureGameModeBase - Custom Game Mode class"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("Construct: AAdventureGameModeBase - Custom Game Mode class"));
 }
 
 void AAdventureGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UE_LOG(LogAdventureGame, Log, TEXT("*** AAdventureGameModeBase::BeginPlay"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AAdventureGameModeBase::BeginPlay"));
 }

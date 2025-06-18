@@ -34,12 +34,10 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UInventoryUI *InventoryUI;
-	
-	// virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
-	AAdventureCharacter *PlayerCharacter = nullptr;
+	TObjectPtr<AAdventureCharacter> PlayerCharacter;
 
-	AAdventurePlayerController *AdventurePlayerController = nullptr;
+	TObjectPtr<AAdventurePlayerController> AdventurePlayerController;
 
 	void SetInteractionText();
 

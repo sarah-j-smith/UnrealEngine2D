@@ -52,7 +52,7 @@ public:
 	//////////////////////////////////
 	///
 	/// PLAYER CHARACTER AI
-	/// 
+	///
 
 	UFUNCTION()
 	void HandleMovementComplete(EPathFollowingResult::Type Result);
@@ -69,7 +69,7 @@ public:
 	/// 
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	EVerbType CurrentVerb = EVerbType::None;
+	EVerbType CurrentVerb = EVerbType::WalkTo;
 
 	void AssignVerb(EVerbType NewVerb);
 	void PerformInteraction();

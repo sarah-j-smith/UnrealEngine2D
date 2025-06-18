@@ -26,5 +26,5 @@ void UInteractionHUD::UnhighlightText()
 void UInteractionHUD::ResetText()
 {
 	UnhighlightText();
-	SetText("");
+	SetText("Walk to");
 }

@@ -18,7 +18,7 @@ AAdventurePlayerController::AAdventurePlayerController()
 	SetShowMouseCursor(true);
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
 	
-	UE_LOG(LogAdventureGame, Log, TEXT("Construct: AAdventurePlayerController"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("Construct: AAdventurePlayerController"));
 }
 
 void AAdventurePlayerController::MouseEnterHotSpot(AHotSpot* HotSpot)
@@ -44,15 +44,11 @@ void AAdventurePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	UE_LOG(LogAdventureGame, Log, TEXT("BeginPlay: AAdventurePlayerController"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("BeginPlay: AAdventurePlayerController"));
 
 	APawn* PlayerPawn = GetPawn();
 	PlayerCharacter = Cast<AAdventureCharacter>(PlayerPawn);
-	if (!IsValid(PlayerCharacter))
-	{
-		UE_LOG(LogAdventureGame, Warning, TEXT("%hs - PlayerCharacter not defined"), __FILE__);
-		return;
-	}
+	check(PlayerCharacter);
 	
 	SetupHUD();
 	TriggerUpdateInteractionText();
@@ -67,7 +63,7 @@ void AAdventurePlayerController::SetupHUD()
 	if (AdventureHUDWidget)
 	{
 		AdventureHUDWidget->AddToViewport();
-		UE_LOG(LogAdventureGame, Log, TEXT("AAdventureGameModeBase::SetupHUD - AddToViewport"));
+		UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AAdventureGameModeBase::SetupHUD - AddToViewport"));
 	}
 }
 
@@ -91,20 +87,18 @@ APawn *AAdventurePlayerController::SetupPuck(AAdventureCharacter *PlayerCharacte
 
 void AAdventurePlayerController::SetupAIController(APawn *AttachToPawn)
 {
-	UE_LOG(LogAdventureGame, Warning, TEXT(">>>>> AAdventurePlayerController::SetupAIController"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AAdventurePlayerController::SetupAIController"));
 	AActor *AIControllerActor = UGameplayStatics::GetActorOfClass(GetWorld(), AAdventureAIController::StaticClass());
 	AAdventureAIController *AdventureAIController = Cast<AAdventureAIController>(AIControllerActor);
 	check(AdventureAIController);
 	
 	AdventureAIController->Possess(AttachToPawn);
 	AdventureAIController->MoveCompletedDelegate.AddDynamic(this, &AAdventurePlayerController::HandleMovementComplete);
-
-	UE_LOG(LogAdventureGame, Warning, TEXT("<<<<<<< AAdventurePlayerController::SetupAIController"));
 }
 
 void AAdventurePlayerController::HandlePointAndClickInput()
 {
-	UE_LOG(LogAdventureGame, Warning, TEXT(">>>>> HandlePointAndClick"));
+	UE_LOG(LogAdventureGame, Verbose, TEXT("*** HandlePointAndClick"));
 	
 	const auto HitResult = GetClicked();
 	if (HitResult != ClickResult::WalkToLocation)
@@ -131,7 +125,7 @@ void AAdventurePlayerController::HandlePointAndClickInput()
 	}
 	LastMouseClick = ThisMouseClick;
 
-	UE_LOG(LogAdventureGame, Warning, TEXT("HandlePointAndClick got click: %f %f"), LocationX, LocationY);
+	UE_LOG(LogAdventureGame, Verbose, TEXT("HandlePointAndClick got location click: %f %f"), LocationX, LocationY);
 	FVector MouseWorldDirection;
 	DeprojectScreenPositionToWorld(LocationX, LocationY, MouseWorldLocation, MouseWorldDirection);
 
@@ -161,6 +155,7 @@ AAdventurePlayerController::ClickResult AAdventurePlayerController::GetClicked()
 
 	if (!HitResult.IsValidBlockingHit())
 	{
+		UE_LOG(LogAdventureGame, Log, TEXT("Click not a valid blocking hit, trying touch..."));
 		GetHitResultUnderFinger(ETouchIndex::Type::Touch1, ECC_Visibility, true, HitResult);
 	}
 
@@ -170,17 +165,19 @@ AAdventurePlayerController::ClickResult AAdventurePlayerController::GetClicked()
 		// Found actor clicked
 		WalkToHotpot(HotSpot);
 
-		GEngine->AddOnScreenDebugMessage(1, 20.0, FColor::White, HotSpot->GetName(),
+		FString HotSpotMessage = FString::Printf(TEXT("Got HotSpot: %s"), *(HotSpot->GetName()));
+		GEngine->AddOnScreenDebugMessage(1, 20.0, FColor::White, HotSpotMessage,
 										 false, FVector2D(2.0, 2.0));
 		
 		return ClickResult::HitHotspot;
 	}
 
-	// TODO: Check the click is on the scene
-	return ClickResult::WalkToLocation;
+	if (IsMouseOverUI)
+	{
+		return ClickResult::Rejected;
+	}
 
-	// TODO: If not on the scene and not on a hotspot return rejected.
-	// return ClickResult::Rejected;
+	return ClickResult::WalkToLocation;
 }
 
 void AAdventurePlayerController::WalkToHotpot(AHotSpot* HotSpot)
@@ -223,12 +220,12 @@ void AAdventurePlayerController::WalkToLocation(FVector WorldLocation)
 		HotspotInteraction = false;
 		break;
 	case EPathFollowingRequestResult::Type::RequestSuccessful:
-		UE_LOG(LogAdventureGame, Warning, TEXT("WalkToLocation request success: %f %f"), WorldLocation.X,
+		UE_LOG(LogAdventureGame, Verbose, TEXT("WalkToLocation request success: %f %f"), WorldLocation.X,
 			   WorldLocation.Y);
 		break;
 	case EPathFollowingRequestResult::Type::AlreadyAtGoal:
 		HandleMovementComplete(EPathFollowingResult::Success);
-		UE_LOG(LogAdventureGame, Warning, TEXT("WalkToLocation already there: %f %f"),
+		UE_LOG(LogAdventureGame, Log, TEXT("WalkToLocation already there: %f %f"),
 			   WorldLocation.X, WorldLocation.Y);
 		break;
 	}
@@ -259,8 +256,8 @@ void AAdventurePlayerController::HandleMovementComplete(EPathFollowingResult::Ty
 	{
 		PlayerCharacter->SetFacingDirection(CurrentHotSpot->FacingDirection);
 		PlayerCharacter->SetPosition(CurrentHotSpot->WalkToPosition);
+		PerformInteraction();
 	}
-	PerformInteraction();
 
 	InterruptCurrentAction();
 }
@@ -273,6 +270,7 @@ void AAdventurePlayerController::AssignVerb(EVerbType NewVerb)
 
 void AAdventurePlayerController::PerformInteraction()
 {
+	check(CurrentHotSpot);
 	switch (CurrentVerb)
 	{
 	case EVerbType::Close:

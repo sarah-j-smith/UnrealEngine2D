@@ -109,11 +109,10 @@ void UVerbsUI::ClearActiveButton()
 	case EVerbType::Pull:
 		Pull->SetStyle(PullNormalStyle);
 		break;
-	case EVerbType::None:
 	case EVerbType::WalkTo:
 		break;
 	}
-	CurrentVerb = EVerbType::None;
+	CurrentVerb = EVerbType::WalkTo;
 }
 
 void UVerbsUI::SetButtonActive(EVerbType VerbType)
@@ -147,7 +146,6 @@ void UVerbsUI::SetButtonActive(EVerbType VerbType)
 	case EVerbType::Pull:
 		Pull->SetStyle(PullSelectedStyle);
 		break;
-	case EVerbType::None:
 	case EVerbType::WalkTo:
 		break;
 	}
@@ -173,6 +171,7 @@ void UVerbsUI::SetActiveVerb() const
 {
 	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
-	AdventurePlayerController->CurrentVerb = CurrentVerb;
+	check(AdventurePlayerController);
+	AdventurePlayerController->AssignVerb(CurrentVerb);
 }
 

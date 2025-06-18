@@ -42,25 +42,16 @@ void AFollowCamera::Tick(float DeltaTime)
 
 void AFollowCamera::SetupCameraConfines() const
 {
-	if (!IsValid(CameraConfines))
-	{
-		UE_LOG(LogAdventureGame, Error, TEXT("Failed to setup camera confines - CameraConfines not valid"));
-		return;
-	}
-
-	if (ConfinesOfCamera == FVector::ZeroVector)
-	{
-		UE_LOG(LogAdventureGame, Warning, TEXT("Camera confines have not been set!"));
-		return;
-	}
+	check(CameraConfines);
+	checkf(ConfinesOfCamera != FVector::ZeroVector, TEXT("Camera confines have not been set!"));
 	CameraConfines->SetBoxExtent(ConfinesOfCamera);
 }
 
 void AFollowCamera::FollowPlayer(float DeltaTime)
 {
-	if (!IsValid(PlayerCharacter)) return;
-	if (!IsValid(CameraConfines)) return;
-	if (!IsValid(CameraComponent)) return;
+	check(PlayerCharacter);
+	check(CameraConfines);
+	check(CameraComponent);
 	
 	const FVector ConfinesBoxMax = CameraConfines->Bounds.Origin + CameraConfines->Bounds.BoxExtent;
 	const FVector ConfinesBoxMin = CameraConfines->Bounds.Origin - CameraConfines->Bounds.BoxExtent;

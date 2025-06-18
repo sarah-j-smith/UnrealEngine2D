@@ -16,8 +16,7 @@ enum class EVerbType: uint8
 	Use     = 6 UMETA(DisplayName = "USE"),
 	Push    = 7 UMETA(DisplayName = "PUSH"),
 	Pull    = 8 UMETA(DisplayName = "PULL"),
-	WalkTo  = 9 UMETA(DisplayName = "WALK_TO"),
-	None   = 10 UMETA(DisplayName = "NONE"),    
+	WalkTo  = 9 UMETA(DisplayName = "WALK_TO")
 };
 
 FString VerbGetDescriptiveString(EVerbType Verb);
