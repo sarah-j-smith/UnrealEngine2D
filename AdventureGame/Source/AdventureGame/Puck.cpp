@@ -19,9 +19,6 @@ APuck::APuck()
 
 void APuck::HandlePointAndClick(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(1, 20.0, FColor::White, TEXT("APuck clicked"),
-								 false, FVector2D(2.0, 2.0));
-
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("APuck::HandlePointAndClick Broadcast"));
 	PointAndClickDelegate.Broadcast();
 }
