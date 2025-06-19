@@ -24,5 +24,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock *OutlineText;
 
-	void SetText(FString NewText);
+	void SetText(FText NewText);
 };

@@ -31,6 +31,10 @@ void UAdventureGameHUD::SetInteractionText()
 		FString HotspotStr = CurrentHotspot->HotSpotDescription;
 		FString hpStr = FString::Printf(TEXT("%s %s"), *VerbStr, *HotspotStr);
 		InteractionUI->SetText(hpStr);
+		if (AdventurePlayerController->HotspotInteraction)
+		{
+			InteractionUI->HighlightText();
+		}
 	}
 	else
 	{

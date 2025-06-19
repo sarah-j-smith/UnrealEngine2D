@@ -40,18 +40,19 @@ void APuck::PawnClientRestart()
 
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("APuck::PawnClientRestart"));
 
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	check(PlayerController);
-	UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
-		PlayerController->GetLocalPlayer());
-	if (SubSystem)
+	if (const APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0))
 	{
-		// PawnClientRestart can run more than once in an Actor's lifetime, so start by clearing out any leftover mappings.
-		SubSystem->ClearAllMappings();
-		// Add each mapping context, along with their priority values. Higher values take priority over lower values.
-		SubSystem->AddMappingContext(InputMappingContext, 0);
-		UE_LOG(LogAdventureGame, Verbose, TEXT("APuck::PawnClientRestart [re-]bound the input mapping context to: %s"),
-			*(PlayerController->GetClass()->GetName()));
+		UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
+			PlayerController->GetLocalPlayer());
+		if (SubSystem)
+		{
+			// PawnClientRestart can run more than once in an Actor's lifetime, so start by clearing out any leftover mappings.
+			SubSystem->ClearAllMappings();
+			// Add each mapping context, along with their priority values. Higher values take priority over lower values.
+			SubSystem->AddMappingContext(InputMappingContext, 0);
+			UE_LOG(LogAdventureGame, Verbose, TEXT("APuck::PawnClientRestart [re-]bound the input mapping context to: %s"),
+				*(PlayerController->GetClass()->GetName()));
+		}
 	}
 }
 

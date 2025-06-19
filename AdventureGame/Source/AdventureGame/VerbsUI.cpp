@@ -170,8 +170,9 @@ void UVerbsUI::AssignNormalStyles()
 void UVerbsUI::SetActiveVerb() const
 {
 	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
-	check(AdventurePlayerController);
-	AdventurePlayerController->AssignVerb(CurrentVerb);
+	if (AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController))
+	{
+		AdventurePlayerController->AssignVerb(CurrentVerb);
+	}
 }
 

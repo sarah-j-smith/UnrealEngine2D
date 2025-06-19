@@ -61,7 +61,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Barking)
 	TObjectPtr<UWidgetComponent> BarkTextComponent;
 
-	void PlayerBark(FString NewBarkText);
+	void PlayerBark(FText NewBarkText);
 
 	void ClearBark();
 

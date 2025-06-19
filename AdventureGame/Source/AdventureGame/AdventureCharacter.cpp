@@ -43,7 +43,7 @@ void AAdventureCharacter::BeginPlay()
 	check(ComponentWidget);
 	BarkText = Cast<UBarkText>(ComponentWidget);
 	check(BarkText);
-	BarkText->SetText("");
+	BarkText->SetText(FText::GetEmpty());
 }
 
 void AAdventureCharacter::Tick(float DeltaTime)
@@ -88,7 +88,7 @@ void AAdventureCharacter::SetFacingDirection(EWalkDirection Direction)
 	}
 }
 
-void AAdventureCharacter::PlayerBark(FString NewBarkText)
+void AAdventureCharacter::PlayerBark(FText NewBarkText)
 {
 	if (bBarkTimerActive)
 	{
@@ -101,7 +101,7 @@ void AAdventureCharacter::PlayerBark(FString NewBarkText)
 
 void AAdventureCharacter::ClearBark()
 {
-	BarkText->SetText("");
+	BarkText->SetText(FText::GetEmpty());
 	GetWorldTimerManager().ClearTimer(BarkTimerHandle);
 	bBarkTimerActive = false;
 }

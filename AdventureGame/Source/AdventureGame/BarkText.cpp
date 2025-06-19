@@ -11,8 +11,8 @@ void UBarkText::NativeOnInitialized()
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("BarkText Initialized"));
 }
 
-void UBarkText::SetText(FString NewText)
+void UBarkText::SetText(FText NewText)
 {
-	BaseText->SetText(FText::FromString(NewText));
-	OutlineText->SetText(FText::FromString(NewText));
+	BaseText->SetText(NewText);
+	OutlineText->SetText(NewText);
 }

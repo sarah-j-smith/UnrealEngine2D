@@ -48,6 +48,4 @@ public:
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "VerbInteractions")
 	void OnUse();
-	
-	
 };
