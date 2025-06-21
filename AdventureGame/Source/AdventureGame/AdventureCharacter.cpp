@@ -116,17 +116,17 @@ void AAdventureCharacter::SetupCamera()
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
 	check(CapsuleComp);
 
-	FVector CapsuleLocation = CapsuleComp->GetComponentLocation();
-	FVector SpawnLocation(CapsuleLocation.X, 0.0, 0.0);
-
-	check(CameraActorToSpawn);
-	AFollowCamera* Camera = GetWorld()->SpawnActor<AFollowCamera>(
-		CameraActorToSpawn,
-		SpawnLocation,
-		FRotator::ZeroRotator);
-
-	Camera->PlayerCharacter = this;
-
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	PlayerController->SetViewTarget(Camera);
+	AActor *CameraActor = UGameplayStatics::GetActorOfClass(GetWorld(), AFollowCamera::StaticClass());
+	AFollowCamera *Camera = Cast<AFollowCamera>(CameraActor);
+	if (IsValid(Camera))
+	{
+		Camera->PlayerCharacter = this;
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		PlayerController->SetViewTarget(Camera);
+		UE_LOG(LogAdventureGame, Verbose, TEXT("Camera loaded - level size: %s"), *(Camera->CameraConfines->GetLocalBounds().ToString()));
+	}
+	else
+	{
+		UE_LOG(LogAdventureGame, Warning, TEXT("AAdventureCharacter::SetupCamera failed - misplaced or no camera set in this level?"));
+	}
 }

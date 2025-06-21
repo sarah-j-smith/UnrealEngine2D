@@ -68,6 +68,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
 	virtual void OnUse_Implementation() override;
+
+	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
+	virtual void OnWalkTo_Implementation() override;
+	
 private:
 	void Bark(const FText &BarkText);
 };

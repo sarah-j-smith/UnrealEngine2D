@@ -32,37 +32,38 @@ public:
 	 * The camera should not be moved directly as that would disable any
 	 * spring arm effects.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Geometry")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FollowCamera")
 	USphereComponent *FollowCameraBase;
 
 	/**
 	 * Camera should be set to orthographic, with fixed aspect ratio
 	 * of the game scene width divided by the game scene height, eg 2.21.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Camera")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FollowCamera")
 	UCameraComponent *CameraComponent;
 
 	/**
 	 * Camera Arm - use this to set the rotation and position of the camera,
 	 * and effects like camera lag.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Camera")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FollowCamera")
 	USpringArmComponent *SpringArmComponent;
 
 	/**
 	 * Box containing the limits for the camera. Camera viewport must be contained
 	 * within this volume.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Geometry")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FollowCamera")
 	UBoxComponent *CameraConfines;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Camera")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FollowCamera")
 	FVector ConfinesOfCamera;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Camera")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FollowCamera")
 	float FollowSpeed = 12.0f;
-	
-	AAdventureCharacter *PlayerCharacter;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="FollowCamera")
+	TObjectPtr<AAdventureCharacter> PlayerCharacter;
 
 	void SetupCameraConfines() const;
 	

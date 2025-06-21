@@ -125,6 +125,13 @@ void AHotSpot::OnUse_Implementation()
 	Bark(FText::FromString("Can't use that."));
 }
 
+void AHotSpot::OnWalkTo_Implementation()
+{
+	IVerbInteractions::OnWalkTo_Implementation();
+	UE_LOG(LogAdventureGame, Log, TEXT("On walk to"));
+	Bark(FText::FromString("Arrived."));
+}
+
 void AHotSpot::Bark(const FText &BarkText)
 {
 	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);

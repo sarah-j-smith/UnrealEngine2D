@@ -164,7 +164,7 @@ void UVerbsUI::AssignNormalStyles()
 	PickUpNormalStyle = FButtonStyle(PickUp->GetStyle());
 	UseNormalStyle = FButtonStyle(Use->GetStyle());
 	PushNormalStyle = FButtonStyle(Push->GetStyle());
-	PullNormalStyle = FButtonStyle(Open->GetStyle());
+	PullNormalStyle = FButtonStyle(Pull->GetStyle());
 }
 
 void UVerbsUI::SetActiveVerb() const

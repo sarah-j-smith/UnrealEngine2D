@@ -22,6 +22,8 @@ AFollowCamera::AFollowCamera()
 
 	CameraConfines = CreateDefaultSubobject<UBoxComponent>(TEXT("CameraConfines"));
 	CameraConfines->SetupAttachment(FollowCameraBase);
+
+	FollowCameraBase->SetCollisionProfileName(FName("NoCollision"));
 }
 
 // Called when the game starts or when spawned
@@ -49,7 +51,7 @@ void AFollowCamera::SetupCameraConfines() const
 
 void AFollowCamera::FollowPlayer(float DeltaTime)
 {
-	check(PlayerCharacter);
+	if (!IsValid(PlayerCharacter)) return;
 	check(CameraConfines);
 	check(CameraComponent);
 	
