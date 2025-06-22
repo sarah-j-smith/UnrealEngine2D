@@ -32,15 +32,12 @@ public:
 	/// MOVEMENT
 	///
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	FVector TargetPlayerLocation = FVector::ZeroVector;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Gameplay)
 	FVector2D LastNonZeroMovement = FVector2D::ZeroVector;
 	
 	FVector2D LastVelocity = FVector2D::ZeroVector;
 
-	void SetPosition(const FVector& NewPosition);
+	void TeleportToLocation(FVector NewLocation);
 
 	void SetFacingDirection(EWalkDirection Direction);
 

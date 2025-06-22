@@ -10,3 +10,10 @@ bool AdvGameUtils::HasChangedMuch(const FVector2D& Current, const FVector2D& Pre
 {
 	return (fabs(Previous.X - Current.X) >= std::numeric_limits<double>::epsilon() || fabs(Previous.Y - Current.Y) >= std::numeric_limits<double>::epsilon());
 }
+
+int32 AdvGameUtils::GetUUID()
+{
+	uuid_t UUIDLatent;
+	uuid_generate(UUIDLatent);
+	return UUIDLatent[0] | UUIDLatent[1] << 8 | UUIDLatent[2] << 16 | UUIDLatent[3] << 24;
+}

@@ -8,6 +8,7 @@
 #include "VerbsUI.h"
 
 #include "Blueprint/UserWidget.h"
+#include "Components/Image.h"
 #include "AdventureGameHUD.generated.h"
 
 class AAdventureCharacter;
@@ -35,9 +36,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UInventoryUI *InventoryUI;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	UImage *BlackScreen;
+
 	TObjectPtr<AAdventureCharacter> PlayerCharacter;
 
 	TObjectPtr<AAdventurePlayerController> AdventurePlayerController;
+
+	void ShowBlackScreen();
+
+	void HideBlackScreen();
 
 	void SetInteractionText();
 

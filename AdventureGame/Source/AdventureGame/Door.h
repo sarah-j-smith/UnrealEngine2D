@@ -21,5 +21,11 @@ public:
 	FName CurrentLevel;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Door)
-	FString DoorLabel;
+	FName DoorLabel;
+
+	void OnUse_Implementation() override;
+
+	void OnWalkTo_Implementation() override;
+
+	void OnOpen_Implementation() override;
 };

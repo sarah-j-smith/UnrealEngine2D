@@ -6,11 +6,11 @@
 #include "AdventureAIController.h"
 #include "AdventureCharacter.h"
 #include "AdventureGame.h"
+#include "AdventureGameInstance.h"
 #include "AdvGameUtils.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "Navigation/PathFollowingComponent.h"
 
 AAdventurePlayerController::AAdventurePlayerController()
@@ -42,6 +42,16 @@ void AAdventurePlayerController::MouseLeaveHotSpot()
 	}
 }
 
+void AAdventurePlayerController::SetInputLocked(bool bLocked)
+{
+	LockInput = bLocked;
+}
+
+bool AAdventurePlayerController::IsInputLocked() const
+{
+	return LockInput;
+}
+
 void AAdventurePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -53,6 +63,11 @@ void AAdventurePlayerController::BeginPlay()
 	check(PlayerCharacter);
 	
 	SetupHUD();
+
+	UGameInstance *GameInstance = UGameplayStatics::GetGameInstance(GetWorld());
+	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
+	AdventureGameInstance->OnLoadRoom();
+	
 	TriggerUpdateInteractionText();
 	APawn *Pawn = SetupPuck(PlayerCharacter);
 	SetupAIController(PlayerCharacter);
@@ -100,6 +115,7 @@ void AAdventurePlayerController::SetupAIController(APawn *AttachToPawn)
 
 void AAdventurePlayerController::HandlePointAndClickInput()
 {
+	if (IsPerformingTaskInteraction || LockInput) return;
 	if (IsMouseOverUI) return;
 	if (!IsValid(PlayerCharacter)) return;
 	if (!Cast<AAdventureAIController>(PlayerCharacter->Controller)) return;
@@ -245,7 +261,7 @@ void AAdventurePlayerController::HandleMovementComplete()
 	if (CurrentHotSpot && (LastPathResult == EAIMoveResult::Success))
 	{
 		PlayerCharacter->SetFacingDirection(CurrentHotSpot->FacingDirection);
-		PlayerCharacter->SetPosition(CurrentHotSpot->WalkToPosition);
+		PlayerCharacter->TeleportToLocation(CurrentHotSpot->WalkToPosition);
 		PerformInteraction();
 	}
 

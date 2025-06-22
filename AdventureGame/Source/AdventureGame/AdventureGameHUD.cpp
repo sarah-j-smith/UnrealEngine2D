@@ -21,6 +21,16 @@ void UAdventureGameHUD::NativeOnInitialized()
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameHUD::NativeOnInitialized"));
 }
 
+void UAdventureGameHUD::ShowBlackScreen()
+{
+	BlackScreen->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UAdventureGameHUD::HideBlackScreen()
+{
+	BlackScreen->SetVisibility(ESlateVisibility::Hidden);
+}
+
 void UAdventureGameHUD::SetInteractionText()
 {
 	auto CurrentVerb = AdventurePlayerController->CurrentVerb;

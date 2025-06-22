@@ -41,10 +41,17 @@ public:
 
 	void MouseLeaveHotSpot();
 
+	void SetInputLocked(bool bLocked);
+
+	bool IsInputLocked() const;
+
 private:
 	bool GetMouseClickPosition(float &LocationX, float &LocationY);
 
 	FVector2D LastMouseClick = FVector2D(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
+
+	/// At certain times, eg level loading, do not allow any user input.
+	bool LockInput = false;
 	
 	//////////////////////////////////
 	///
@@ -126,6 +133,10 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gameplay")
 	bool HotspotInteraction = false;
+
+	/// When the character is performing a sequence of chained actions do not allow any input
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gameplay")
+	bool IsPerformingTaskInteraction = false;
 	
 	//////////////////////////////////
 	///

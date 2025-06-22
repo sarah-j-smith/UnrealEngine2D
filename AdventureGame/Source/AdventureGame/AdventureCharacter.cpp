@@ -31,12 +31,7 @@ void AAdventureCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
-	TargetPlayerLocation = CapsuleComp->GetComponentLocation();
-
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AAdventureCharacter::BeginPlay"));
-
-	SetupCamera();
 
 	check(BarkTextComponent);
 	UUserWidget* ComponentWidget = BarkTextComponent->GetWidget();
@@ -63,11 +58,11 @@ void AAdventureCharacter::Tick(float DeltaTime)
 	}
 }
 
-void AAdventureCharacter::SetPosition(const FVector& NewPosition)
+void AAdventureCharacter::TeleportToLocation(FVector NewLocation)
 {
-	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
-	FVector CapsuleLocation = CapsuleComp->GetComponentLocation();
-	TargetPlayerLocation = FVector(floorf(NewPosition.X), floorf(NewPosition.Y), CapsuleLocation.Z);
+	UCapsuleComponent *Capsule = GetCapsuleComponent();
+	FVector PrevLocation = Capsule->GetComponentLocation();
+	Capsule->SetWorldLocation(FVector(NewLocation.X, NewLocation.Y, PrevLocation.Z));
 }
 
 void AAdventureCharacter::SetFacingDirection(EWalkDirection Direction)
