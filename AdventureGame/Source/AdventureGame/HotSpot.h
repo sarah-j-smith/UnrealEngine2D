@@ -11,6 +11,7 @@
 
 #include "HotSpot.generated.h"
 
+class AAdventurePlayerController;
 /**
  * 
  */
@@ -71,7 +72,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
 	virtual void OnWalkTo_Implementation() override;
-	
-private:
+
+	UFUNCTION(BlueprintCallable, Category="HotSpot")
 	void Bark(const FText &BarkText);
+
+	UFUNCTION(BlueprintCallable, Category="HotSpot")
+	AAdventurePlayerController *GetAdventureController() const;
 };

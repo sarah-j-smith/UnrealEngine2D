@@ -24,8 +24,4 @@ public:
 	FName DoorLabel;
 
 	void OnUse_Implementation() override;
-
-	void OnWalkTo_Implementation() override;
-
-	void OnOpen_Implementation() override;
 };

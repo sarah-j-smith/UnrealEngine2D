@@ -118,6 +118,7 @@ void AAdventureCharacter::SetupCamera()
 		Camera->PlayerCharacter = this;
 		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 		PlayerController->SetViewTarget(Camera);
+		Camera->SetupCamera();
 		UE_LOG(LogAdventureGame, Verbose, TEXT("Camera loaded - level size: %s"), *(Camera->CameraConfines->GetLocalBounds().ToString()));
 	}
 	else

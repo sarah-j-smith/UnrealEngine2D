@@ -123,7 +123,7 @@ void AAdventurePlayerController::HandlePointAndClickInput()
 	if (AHotSpot *HotSpot = HotSpotClicked())
 	{
 		WalkToHotSpot(HotSpot);
-		if (LastPathResult == EAIMoveResult::Moving)
+		if (AIStatus == EAIStatus::Moving || AIStatus == EAIStatus::Done)
 		{
 			CurrentHotSpot = HotSpot;
 			HotspotInteraction = true;
@@ -205,10 +205,10 @@ void AAdventurePlayerController::WalkToHotSpot(AHotSpot *HotSpot)
 	HotSpotWalkToLocation.Z = PlayerLocation.Z;
 
 	WalkToLocation(HotSpotWalkToLocation);
-	switch (LastPathResult)
+	switch (AIStatus)
 	{
-	case EAIMoveResult::Moving:
-	case EAIMoveResult::Success:
+	case EAIStatus::Moving:
+	case EAIStatus::AlreadyThere:
 		CurrentHotSpot = HotSpot;
 		HotspotInteraction = true;
 	default:
@@ -216,44 +216,52 @@ void AAdventurePlayerController::WalkToHotSpot(AHotSpot *HotSpot)
 	}
 }
 
-void AAdventurePlayerController::WalkToLocation(const FVector &WorldLocation)
+void AAdventurePlayerController::WalkToLocation(const FVector &Location)
 {
 	AAdventureAIController *AI = Cast<AAdventureAIController>(PlayerCharacter->GetController());
-	if (LastPathResult == EAIMoveResult::Moving)
+	if (AIStatus == EAIStatus::Moving)
 	{
 		AI->StopMovement();
 		PlayerCharacter->GetMovementComponent()->StopActiveMovement();
 	}
-	switch (AI->MoveToLocation(WorldLocation, 1.0))
+	else if (AIStatus != EAIStatus::Idle)
+	{
+		return;
+	}
+	AIStatus = EAIStatus::MakingRequest;
+	switch (AI->MoveToLocation(Location, 1.0))
 	{
 	case EPathFollowingRequestResult::Type::Failed:
-		UE_LOG(LogAdventureGame, Log, TEXT("Path following request -> failed: %f %f"), WorldLocation.X,
-		       WorldLocation.Y);
+		UE_LOG(LogAdventureGame, Log, TEXT("Path following request -> failed: %f %f"), Location.X, Location.Y);
 		LastPathResult = EAIMoveResult::Fail;
 		break;
 	case EPathFollowingRequestResult::Type::RequestSuccessful:
-		UE_LOG(LogAdventureGame, Verbose, TEXT("Path following request -> success: %f %f"), WorldLocation.X,
-		       WorldLocation.Y);
+		UE_LOG(LogAdventureGame, Verbose, TEXT("Path following request -> success: %f %f"), Location.X, Location.Y);
 		LastPathResult = EAIMoveResult::Moving;
+		AIStatus = EAIStatus::Moving;
 		break;
 	case EPathFollowingRequestResult::Type::AlreadyAtGoal:
-		LastPathResult = EAIMoveResult::Success;
-		GetWorldTimerManager().SetTimerForNextTick(MovementCompleteTimerDelegate);
-		UE_LOG(LogAdventureGame, Verbose, TEXT("Path following request -> already there: %f %f"),
-		       WorldLocation.X, WorldLocation.Y);
+		UE_LOG(LogAdventureGame, Verbose, TEXT("Path following request -> already there: %f %f"), Location.X, Location.Y);
 		break;
 	}
 }
 
+/**
+ * Called by AI Controller to notify that pathing is finished. Can be immediately & synchronously
+ * if the agent/player is already at the location; or can be after moving there. Schedules
+ * `HandleMovementComplete` to be called on the next timer tick.
+ */
 void AAdventurePlayerController::HandleAIMovementCompleteNotify(EPathFollowingResult::Type Result)
 {
-	// Called by AI Controller to notify that pathing is finished.
-	LastPathResult = EAIMoveResult::Fail;
 	if (Result == EPathFollowingResult::Success)
 	{
+		if (AIStatus == EAIStatus::MakingRequest)
+		{
+			AIStatus = EAIStatus::AlreadyThere;
+		}
 		LastPathResult = EAIMoveResult::Success;
 	}
-	HandleMovementComplete();
+	GetWorldTimerManager().SetTimerForNextTick(MovementCompleteTimerDelegate);
 }
 
 void AAdventurePlayerController::HandleMovementComplete()
@@ -264,7 +272,7 @@ void AAdventurePlayerController::HandleMovementComplete()
 		PlayerCharacter->TeleportToLocation(CurrentHotSpot->WalkToPosition);
 		PerformInteraction();
 	}
-
+	AIStatus = EAIStatus::Idle;
 	InterruptCurrentAction();
 }
 
@@ -309,11 +317,17 @@ void AAdventurePlayerController::PerformInteraction()
 	case EVerbType::Use:
 		AHotSpot::Execute_OnUse(CurrentHotSpot);
 		break;
+	case EVerbType::WalkTo:
+		AHotSpot::Execute_OnWalkTo(CurrentHotSpot);
 	default:
 		break;
 	}
 }
 
+/**
+ * Stop any current movement of the player character, unlock and clear the current verb
+ * & active hotspot displayed. Run any action bound to the `RunInterruptedActionDelegate`.
+ */
 void AAdventurePlayerController::InterruptCurrentAction()
 {
 	if (IsValid(PlayerCharacter))
@@ -322,9 +336,9 @@ void AAdventurePlayerController::InterruptCurrentAction()
 	}
 	CurrentVerb = EVerbType::WalkTo;
 	CurrentHotSpot = nullptr;
-	RunInterruptedActionDelegate.ExecuteIfBound();
 	HotspotInteraction = false;
 	TriggerInterruptAction();
+	RunInterruptedActionDelegate.ExecuteIfBound();
 }
 
 void AAdventurePlayerController::TriggerBeginAction()

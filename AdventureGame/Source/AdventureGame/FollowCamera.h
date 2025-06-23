@@ -65,7 +65,22 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="FollowCamera")
 	TObjectPtr<AAdventureCharacter> PlayerCharacter;
 
-	void SetupCameraConfines() const;
-	
+	/// Define the CameraConfines box from the screen values entered into
+	/// the blueprint for the `ConfinesOfCamera`.
+	void SetupCameraConfines();
+
+	/// Lerp the camera to a position as close as possible to the player
+	/// within the confines.
 	void FollowPlayer(float DeltaTime);
+
+	/// Jump the camera straight to a position as close as possible to
+	/// the player within the confines.
+	void SetupCamera();
+
+private:
+	/// Initialise the control values for the box that defines the camera confines.
+	void InitialiseCameraConfines();
+	
+	FVector ConfineMax;
+	FVector ConfineMin;
 };

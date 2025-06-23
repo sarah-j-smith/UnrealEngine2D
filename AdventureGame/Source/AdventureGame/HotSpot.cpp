@@ -129,7 +129,15 @@ void AHotSpot::OnWalkTo_Implementation()
 {
 	IVerbInteractions::OnWalkTo_Implementation();
 	UE_LOG(LogAdventureGame, Log, TEXT("On walk to"));
-	Bark(FText::FromString("Arrived."));
+	AAdventurePlayerController *PC = GetAdventureController();
+	if (PC->IsAlreadyAtHotspotClicked())
+	{
+		PC->PlayerBark(FText::FromString("I'm here, what should I do?"));
+	}
+	else
+	{
+		PC->PlayerBark(FText::FromString("Arrived here. What now?"));;
+	}
 }
 
 void AHotSpot::Bark(const FText &BarkText)
@@ -140,4 +148,11 @@ void AHotSpot::Bark(const FText &BarkText)
 	{
 		AdventurePlayerController->PlayerBark(BarkText);
 	}
+}
+
+AAdventurePlayerController* AHotSpot::GetAdventureController() const
+{
+	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
+	return AdventurePlayerController;
 }

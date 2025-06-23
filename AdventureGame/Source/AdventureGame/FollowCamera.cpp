@@ -42,31 +42,17 @@ void AFollowCamera::Tick(float DeltaTime)
 	FollowPlayer(DeltaTime);
 }
 
-void AFollowCamera::SetupCameraConfines() const
+void AFollowCamera::SetupCameraConfines()
 {
 	check(CameraConfines);
 	checkf(ConfinesOfCamera != FVector::ZeroVector, TEXT("Camera confines have not been set!"));
 	CameraConfines->SetBoxExtent(ConfinesOfCamera);
+	InitialiseCameraConfines();
 }
 
 void AFollowCamera::FollowPlayer(float DeltaTime)
 {
 	if (!IsValid(PlayerCharacter)) return;
-	check(CameraConfines);
-	check(CameraComponent);
-	
-	const FVector ConfinesBoxMax = CameraConfines->Bounds.Origin + CameraConfines->Bounds.BoxExtent;
-	const FVector ConfinesBoxMin = CameraConfines->Bounds.Origin - CameraConfines->Bounds.BoxExtent;
-
-	float HalfCamWidth = CameraComponent->OrthoWidth * 0.5f;
-	float HalfCamHeight = (CameraComponent->OrthoWidth / CameraComponent->AspectRatio) * 0.5;
-
-	FVector ConfineMax;
-	FVector ConfineMin;
-	ConfineMax.X = ConfinesBoxMax.X - HalfCamWidth;
-	ConfineMax.Y = ConfinesBoxMax.Y - HalfCamHeight;
-	ConfineMin.X = ConfinesBoxMin.X + HalfCamWidth;
-	ConfineMin.Y = ConfinesBoxMin.Y + HalfCamHeight;
 
 	FVector PlayerCharacterPosition = PlayerCharacter->GetActorLocation();
 	FVector CamTargetPosition;
@@ -80,5 +66,36 @@ void AFollowCamera::FollowPlayer(float DeltaTime)
 	CamTargetPosition.Y, DeltaTime, FollowSpeed);
 	
 	SetActorLocation(CameraNewPosition);
+}
+
+void AFollowCamera::SetupCamera()
+{
+	if (!IsValid(PlayerCharacter)) return;
+	
+	FVector CameraCurrentPosition = GetActorLocation();
+	FVector PlayerCharacterPosition = PlayerCharacter->GetActorLocation();
+	FVector CamTargetPosition;
+	CamTargetPosition.X = UKismetMathLibrary::FClamp(PlayerCharacterPosition.X, ConfineMin.X, ConfineMax.X);
+	CamTargetPosition.Y = UKismetMathLibrary::FClamp(PlayerCharacterPosition.Y, ConfineMin.Y, ConfineMax.Y);
+	CamTargetPosition.Z = CameraCurrentPosition.Z;
+	
+	SetActorLocation(CamTargetPosition);
+}
+
+void AFollowCamera::InitialiseCameraConfines()
+{
+	check(CameraConfines);
+	check(CameraComponent);
+	
+	const FVector ConfinesBoxMax = CameraConfines->Bounds.Origin + CameraConfines->Bounds.BoxExtent;
+	const FVector ConfinesBoxMin = CameraConfines->Bounds.Origin - CameraConfines->Bounds.BoxExtent;
+
+	float HalfCamWidth = CameraComponent->OrthoWidth * 0.5f;
+	float HalfCamHeight = (CameraComponent->OrthoWidth / CameraComponent->AspectRatio) * 0.5;
+	
+	ConfineMax.X = ConfinesBoxMax.X - HalfCamWidth;
+	ConfineMax.Y = ConfinesBoxMax.Y - HalfCamHeight;
+	ConfineMin.X = ConfinesBoxMin.X + HalfCamWidth;
+	ConfineMin.Y = ConfinesBoxMin.Y + HalfCamHeight;
 }
 

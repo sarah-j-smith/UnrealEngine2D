@@ -19,7 +19,7 @@ void UAdventureGameInstance::OnLoadRoom()
 	{
 		LoadStartingRoom();
 	}
-	else
+	else if (RoomTransitionPhase == ERoomTransitionPhase::RoomCurrent)
 	{
 		LoadRoom();
 	}
@@ -43,8 +43,8 @@ void UAdventureGameInstance::OnRoomLoaded()
 		NewRoomDelay();
 		break;
 	case ERoomTransitionPhase::LoadNewRoom:
-		SetupRoom();
 		UnloadRoom();
+		SetupRoom();
 	default:
 		UE_LOG(LogAdventureGame, Warning, TEXT("Unexpected state during OnRoomLoaded"));
 		break;	
@@ -143,11 +143,13 @@ ADoor* UAdventureGameInstance::FindDoor(FName DoorLabel)
 	{
 		return Cast<ADoor>(*FoundDoor);
 	}
+	UE_LOG(LogAdventureGame, Error, TEXT("UAdventureGameInstance::FindDoor failed to find %s"), *(DoorLabel.ToString()));
 	return nullptr;
 }
 
 void UAdventureGameInstance::LoadDoor(const ADoor* Door)
 {
+	if (!Door) return;
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	AAdventurePlayerController* AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
 	AAdventureCharacter* AdventureCharacter = AdventurePlayerController->PlayerCharacter;

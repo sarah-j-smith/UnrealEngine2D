@@ -45,6 +45,11 @@ public:
 
 	bool IsInputLocked() const;
 
+	bool IsAlreadyAtHotspotClicked() const
+	{
+		return AIStatus == EAIStatus::AlreadyThere;
+	}
+
 private:
 	bool GetMouseClickPosition(float &LocationX, float &LocationY);
 
@@ -58,6 +63,17 @@ private:
 	/// PLAYER CHARACTER AI
 	///
 	
+	enum class EAIStatus:uint8
+	{
+		Idle,
+		MakingRequest,
+		AlreadyThere,
+		Moving,
+		Done
+	};
+
+	EAIStatus AIStatus = EAIStatus::Idle;
+	
 	enum class EAIMoveResult
 	{
 		Unknown,
@@ -69,7 +85,7 @@ private:
 	UFUNCTION()
 	void HandleMovementComplete();
 
-	void WalkToLocation(const FVector &WorldLocation);
+	void WalkToLocation(const FVector &Location);
 
 	void ClearCurrentPath();
 
