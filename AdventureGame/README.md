@@ -8,11 +8,24 @@ My Dev Environment:
 * Rider
 * Unreal 5.5
 
+~~Out of Date Screenshot~~
+
 ![Screenshot from Ch 1](Docs/images/Ep1-screenshot.png)
 
 * Screenshot of state at end of Episode 1.
 * The black area at the bottom will have Lucas Arts style text
-* 
+
+**Update**
+
+I have moved to using a [character sprite sheet](https://danger-goose.itch.io/point-and-click-adventure-game-sprite-template) from _Danger Goose_ on itch.io.
+
+![Screenshot with updated sprite](Docs/images/current.png)
+
+I've also implemented the whole thing in C++ pretty much. There's a lot of per-item
+customisations that make sense to stay in Blueprint, but the C++ implementation makes
+it a lot more manageable. As of right now, actions are working, moving from room to
+room, as at Chapter 5 but with maybe some minor niggles.
+
 ## Math Nodes
 
 * Most of the tutorial went as per Lesser Dogs excellent guidance.
@@ -77,3 +90,8 @@ to use C++ for the bulk of the logic as the blueprints are very complex and hard
 Also I wanted to have animation states handled using Paper ZD.  See the doc here for this.
 
 * [Paper ZD animation states](Docs/AnimationStateMachine.md)
+
+I have moved to using a [character sprite sheet](https://danger-goose.itch.io/point-and-click-adventure-game-sprite-template) from _Danger Goose_ on itch.io. Its intended 
+to be a template that you can then overwrite with your own character art.
+
+![Danger goose character](Docs/images/SpH4M4.gif)

@@ -15,6 +15,7 @@
 
 void UAdventureGameInstance::OnLoadRoom()
 {
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::OnLoadRoom"));
 	if (RoomTransitionPhase == ERoomTransitionPhase::GameNotStarted)
 	{
 		LoadStartingRoom();
@@ -27,6 +28,7 @@ void UAdventureGameInstance::OnLoadRoom()
 
 void UAdventureGameInstance::LoadStartingRoom()
 {
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::LoadStartingRoom"));
 	RoomTransitionPhase = ERoomTransitionPhase::LoadStartingRoom;
 	FLatentActionInfo LatentActionInfo = GetLatentActionForHandler(OnRoomLoadedName);
 	UGameplayStatics::LoadStreamLevel(GetWorld(), StartingLevelName,
@@ -38,11 +40,13 @@ void UAdventureGameInstance::OnRoomLoaded()
 	switch (RoomTransitionPhase)
 	{
 	case ERoomTransitionPhase::LoadStartingRoom:
+		UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::OnRoomLoaded - LoadStartingRoom"));
 		CurrentDoorLabel = StartingDoorLabel;
 		SetupRoom();
 		NewRoomDelay();
 		break;
 	case ERoomTransitionPhase::LoadNewRoom:
+		UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::OnRoomLoaded - LoadNewRoom"));
 		UnloadRoom();
 		SetupRoom();
 	default:
@@ -53,6 +57,7 @@ void UAdventureGameInstance::OnRoomLoaded()
 
 void UAdventureGameInstance::SetupRoom()
 {
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::SetupRoom"));
 	RoomTransitionPhase = ERoomTransitionPhase::NewRoomLoaded;
 
 	// Find the door with the label.
@@ -141,6 +146,7 @@ ADoor* UAdventureGameInstance::FindDoor(FName DoorLabel)
 		return Cast<ADoor>(Element)->DoorLabel == DoorLabel;
 	}))
 	{
+		UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::FindDoor - got: %s"), *(Cast<ADoor>(*FoundDoor)->HotSpotDescription));
 		return Cast<ADoor>(*FoundDoor);
 	}
 	UE_LOG(LogAdventureGame, Error, TEXT("UAdventureGameInstance::FindDoor failed to find %s"), *(DoorLabel.ToString()));
@@ -150,6 +156,7 @@ ADoor* UAdventureGameInstance::FindDoor(FName DoorLabel)
 void UAdventureGameInstance::LoadDoor(const ADoor* Door)
 {
 	if (!Door) return;
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::LoadDoor: %s"), *(Cast<ADoor>(Door)->HotSpotDescription));
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	AAdventurePlayerController* AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
 	AAdventureCharacter* AdventureCharacter = AdventurePlayerController->PlayerCharacter;
@@ -162,7 +169,6 @@ void UAdventureGameInstance::LoadDoor(const ADoor* Door)
 void UAdventureGameInstance::LoadRoom(ADoor* FromDoor)
 {
 	UWorld* World = FromDoor->GetWorld();
-	// UWorld* World = GEngine->GameViewport->GetWorld(); 
 	UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(World);
 	UAdventureGameInstance* AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
 	AdventureGameInstance->CurrentDoor = FromDoor;

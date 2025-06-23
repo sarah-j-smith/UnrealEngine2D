@@ -9,23 +9,9 @@
   <component name="ChangeListManager">
     <list default="true" id="e7d87409-0359-4ca5-b933-df4b7b2a98d8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_FollowCamera.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/BP_FollowCamera.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/Gameplay/BP_AdventureGameInstance.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/Gameplay/BP_AdventureGameInstance.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Hotspots/BP_Door_TowerExteriorToInterior.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Hotspots/BP_Door_TowerExteriorToInterior.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Hotspots/BP_Door_TowerInteriorToExterior.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Hotspots/BP_Door_TowerInteriorToExterior.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Levels/AdventureData.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Levels/AdventureData.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Levels/TowerExterior.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Levels/TowerExterior.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Levels/TowerInterior.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Levels/TowerInterior.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameInstance.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventurePlayerController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventurePlayerController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventurePlayerController.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventurePlayerController.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Door.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Door.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Door.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Door.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/FollowCamera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/FollowCamera.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/FollowCamera.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/FollowCamera.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HotSpot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HotSpot.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HotSpot.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HotSpot.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -125,6 +111,7 @@
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Public/Misc/Crc.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Public/ProfilingDebugging/TraceAuxiliary.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Public/UObject/ScriptDelegates.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Public/Templates/Casts.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Public/Templates/SubclassOf.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Public/UObject/Object.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectHandle.h" root0="FORCE_HIGHLIGHTING" />
@@ -201,6 +188,42 @@
     <setting file="file://$PROJECT_DIR$/Source/AdventureGame/SplitScreenManager.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AdventureGame/VerbsUI.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AdventureGame/VerbsUI.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
@@ -761,7 +784,7 @@
       <workItem from="1750365015305" duration="3193000" />
       <workItem from="1750481544372" duration="21973000" />
       <workItem from="1750572201973" duration="14151000" />
-      <workItem from="1750645156175" duration="15561000" />
+      <workItem from="1750645156175" duration="18787000" />
     </task>
     <servers />
   </component>
@@ -770,6 +793,9 @@
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="UnrealLogPanelSettings">
+    <option name="showAllCategories" value="false" />
+  </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
@@ -799,81 +825,6 @@
           <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
           <option name="timeStamp" value="3" />
         </breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/AdventureGame/AdventureGameInstance.cpp</url>
-          <line>17</line>
-          <option name="timeStamp" value="21" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/AdventureGame/AdventureGameInstance.cpp</url>
-          <line>28</line>
-          <option name="timeStamp" value="22" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/AdventureGame/AdventureGameInstance.cpp</url>
-          <line>36</line>
-          <option name="timeStamp" value="23" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/AdventureGame/AdventureGameInstance.cpp</url>
-          <line>55</line>
-          <option name="timeStamp" value="24" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/AdventureGame/AdventureGameInstance.cpp</url>
-          <line>69</line>
-          <option name="timeStamp" value="25" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/AdventureGame/AdventureGameInstance.cpp</url>
-          <line>79</line>
-          <option name="timeStamp" value="26" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/AdventureGame/AdventureGameInstance.cpp</url>
-          <line>84</line>
-          <option name="timeStamp" value="27" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/AdventureGame/AdventureGameInstance.cpp</url>
-          <line>91</line>
-          <option name="timeStamp" value="28" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/AdventureGame/AdventureGameInstance.cpp</url>
-          <line>96</line>
-          <option name="timeStamp" value="29" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/AdventureGame/AdventureGameInstance.cpp</url>
-          <line>102</line>
-          <option name="timeStamp" value="30" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/AdventureGame/AdventureGameInstance.cpp</url>
-          <line>119</line>
-          <option name="timeStamp" value="31" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/AdventureGame/AdventureGameInstance.cpp</url>
-          <line>136</line>
-          <option name="timeStamp" value="32" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/AdventureGame/AdventurePlayerController.cpp</url>
-          <line>268</line>
-          <option name="timeStamp" value="35" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/AdventureGame/AdventurePlayerController.cpp</url>
-          <line>255</line>
-          <option name="timeStamp" value="36" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/AdventureGame/AdventurePlayerController.cpp</url>
-          <line>207</line>
-          <option name="timeStamp" value="37" />
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
