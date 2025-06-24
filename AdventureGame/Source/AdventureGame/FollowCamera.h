@@ -77,10 +77,24 @@ public:
 	/// the player within the confines.
 	void SetupCamera();
 
+	/// Get the confines of the scene that the camera can view & pan across.
+	/// Only valid after InitialiseCameraConfines has been called.
+	void GetSceneBounds(FVector &ConfineMax, FVector &ConfineMin)
+	{
+		verify(bConfinesInitialised);
+		float HalfCamWidth = CameraComponent->OrthoWidth * 0.5f;
+		float HalfCamHeight = (CameraComponent->OrthoWidth / CameraComponent->AspectRatio) * 0.5;
+		ConfineMax = this->ConfineMax + FVector(HalfCamWidth, HalfCamHeight, 0.0f);
+		ConfineMin = this->ConfineMin - FVector(HalfCamWidth, HalfCamHeight, 0.0f);
+	}
+
 private:
+	bool bConfinesInitialised = false;
+	
 	/// Initialise the control values for the box that defines the camera confines.
 	void InitialiseCameraConfines();
-	
+
+	/// Confines of a box that the POSITION (center/pivot) of the camera must be in.
 	FVector ConfineMax;
 	FVector ConfineMin;
 };

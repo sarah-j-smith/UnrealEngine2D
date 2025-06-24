@@ -15,9 +15,9 @@ My Dev Environment:
 * Screenshot of state at end of Episode 1.
 * The black area at the bottom will have Lucas Arts style text
 
-**Update**
+### Update
 
-I have moved to using a [character sprite sheet](https://danger-goose.itch.io/point-and-click-adventure-game-sprite-template) from _Danger Goose_ on itch.io.
+I have moved to using a [character sprite sheet](https://danger-goose.itch.io/point-and-click-adventure-game-sprite-template) from _Danger Goose_ on itch.io. And a bunch more things are working now.
 
 ![Screenshot with updated sprite](Docs/images/current.png)
 
@@ -37,6 +37,10 @@ room, as at Chapter 5 but with maybe some minor niggles.
 
 * Screenshot of the `BP_AdventureCam` blueprint `GetCameraConfines` function
 * The `-` and `+` nodes are at the right of the screenshot
+
+### Update
+
+I implemented all of the [camera follow logic in C++](https://github.com/sarah-j-smith/UnrealEngine2D/blob/main/AdventureGame/Source/AdventureGame/FollowCamera.cpp#L53) inside a `FollowCamera` class.
 
 ## Nav Mesh Problems
 
@@ -69,11 +73,11 @@ room, as at Chapter 5 but with maybe some minor niggles.
 
 ## Player Character Falling
 
-At the end of the first episode on running the project with the player character it fell constantly. In 
+At the end of the first episode on running the project with the player character it fell constantly. What that looks like is the game starts, the character disappears but is visible in the _Outliner_ (the list of all objects in the scene). Clicking on the character in the outliner and expanding the Transform you can see in the Z direction its rapidly and constantly changing. The character has fallen through the floor. In 
 my case the fix for this is:
 
 * change from top to side view (eg "right") 
-* make sure the character mesh is above the red line of the background image
+* make sure the character mesh/start point is above the red line of the background image
 * make sure the character is inside the nav mesh bounds
 
 # Customisations 
@@ -91,7 +95,11 @@ Also I wanted to have animation states handled using Paper ZD.  See the doc here
 
 * [Paper ZD animation states](Docs/AnimationStateMachine.md)
 
+# Updates
+
 I have moved to using a [character sprite sheet](https://danger-goose.itch.io/point-and-click-adventure-game-sprite-template) from _Danger Goose_ on itch.io. Its intended 
 to be a template that you can then overwrite with your own character art.
 
 ![Danger goose character](Docs/images/SpH4M4.gif)
+
+I also implemented pretty much all of the main game logic in C++.

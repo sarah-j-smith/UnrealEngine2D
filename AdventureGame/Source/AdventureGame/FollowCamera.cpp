@@ -84,9 +84,10 @@ void AFollowCamera::SetupCamera()
 
 void AFollowCamera::InitialiseCameraConfines()
 {
-	check(CameraConfines);
-	check(CameraComponent);
-	
+	if (!CameraConfines) return;
+	if (!CameraComponent) return;
+	if (bConfinesInitialised) return;
+
 	const FVector ConfinesBoxMax = CameraConfines->Bounds.Origin + CameraConfines->Bounds.BoxExtent;
 	const FVector ConfinesBoxMin = CameraConfines->Bounds.Origin - CameraConfines->Bounds.BoxExtent;
 
@@ -97,5 +98,7 @@ void AFollowCamera::InitialiseCameraConfines()
 	ConfineMax.Y = ConfinesBoxMax.Y - HalfCamHeight;
 	ConfineMin.X = ConfinesBoxMin.X + HalfCamWidth;
 	ConfineMin.Y = ConfinesBoxMin.Y + HalfCamHeight;
+
+	bConfinesInitialised = true;
 }
 

@@ -16,3 +16,4 @@ void UBarkText::SetText(FText NewText)
 	BaseText->SetText(NewText);
 	OutlineText->SetText(NewText);
 }
+
