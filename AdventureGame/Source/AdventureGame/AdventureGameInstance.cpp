@@ -42,33 +42,17 @@ void UAdventureGameInstance::OnRoomLoaded()
 	case ERoomTransitionPhase::LoadStartingRoom:
 		UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::OnRoomLoaded - LoadStartingRoom"));
 		CurrentDoorLabel = StartingDoorLabel;
-		SetupRoom();
+		RoomTransitionPhase = ERoomTransitionPhase::NewRoomLoaded;
 		NewRoomDelay();
 		break;
 	case ERoomTransitionPhase::LoadNewRoom:
 		UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::OnRoomLoaded - LoadNewRoom"));
+		RoomTransitionPhase = ERoomTransitionPhase::NewRoomLoaded;
 		UnloadRoom();
-		SetupRoom();
 	default:
 		UE_LOG(LogAdventureGame, Warning, TEXT("Unexpected state during OnRoomLoaded"));
 		break;	
 	}
-}
-
-void UAdventureGameInstance::SetupRoom()
-{
-	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::SetupRoom"));
-	RoomTransitionPhase = ERoomTransitionPhase::NewRoomLoaded;
-
-	// Find the door with the label.
-	const ADoor* Door = FindDoor(CurrentDoorLabel);
-	LoadDoor(Door);
-
-	UAdventureGameHUD* HUD = UAdventureGameInstance::GetHUD();
-	HUD->HideBlackScreen();
-
-	AAdventurePlayerController* AdventurePlayerController = GetAdventureController();
-	AdventurePlayerController->InterruptCurrentAction();
 }
 
 void UAdventureGameInstance::NewRoomDelay() {
@@ -82,7 +66,22 @@ void UAdventureGameInstance::NewRoomDelay() {
 
 void UAdventureGameInstance::OnRoomLoadTimerTimeout()
 {
-	StartNewRoom();
+	SetupRoom();
+}
+
+void UAdventureGameInstance::SetupRoom()
+{
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::SetupRoom"));
+
+	// Find the door with the label.
+	const ADoor* Door = FindDoor(CurrentDoorLabel);
+	LoadDoor(Door);
+
+	UAdventureGameHUD* HUD = UAdventureGameInstance::GetHUD();
+	HUD->HideBlackScreen();
+
+	AAdventurePlayerController* AdventurePlayerController = GetAdventureController();
+	AdventurePlayerController->InterruptCurrentAction();
 }
 
 void UAdventureGameInstance::StartNewRoom()

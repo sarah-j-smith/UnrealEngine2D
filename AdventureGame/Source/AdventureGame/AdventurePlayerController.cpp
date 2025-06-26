@@ -138,7 +138,8 @@ void AAdventurePlayerController::HandlePointAndClickInput()
 		
 		FVector MouseWorldLocation, MouseWorldDirection;
 		DeprojectScreenPositionToWorld(LocationX, LocationY, MouseWorldLocation, MouseWorldDirection);
-
+		UE_LOG(LogAdventureGame, Warning, TEXT("Mouse world posiition: %s"), *(FVector2D(LocationX, LocationY).ToString()));
+		
 		FVector PlayerLocation = PlayerCharacter->GetCapsuleComponent()->GetComponentLocation();
 		MouseWorldLocation.Z = PlayerLocation.Z;
 		WalkToLocation(MouseWorldLocation);

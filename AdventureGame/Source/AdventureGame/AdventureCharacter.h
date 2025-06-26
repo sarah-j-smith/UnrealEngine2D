@@ -38,29 +38,52 @@ public:
 	FZDOnAnimationOverrideEndSignature OnInteractOverrideEndDelegate;
 	
 	/// Animation sequence for interacting with objects
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UPaperZDAnimSequence *InteractAnimationSequence;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Animation)
+	UPaperZDAnimSequence *InteractLeftAnimationSequence;
+	
+	/// Animation sequence for interacting with objects
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Animation)
+	UPaperZDAnimSequence *InteractRightAnimationSequence;
+
+	/// Animation sequence for climbing on objects
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Animation)
+	UPaperZDAnimSequence *ClimbLeftAnimationSequence;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Animation)
+	UPaperZDAnimSequence *ClimbRightAnimationSequence;
 	
 	/// Animation sequence for climbing on objects
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UPaperZDAnimSequence *ClimbAnimationSequence;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Animation)
+	UPaperZDAnimSequence *SitLeftAnimationSequence;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Animation)
+	UPaperZDAnimSequence *SitRightAnimationSequence;
+	
 	void Climb();
 
 	void Interact();
 
+	void Sit();
+	
 private:
 	void OnInteractAnimOverrideEnd(bool completed);
 	
 	void OnClimbAnimOverrideEnd(bool completed);
 
-public:
-	
+	void OnSitAnimOverrideEnd(bool completed);
+
 	//////////////////////////////////
 	///
 	/// MOVEMENT
 	///
 
+	/// Try to prevent the player character from falling through the floor due to
+	/// misplaced geometry. Exposed mostly for debugging purposes.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Movement, meta=(AllowPrivateAccess=true))
+	float MinZValue = 5.0f;
+
+public:
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Gameplay)
 	FVector2D LastNonZeroMovement = FVector2D::ZeroVector;
 	
@@ -87,7 +110,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Barking)
 	TObjectPtr<UWidgetComponent> BarkTextComponent;
 
-	void PlayerBark(FText NewBarkText);
+	void PlayerBark(const FText &NewBarkText);
 
 	void ClearBark();
 
@@ -109,15 +132,28 @@ private:
 	
 	void InitializeBarkTextConfines(AFollowCamera *Camera);
 
+	/// Recalculates the UpdatedBarkConfineMax & Min based on the initialised
+	/// Bark Confines. Use after the text has been set.
+	/// Potentially expensive call - do not call inside Tick()
+	void UpdateBarkTextConfines();
+
+	bool bBarkTextConfinesNeedsUpdate = false;
+
 	FVector BarkConfineMax;
 	FVector BarkConfineMin;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Barking)
+	FVector UpdatedBarkConfineMax;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Barking)
+	FVector UpdatedBarkConfineMin;
 	
 	//////////////////////////////////
 	///
 	/// CAMERA
 	///
 
-public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TSubclassOf<AFollowCamera> CameraActorToSpawn;
 

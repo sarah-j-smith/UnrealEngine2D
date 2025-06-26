@@ -24,5 +24,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock *OutlineText;
 
+	UFUNCTION(BlueprintCallable)
 	void SetText(FText NewText);
+
+	UFUNCTION(BlueprintCallable)
+	FVector2D GetSize();
 };

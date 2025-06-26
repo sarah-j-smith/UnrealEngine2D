@@ -79,10 +79,28 @@ private:
 	ERoomTransitionPhase RoomTransitionPhase = ERoomTransitionPhase::GameNotStarted;
 
 	// On game start:
-	// GameNotStarted > LoadStartingRoom > NewRoomLoaded > DelayProcessing > RoomCurrent
+	//  Member function called           State
+	//     ------------                  ------------------
+	//     OnLoadRoom()                  GameNotStarted
+	//     LoadStartingRoom()            LoadStartingRoom
+	//     OnRoomLoaded()                NewRoomLoaded
+	//     NewRoomDelay()                DelayProcessing
+	//     OnRoomLoadTimerTimeout()
+	//     SetupRoom()
+	//     StartNewRoom()                RoomCurrent
 	//
-	// On room transition:
-	// RoomCurrent > LoadNewRoom > NewRoomLoaded > RoomUnloaded > DelayProcessing > RoomCurrent
+	// On room transition to a different room:
+	//  Member function called           State 
+	//     ------------                  ------------------
+	//     OnLoadRoom()                  RoomCurrent
+	//     LoadRoom()                    LoadNewRoom
+	//     OnRoomLoaded()                NewRoomLoaded
+	//     UnloadRoom()                  UnloadOldRoom
+	//     OnRoomUnloaded()
+	//     NewRoomDelay()                DelayProcessing
+	//     OnRoomLoadTimerTimeout()      
+	//     SetupRoom()
+	//     StartNewRoom()                RoomCurrent
 
 	/// Load up the room specified by the current door
 	void LoadRoom();
@@ -93,13 +111,17 @@ private:
 	/// Unload the room specified by the current door
 	void UnloadRoom();
 
-	/// Setup the current room, and 
-	void SetupRoom();
-
-	/// Run a short delay to allow setup to complete
+	/// Run a short delay to allow scene to complete, and any geometry
+	/// to be placed, spawned and stabilise.
 	void NewRoomDelay();
 	
-	/// Restart play in the new room after the delay has expired
+	/// Setup the current room, find & load the door (move the player
+	/// character to the relevant door). Hide the transition effect.
+	/// Call this only after the delay to ensure the player character
+	/// and all geometry is stable from any collisions.
+	void SetupRoom();
+
+	/// Restart play in the new room allowing input from the player.
 	void StartNewRoom();
 
 	void OnRoomLoadTimerTimeout();
