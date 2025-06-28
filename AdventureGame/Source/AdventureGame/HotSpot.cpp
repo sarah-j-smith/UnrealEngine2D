@@ -42,7 +42,7 @@ void AHotSpot::BeginPlay()
 
 void AHotSpot::OnBeginCursorOver(UPrimitiveComponent *Component)
 {
-	UE_LOG(LogAdventureGame, Log, TEXT("OnBeginCursorOver"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("OnBeginCursorOver"));
 	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
 	if (IsValid(AdventurePlayerController))
@@ -53,7 +53,7 @@ void AHotSpot::OnBeginCursorOver(UPrimitiveComponent *Component)
 
 void AHotSpot::OnEndCursorOver(UPrimitiveComponent *Component)
 {
-	UE_LOG(LogAdventureGame, Log, TEXT("OnEndCursorOver"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("OnEndCursorOver"));
 	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
 	if (IsValid(AdventurePlayerController))
@@ -65,70 +65,70 @@ void AHotSpot::OnEndCursorOver(UPrimitiveComponent *Component)
 void AHotSpot::OnClose_Implementation()
 {
 	IVerbInteractions::OnClose_Implementation();
-	UE_LOG(LogAdventureGame, Log, TEXT("On close"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On close"));
 	Bark(FText::FromString("I can't close that."));
 }
 
 void AHotSpot::OnOpen_Implementation()
 {
 	IVerbInteractions::OnOpen_Implementation();
-	UE_LOG(LogAdventureGame, Log, TEXT("On open"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On open"));
 	Bark(FText::FromString("I can't open that."));
 }
 
 void AHotSpot::OnGive_Implementation()
 {
 	IVerbInteractions::OnGive_Implementation();
-	UE_LOG(LogAdventureGame, Log, TEXT("On give"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On give"));
 	Bark(FText::FromString("No-one to give to."));
 }
 
 void AHotSpot::OnPickUp_Implementation()
 {
 	IVerbInteractions::OnPickUp_Implementation();
-	UE_LOG(LogAdventureGame, Log, TEXT("On Pickup"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On Pickup"));
 	Bark(FText::FromString("It's not possible to pick it up."));
 }
 
 void AHotSpot::OnTalkTo_Implementation()
 {
 	IVerbInteractions::OnTalkTo_Implementation();
-	UE_LOG(LogAdventureGame, Log, TEXT("On talk to"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On talk to"));
 	Bark(FText::FromString("Not very talkative."));
 }
 
 void AHotSpot::OnLookAt_Implementation()
 {
 	IVerbInteractions::OnLookAt_Implementation();
-	UE_LOG(LogAdventureGame, Log, TEXT("On look at"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On look at"));
 	Bark(FText::FromString("Doesn't look like much at all."));
 }
 
 void AHotSpot::OnPull_Implementation()
 {
 	IVerbInteractions::OnPull_Implementation();
-	UE_LOG(LogAdventureGame, Log, TEXT("On pull"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On pull"));
 	Bark(FText::FromString("Nope, can't pull that."));
 }
 
 void AHotSpot::OnPush_Implementation()
 {
 	IVerbInteractions::OnPush_Implementation();
-	UE_LOG(LogAdventureGame, Log, TEXT("On push"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On push"));
 	Bark(FText::FromString("Pushing that won't work."));
 }
 
 void AHotSpot::OnUse_Implementation()
 {
 	IVerbInteractions::OnUse_Implementation();
-	UE_LOG(LogAdventureGame, Log, TEXT("On use"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On use"));
 	Bark(FText::FromString("Can't use that."));
 }
 
 void AHotSpot::OnWalkTo_Implementation()
 {
 	IVerbInteractions::OnWalkTo_Implementation();
-	UE_LOG(LogAdventureGame, Log, TEXT("On walk to"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On walk to"));
 	AAdventurePlayerController *PC = GetAdventureController();
 	if (PC->IsAlreadyAtHotspotClicked())
 	{
@@ -142,9 +142,7 @@ void AHotSpot::OnWalkTo_Implementation()
 
 void AHotSpot::Bark(const FText &BarkText)
 {
-	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
-	if (IsValid(AdventurePlayerController))
+	if (AAdventurePlayerController *AdventurePlayerController = GetAdventureController())
 	{
 		AdventurePlayerController->PlayerBark(BarkText);
 	}

@@ -8,6 +8,8 @@
 #include "AdventureGame.h"
 #include "AdventureGameInstance.h"
 #include "AdvGameUtils.h"
+#include "InventoryItem.h"
+#include "ItemSlot.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -42,6 +44,21 @@ void AAdventurePlayerController::MouseLeaveHotSpot()
 	}
 }
 
+void AAdventurePlayerController::MouseEnterInventoryItem(UItemSlot *ItemSlot)
+{
+	if (HotspotInteraction || IsPerformingTaskInteraction) return;
+	CurrentItem = ItemSlot->InventoryItem;
+	TriggerUpdateInteractionText();
+}
+
+void AAdventurePlayerController::MouseLeaveInventoryItem()
+{
+	if (HotspotInteraction || IsPerformingTaskInteraction) return;
+	if (!CurrentItem) return;
+	CurrentItem = nullptr;
+	TriggerUpdateInteractionText();
+}
+
 void AAdventurePlayerController::SetInputLocked(bool bLocked)
 {
 	LockInput = bLocked;
@@ -61,6 +78,7 @@ void AAdventurePlayerController::BeginPlay()
 	APawn* PlayerPawn = GetPawn();
 	PlayerCharacter = Cast<AAdventureCharacter>(PlayerPawn);
 	check(PlayerCharacter);
+	SetupAnimationDelegates();
 	
 	SetupHUD();
 
@@ -82,6 +100,11 @@ void AAdventurePlayerController::SetupHUD()
 		AdventureHUDWidget->AddToViewport();
 		UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AAdventureGameModeBase::SetupHUD - AddToViewport"));
 	}
+}
+
+void AAdventurePlayerController::SetupAnimationDelegates()
+{
+	PlayerCharacter->OnInteractOverrideEndDelegate.BindUObject(this, &AAdventurePlayerController::OnPlayerInteractComplete);
 }
 
 APawn *AAdventurePlayerController::SetupPuck(AAdventureCharacter *PlayerCharacter)
@@ -152,6 +175,44 @@ void AAdventurePlayerController::HandlePointAndClickInput()
 	}
 }
 
+void AAdventurePlayerController::HandleInventoryItemClicked(UItemSlot* ItemSlot)
+{
+	UInventoryItem *Item = ItemSlot->InventoryItem;
+	switch (CurrentVerb)
+	{
+	case EVerbType::Give:
+		// Special behaviour
+		break;
+	case EVerbType::Open:
+		Item->Execute_OnOpen(Item);
+		break;
+	case EVerbType::Close:
+		Item->Execute_OnClose(Item);
+		break;
+	case EVerbType::PickUp:
+		Item->Execute_OnPickUp(Item);
+		break;
+	case EVerbType::LookAt:
+		Item->Execute_OnLookAt(Item);
+		break;
+	case EVerbType::TalkTo:
+		Item->Execute_OnTalkTo(Item);
+		break;
+	case EVerbType::Use:
+		Item->Execute_OnUse(Item);
+		break;
+	case EVerbType::Push:
+		Item->Execute_OnPush(Item);
+		break;
+	case EVerbType::Pull:
+		Item->Execute_OnPull(Item);
+		break;
+	case EVerbType::WalkTo:
+		Item->Execute_OnWalkTo(Item);
+		break;
+	}
+}
+
 bool AAdventurePlayerController::GetMouseClickPosition(float &LocationX, float &LocationY)
 {
 	bool bIsPressed = GetMousePosition(LocationX, LocationY);
@@ -168,6 +229,13 @@ bool AAdventurePlayerController::GetMouseClickPosition(float &LocationX, float &
 	}
 	LastMouseClick = ThisMouseClick;
 	return true;
+}
+
+void AAdventurePlayerController::EndTaskAction(EInteractionType InteractionType, int32 UID, bool Complete)
+{
+	EndAction.Broadcast(InteractionType, UID, Complete);
+	PlayerInteractUID = 0;
+	SetInputLocked(false);
 }
 
 AHotSpot* AAdventurePlayerController::HotSpotClicked()
@@ -283,6 +351,11 @@ void AAdventurePlayerController::AssignVerb(EVerbType NewVerb)
 	TriggerUpdateInteractionText();
 }
 
+void AAdventurePlayerController::PerformItemInteraction(UInventoryItem *InventoryItem)
+{
+	//
+}
+
 void AAdventurePlayerController::PerformInteraction()
 {
 	// This `Execute_Verb` pattern will call C++ and Blueprint overrides.
@@ -360,4 +433,64 @@ void AAdventurePlayerController::TriggerUpdateInteractionText()
 void AAdventurePlayerController::PlayerBark(FText BarkText)
 {
 	PlayerCharacter->PlayerBark(BarkText);
+}
+
+void AAdventurePlayerController::PlayerClimb(int32 UID)
+{
+	PlayerInteractUID = UID;
+	if (PlayerCharacter->LastNonZeroMovement.X != 0)
+	{
+		SetInputLocked(true);
+		PlayerCharacter->Climb();
+	}
+	else
+	{
+		OnPlayerClimbComplete(false);
+		UE_LOG(LogAdventureGame, Warning, TEXT("PlayerClimb called when player not facing left or right."))
+	}
+}
+
+void AAdventurePlayerController::PlayerInteract(int32 UID)
+{
+	PlayerInteractUID = UID;
+	if (PlayerCharacter->LastNonZeroMovement.X != 0)
+	{
+		SetInputLocked(true);
+		PlayerCharacter->Interact();
+	}
+	else
+	{
+		OnPlayerInteractComplete(false);
+		UE_LOG(LogAdventureGame, Warning, TEXT("PlayerInteract called when player not facing left or right."))
+	}
+}
+
+void AAdventurePlayerController::PlayerSit(int32 UID)
+{
+	PlayerInteractUID = UID;
+	if (PlayerCharacter->LastNonZeroMovement.X != 0)
+	{
+		SetInputLocked(true);
+		PlayerCharacter->Sit();
+	}
+	else
+	{
+		OnPlayerSitComplete(false);
+		UE_LOG(LogAdventureGame, Warning, TEXT("PlayerSit called when player not facing left or right."))
+	}
+}
+
+void AAdventurePlayerController::OnPlayerInteractComplete(bool Complete)
+{
+	EndTaskAction(EInteractionType::Interact, PlayerInteractUID, Complete);
+}
+
+void AAdventurePlayerController::OnPlayerSitComplete(bool Complete)
+{
+	EndTaskAction(EInteractionType::Sit, PlayerSitUID, Complete);
+}
+
+void AAdventurePlayerController::OnPlayerClimbComplete(bool Complete)
+{
+	EndTaskAction(EInteractionType::Climb, PlayerClimbUID, Complete);
 }

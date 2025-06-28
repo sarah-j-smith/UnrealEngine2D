@@ -31,6 +31,9 @@ void AAdventureCharacter::OnConstruction(const FTransform& Transform)
 	BarkTextComponent->SetWidgetSpace(EWidgetSpace::Screen);
 	BarkTextComponent->SetDrawSize(BarkTextSize);
 	BarkRelativeOffset = BarkTextComponent->GetComponentLocation() - GetCapsuleComponent()->GetComponentLocation();
+	OnSitOverrideEndDelegate.BindUObject(this, &AAdventureCharacter::OnSitAnimOverrideEnd);
+	OnClimbOverrideEndDelegate.BindUObject(this, &AAdventureCharacter::OnClimbAnimOverrideEnd);
+	OnInteractOverrideEndDelegate.BindUObject(this, &AAdventureCharacter::OnInteractAnimOverrideEnd);
 }
 
 void AAdventureCharacter::BeginPlay()
@@ -93,7 +96,7 @@ void AAdventureCharacter::Sit()
 	UPaperZDAnimInstance *Anim = GetAnimInstance();
 	Anim->PlayAnimationOverride(LastNonZeroMovement.X > 0 ? InteractRightAnimationSequence : InteractLeftAnimationSequence,
 		FName("DefaultSlot"), 1.0f, 0.0f,
-		OnInteractOverrideEndDelegate);
+		OnSitOverrideEndDelegate);
 }
 
 void AAdventureCharacter::OnInteractAnimOverrideEnd(bool completed)

@@ -3,20 +3,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "AdventureAIController.h"
 #include "AdventureGameHUD.h"
 #include "HotSpot.h"
+#include "InteractionType.h"
 #include "VerbType.h"
 #include "Puck.h"
+#include "InventoryItem.h"
+
 #include "GameFramework/PlayerController.h"
-#include "Navigation/PathFollowingComponent.h"
 #include "AdventurePlayerController.generated.h"
 
+class UItemSlot;
 DECLARE_DELEGATE(FRunInterruptedActionDelegate);
 
 DECLARE_MULTICAST_DELEGATE(FBeginAction);
 DECLARE_MULTICAST_DELEGATE(FInterruptAction);
 DECLARE_MULTICAST_DELEGATE(FUpdateInteractionText);
+
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FEndAction, EInteractionType /* Interaction */, int32 /* UID */, bool /* Completed */);
 
 /**
  * 
@@ -31,12 +37,14 @@ public:
 	//////////////////////////////////
 	///
 	/// EVENT HANDLERS
-	/// 
-
+	///
+	
+	FEndAction EndAction;
+	
 	virtual void BeginPlay() override;
 	
 	void HandlePointAndClickInput();
-	
+
 	void MouseEnterHotSpot(AHotSpot *HotSpot);
 
 	void MouseLeaveHotSpot();
@@ -95,12 +103,33 @@ private:
 	FTimerDelegate MovementCompleteTimerDelegate;
 
 	EAIMoveResult LastPathResult = EAIMoveResult::Unknown;
+	
+	//////////////////////////////////
+	///
+	/// ITEMS AND INTERACTION
+	///
+
+public:
+	void HandleInventoryItemClicked(UItemSlot *ItemSlot);
+	
+	void MouseEnterInventoryItem(UItemSlot *ItemSlot);
+
+	void MouseLeaveInventoryItem();
+
+	void PerformItemInteraction(UInventoryItem *InventoryItem);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
+	TObjectPtr<UInventoryItem> CurrentItem;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
+	bool ItemInteraction = false;
 
 	//////////////////////////////////
 	///
 	/// VERBS AND INTERACTION
-	/// 
-
+	///
+	
+private:
 	void PerformInteraction();
 
 	/// Tell the UI to highlight and lock the action text
@@ -115,6 +144,9 @@ private:
 	/// Tell the UI to put the current verb and any current hotspot into the text display
 	/// and if the HotspotInteraction is true, highlight the text.
 	void TriggerUpdateInteractionText();
+
+	/// Maybe use an FSM - https://gist.github.com/JoshLmao/a71e10d70c88b1c23418f20bcab26977
+	/// ....or a HSM - see readme for State Trees.
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -131,12 +163,32 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayerBark(FText BarkText);
 	
+	void PlayerClimb(int32 UID);
+	
+	void PlayerInteract(int32 UID);
+	
+	void PlayerSit(int32 UID);
+
+private:
+	UFUNCTION()
+	void OnPlayerInteractComplete(bool Complete);
+	int32 PlayerInteractUID = 0;
+	
+	UFUNCTION()
+	void OnPlayerSitComplete(bool Complete);
+	int32 PlayerSitUID = 0;
+
+	UFUNCTION()
+	void OnPlayerClimbComplete(bool Complete);
+	int32 PlayerClimbUID = 0;
+
+	void EndTaskAction(EInteractionType InteractionType, int32 UID, bool Complete);
+	
 	//////////////////////////////////
 	///
 	/// HOTSPOT INTERACTION
 	///
-
-private:
+	
 	/// Get the Hotspot under the click location, or null if no hotspot was found
 	AHotSpot *HotSpotClicked();
 
@@ -176,6 +228,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UAdventureGameHUD> AdventureHUDClass;
 	void SetupHUD();
+
+	void SetupAnimationDelegates();
 	
 	//////////////////////////////////
 	///

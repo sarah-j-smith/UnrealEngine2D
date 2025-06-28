@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ItemList.h"
 #include "UObject/Interface.h"
 #include "VerbInteractions.generated.h"
 
@@ -51,4 +52,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "VerbInteractions")
 	void OnWalkTo();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "VerbInteractions")
+	void OnItemUsed(EItemList ItemUsed);
 };

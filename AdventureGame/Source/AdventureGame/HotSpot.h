@@ -8,6 +8,7 @@
 #include "VerbInteractions.h"
 #include "WalkDirection.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/BlueprintAsyncActionBase.h"
 
 #include "HotSpot.generated.h"
 
@@ -73,9 +74,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
 	virtual void OnWalkTo_Implementation() override;
 
-	UFUNCTION(BlueprintCallable, Category="HotSpot")
+	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
 	void Bark(const FText &BarkText);
 
-	UFUNCTION(BlueprintCallable, Category="HotSpot")
-	AAdventurePlayerController *GetAdventureController() const;
+	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
+	AAdventurePlayerController* GetAdventureController() const;
 };

@@ -11,6 +11,7 @@
 #include "AdventureCharacter.generated.h"
 
 class UWidgetComponent;
+
 /**
  * 
  */
@@ -36,6 +37,8 @@ public:
 	FZDOnAnimationOverrideEndSignature OnClimbOverrideEndDelegate;
 
 	FZDOnAnimationOverrideEndSignature OnInteractOverrideEndDelegate;
+
+	FZDOnAnimationOverrideEndSignature OnSitOverrideEndDelegate;
 	
 	/// Animation sequence for interacting with objects
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Animation)
@@ -58,7 +61,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Animation)
 	UPaperZDAnimSequence *SitRightAnimationSequence;
-	
+
 	void Climb();
 
 	void Interact();

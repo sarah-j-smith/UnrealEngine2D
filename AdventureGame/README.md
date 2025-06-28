@@ -103,3 +103,8 @@ to be a template that you can then overwrite with your own character art.
 ![Danger goose character](Docs/images/SpH4M4.gif)
 
 I also implemented pretty much all of the main game logic in C++.
+
+Maybe use this in future - UE5 State Trees
+
+https://dev.epicgames.com/community/learning/tutorials/Dd0L/unreal-engine-environmental-storytelling-npc-action-sequencer
+

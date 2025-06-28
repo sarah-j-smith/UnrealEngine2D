@@ -22,6 +22,15 @@ class ADVENTUREGAME_API UAdventureGameInstance : public UGameInstance
 public:
 	//////////////////////////////////
 	///
+	/// INVENTORY
+	///
+
+	/// Player Character current inventory
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TArray<UInventoryItem *> Inventory;
+	
+	//////////////////////////////////
+	///
 	/// DOOR MANAGEMENT
 	///
 	
