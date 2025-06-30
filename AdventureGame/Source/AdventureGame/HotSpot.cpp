@@ -154,3 +154,13 @@ AAdventurePlayerController* AHotSpot::GetAdventureController() const
 	AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
 	return AdventurePlayerController;
 }
+
+void AHotSpot::AddToInventory(EItemList ItemToAdd)
+{
+	GetAdventureController()->OnItemAddToInventory(ItemToAdd);
+}
+
+void AHotSpot::RemoveFromInventory(EItemList ItemToRemove)
+{
+	GetAdventureController()->OnItemRemoveFromInventory(ItemToRemove);
+}

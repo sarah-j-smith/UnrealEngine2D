@@ -48,7 +48,7 @@ public:
 	UFUNCTION()
 	void HandleOnUnhover();
 private:
-	FButtonStyle SavedStyle;
+	FSlateBrush SavedStyle;
 	
 	void SetButtonImageFromInventoryItem(const UInventoryItem* InventoryItem);
 };

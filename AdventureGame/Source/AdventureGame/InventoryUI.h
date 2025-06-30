@@ -34,12 +34,28 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Arrows")
 	void OnUpArrowButtonClicked();
+
+	void CalculateMaxRowIndex();
+
+	void UpdateCurrentRowIndex();
+
+	void PopulateInventory();
+
+	int32 MaxRowIndex = 0;
+	int32 CurrentRowIndex = 0;
+
+private:
+	bool bArrowButtonClicked = false;
+	int32 iCurrentInventoryLength = 0;
+
+	void UpdateInventoryLength();
 	
 	//////////////////////////////////
 	///
 	/// INVENTORY SLOTS
 	///
 
+public:
 	TArray<UItemSlot *> InventorySlots;
 
 	void AddSlotsToArray();

@@ -108,3 +108,8 @@ Maybe use this in future - UE5 State Trees
 
 https://dev.epicgames.com/community/learning/tutorials/Dd0L/unreal-engine-environmental-storytelling-npc-action-sequencer
 
+## Fonts Update
+
+* The FontStruction “LucasArts SCUMM - Outline” (https://fontstruct.com/fontstructions/show/334686) by “Goatmeal” is licensed under a Creative Commons Attribution Non-commercial Share Alike license (http://creativecommons.org/licenses/by-nc-sa/3.0/).
+  [ancestry]
+* [License text](./lucas-arts-font-license.txt)

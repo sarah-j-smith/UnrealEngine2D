@@ -26,6 +26,11 @@ public:
 	
 	virtual void BeginPlay() override;
 
+	//////////////////////////////////
+	///
+	/// HOTSPOT PROPERTIES
+	///
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HotSpot")
 	USphereComponent* WalkToPoint;
 	
@@ -38,11 +43,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HotSpot")
 	EWalkDirection FacingDirection;
 
+	//////////////////////////////////
+	///
+	/// USER INPUT EVENTS
+	///
+
 	UFUNCTION(BlueprintCallable, Category = "HotSpot")
 	void OnBeginCursorOver(UPrimitiveComponent* Component);
 
 	UFUNCTION(BlueprintCallable, Category = "HotSpot")
 	void OnEndCursorOver(UPrimitiveComponent* Component);
+
+	//////////////////////////////////
+	///
+	/// VERB TRIGGER EVENTS
+	///
 
 	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
 	virtual void OnClose_Implementation() override;
@@ -74,9 +89,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
 	virtual void OnWalkTo_Implementation() override;
 
+	//////////////////////////////////
+	///
+	/// PLAYER ACTIONS
+	///
+	
 	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
 	void Bark(const FText &BarkText);
 
 	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
 	AAdventurePlayerController* GetAdventureController() const;
+
+	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
+	void AddToInventory(EItemList ItemToAdd);
+
+	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
+	void RemoveFromInventory(EItemList ItemToRemove);
 };

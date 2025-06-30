@@ -110,6 +110,10 @@ private:
 	///
 
 public:
+	void OnItemAddToInventory(EItemList ItemToAdd);
+
+	void OnItemRemoveFromInventory(EItemList ItemToRemove);
+	
 	void HandleInventoryItemClicked(UItemSlot *ItemSlot);
 	
 	void MouseEnterInventoryItem(UItemSlot *ItemSlot);
@@ -123,6 +127,9 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
 	bool ItemInteraction = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
+	UItemSlot *CurrentItemSlot;
 
 	//////////////////////////////////
 	///

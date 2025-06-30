@@ -9,8 +9,10 @@
 #include "Door.h"
 #include "AdventureGameHUD.h"
 #include "AdvGameUtils.h"
+#include "ItemData.h"
 
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Kismet/DataTableFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
 void UAdventureGameInstance::OnLoadRoom()
@@ -163,6 +165,33 @@ void UAdventureGameInstance::LoadDoor(const ADoor* Door)
 	AdventureCharacter->TeleportToLocation(Door->WalkToPosition);
 	AdventureCharacter->SetFacingDirection(Door->FacingDirection);
 	AdventureCharacter->SetupCamera();
+}
+
+void UAdventureGameInstance::AddItemToInventory(EItemList ItemToAdd)
+{
+	FName ItemName = FName(ItemGetDescriptiveString(ItemToAdd));
+	check(InventoryDataTable);
+	FItemData *ItemData = InventoryDataTable->FindRow<FItemData>(ItemName, "AddItemToInventory");
+	if (ItemData)
+	{
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		AAdventurePlayerController* AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
+		UInventoryItem *InventoryItem = NewObject<UInventoryItem>(this, ItemData->ItemClass, ItemName);
+		InventoryItem->SetAdventureController(AdventurePlayerController);
+		Inventory.Add(InventoryItem);
+
+		GetHUD()->InventoryUI->PopulateInventory();
+	}
+}
+
+void UAdventureGameInstance::RemoveItemFromInventory(EItemList ItemToRemove)
+{
+	FName ItemName = FName(ItemGetDescriptiveString(ItemToRemove));
+	if (UInventoryItem **FoundItem = Inventory.FindByPredicate([ItemName](UInventoryItem *Item){ return FName(Item->Name) == ItemName; }))
+	{
+		Inventory.Remove(*FoundItem);
+	}
+	GetHUD()->InventoryUI->PopulateInventory();
 }
 
 void UAdventureGameInstance::LoadRoom(ADoor* FromDoor)

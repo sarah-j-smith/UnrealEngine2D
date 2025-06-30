@@ -28,6 +28,19 @@ public:
 	/// Player Character current inventory
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<UInventoryItem *> Inventory;
+
+	/// Add the given item to the current players inventory of held
+	/// items. Instantiates an `UInventoryItem` instance of the class
+	/// from the `InventoryDataTable` and displays it in the inventory UI
+	void AddItemToInventory(EItemList ItemToAdd);
+
+	/// Removes the given item from the current players inventory of held
+	/// items. Destroys the `UInventoryItem` instance of the class
+	/// from the `InventoryDataTable` and deletes it in the inventory UI
+	void RemoveItemFromInventory(EItemList ItemToRemove);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UDataTable *InventoryDataTable;
 	
 	//////////////////////////////////
 	///

@@ -50,6 +50,25 @@ void UAdventureGameHUD::SetInteractionText()
 	{
 		InteractionUI->SetText(VerbStr);
 	}
+	UItemSlot *ItemSlot = AdventurePlayerController->CurrentItemSlot;
+	if (IsValid(ItemSlot) && ItemSlot->HasItem)
+	{
+		UInventoryItem *Item = ItemSlot->InventoryItem;
+		if (IsValid(Item))
+		{
+			if (AdventurePlayerController->CurrentVerb == EVerbType::WalkTo)
+			{
+				FString InteractionText = FString::Printf(TEXT("Look at %s"), *Item->GetName());
+				InteractionUI->SetText(InteractionText);
+			}
+			else
+			{
+				FString VerbText = VerbGetDescriptiveString(AdventurePlayerController->CurrentVerb);
+				FString InteractionText = FString::Printf(TEXT("%s %s"), *VerbText, *Item->GetName());
+				InteractionUI->SetText(InteractionText);
+			}
+		}
+	}
 }
 
 void UAdventureGameHUD::UpdateInteractionTextEvent()

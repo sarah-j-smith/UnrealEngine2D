@@ -115,6 +115,17 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
 	void Bark(const FText &BarkText);
+
+	
+	//////////////////////////////////
+	///
+	/// BARK TEXT
+	///
+		
+	void SetAdventureController(AAdventurePlayerController *AdventurePlayerController)
+	{
+		this->AdventurePlayerController = AdventurePlayerController;
+	}
 	
 private:
 	TObjectPtr<AAdventurePlayerController> AdventurePlayerController; 

@@ -26,6 +26,11 @@ protected:
 
 public:	
 	virtual void Tick(float DeltaTime) override;
+	
+	//////////////////////////////////
+	///
+	/// FOLLOW CAMERA PROPERTIES
+	///
 
 	/**
 	 * Camera base. This is moved to change the location of the camera.
@@ -62,6 +67,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FollowCamera")
 	float FollowSpeed = 12.0f;
 
+	//////////////////////////////////
+	///
+	/// INITIALIZATION
+	///
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="FollowCamera")
 	TObjectPtr<AAdventureCharacter> PlayerCharacter;
 
@@ -69,15 +79,11 @@ public:
 	/// the blueprint for the `ConfinesOfCamera`.
 	void SetupCameraConfines();
 
-	/// Lerp the camera to a position as close as possible to the player
-	/// within the confines.
-	void FollowPlayer(float DeltaTime);
-
 	/// Jump the camera straight to a position as close as possible to
 	/// the player within the confines.
 	void SetupCamera();
 
-	/// Get the confines of the scene that the camera can view & pan across.
+	/// Setup the confines of the scene that the camera can view & pan across.
 	/// Only valid after InitialiseCameraConfines has been called.
 	void GetSceneBounds(FVector &ConfineMax, FVector &ConfineMin)
 	{
@@ -87,6 +93,15 @@ public:
 		ConfineMax = this->ConfineMax + FVector(HalfCamWidth, HalfCamHeight, 0.0f);
 		ConfineMin = this->ConfineMin - FVector(HalfCamWidth, HalfCamHeight, 0.0f);
 	}
+
+	//////////////////////////////////
+	///
+	/// CAMERA FOLLOW BEHAVIOUR
+	///
+	
+	/// Lerp the camera to a position as close as possible to the player
+	/// within the confines. Call from Tick()
+	void FollowPlayer(float DeltaTime);
 
 private:
 	bool bConfinesInitialised = false;

@@ -175,8 +175,25 @@ void AAdventurePlayerController::HandlePointAndClickInput()
 	}
 }
 
+void AAdventurePlayerController::OnItemAddToInventory(EItemList ItemToAdd)
+{
+	UGameInstance *GameInstance = GetGameInstance();
+	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
+	if (!AdventureGameInstance) return;
+	AdventureGameInstance->AddItemToInventory(ItemToAdd);
+}
+
+void AAdventurePlayerController::OnItemRemoveFromInventory(EItemList ItemToRemove)
+{
+	UGameInstance *GameInstance = GetGameInstance();
+	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
+	if (!AdventureGameInstance) return;
+	AdventureGameInstance->RemoveItemFromInventory(ItemToRemove);
+}
+
 void AAdventurePlayerController::HandleInventoryItemClicked(UItemSlot* ItemSlot)
 {
+	CurrentItemSlot = ItemSlot;
 	UInventoryItem *Item = ItemSlot->InventoryItem;
 	switch (CurrentVerb)
 	{

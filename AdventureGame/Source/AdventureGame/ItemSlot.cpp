@@ -6,6 +6,7 @@
 #include "AdventurePlayerController.h"
 #include "InventoryItem.h"
 #include "Kismet/GameplayStatics.h"
+#include "Tools/UEdMode.h"
 
 void UItemSlot::NativeOnInitialized()
 {
@@ -36,8 +37,8 @@ void UItemSlot::RemoveItem()
 	{
 		HasItem = false;
 		this->InventoryItem = nullptr;
-		ItemButton->SetStyle(SavedStyle);
-		ItemSlot->SetVisibility(ESlateVisibility::Visible);
+		ItemSlot->SetBrush(SavedStyle);
+		ItemSlot->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
@@ -76,9 +77,10 @@ void UItemSlot::HandleOnUnhover()
 
 void UItemSlot::SetButtonImageFromInventoryItem(const UInventoryItem* InventoryItem)
 {
-	FButtonStyle Style = ItemButton->GetStyle();
-	SavedStyle = Style;
-	Style.Normal.SetResourceObject(InventoryItem->Thumbnail->GetSourceTexture());
-	ItemButton->SetStyle(Style);
+	SavedStyle = ItemSlot->GetBrush();
+	FSlateBrush NewBrush = SavedStyle;
+	NewBrush.DrawAs = ESlateBrushDrawType::Type::Image;
+	NewBrush.SetResourceObject(InventoryItem->Thumbnail->GetSourceTexture());
+	ItemSlot->SetBrush(NewBrush);
 }
 
