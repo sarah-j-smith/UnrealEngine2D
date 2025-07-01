@@ -20,6 +20,8 @@ enum class EItemList: uint8
 {
 	None        = 0 UMETA(DisplayName = "NONE"),
 	Pickle      = 1 UMETA(DisplayName = "PICKLE"),
+	PickleKey   = 2 UMETA(DisplayName = "PICKLE KEY"),
+	Knife       = 3 UMETA(DisplayName = "KNIFE"),
 };
 
 FString ItemGetDescriptiveString(EItemList ItemList);

@@ -34,6 +34,8 @@ void AAdventureCharacter::OnConstruction(const FTransform& Transform)
 	OnSitOverrideEndDelegate.BindUObject(this, &AAdventureCharacter::OnSitAnimOverrideEnd);
 	OnClimbOverrideEndDelegate.BindUObject(this, &AAdventureCharacter::OnClimbAnimOverrideEnd);
 	OnInteractOverrideEndDelegate.BindUObject(this, &AAdventureCharacter::OnInteractAnimOverrideEnd);
+	OnTurnLeftOverrideEndDelegate.BindUObject(this, &AAdventureCharacter::OnTurnLeftAnimOverrideEnd);
+	OnTurnRightOverrideEndDelegate.BindUObject(this, &AAdventureCharacter::OnTurnRightAnimOverrideEnd);
 }
 
 void AAdventureCharacter::BeginPlay()
@@ -76,27 +78,63 @@ void AAdventureCharacter::Tick(float DeltaTime)
 	}
 }
 
-void AAdventureCharacter::Climb()
+void AAdventureCharacter::Climb(EInteractTimeDirection InteractTimeDirection)
 {
+	LastInteractTimeDirection = InteractTimeDirection;
 	UPaperZDAnimInstance *Anim = GetAnimInstance();
 	Anim->PlayAnimationOverride(LastNonZeroMovement.X > 0 ? ClimbRightAnimationSequence : ClimbLeftAnimationSequence,
-		FName("DefaultSlot"), 1.0f, 0.0f, OnClimbOverrideEndDelegate);
+		FName("DefaultSlot"),
+		InteractTimeDirection == EInteractTimeDirection::Forward ? 1.0f : -1.0f,
+		0.0f,
+		OnClimbOverrideEndDelegate);
 }
 
-void AAdventureCharacter::Interact()
+void AAdventureCharacter::Interact(EInteractTimeDirection InteractTimeDirection)
 {
+	LastInteractTimeDirection = InteractTimeDirection;
 	UPaperZDAnimInstance *Anim = GetAnimInstance();
 	Anim->PlayAnimationOverride(LastNonZeroMovement.X > 0 ? InteractRightAnimationSequence : InteractLeftAnimationSequence,
-		FName("DefaultSlot"), 1.0f, 0.0f,
+		FName("DefaultSlot"),
+		InteractTimeDirection == EInteractTimeDirection::Forward ? 1.0f : -1.0f,
+		0.0f,
 		OnInteractOverrideEndDelegate);
 }
 
-void AAdventureCharacter::Sit()
+void AAdventureCharacter::Sit(EInteractTimeDirection InteractTimeDirection)
 {
+	LastInteractTimeDirection = InteractTimeDirection;
 	UPaperZDAnimInstance *Anim = GetAnimInstance();
-	Anim->PlayAnimationOverride(LastNonZeroMovement.X > 0 ? InteractRightAnimationSequence : InteractLeftAnimationSequence,
-		FName("DefaultSlot"), 1.0f, 0.0f,
+	Anim->PlayAnimationOverride(
+		LastNonZeroMovement.X > 0 ? InteractRightAnimationSequence : InteractLeftAnimationSequence,
+		FName("DefaultSlot"),
+		InteractTimeDirection == EInteractTimeDirection::Forward ? 1.0f : -1.0f,
+		0.0f,
 		OnSitOverrideEndDelegate);
+}
+
+void AAdventureCharacter::TurnLeft(EInteractTimeDirection InteractTimeDirection)
+{
+	LastInteractTimeDirection = InteractTimeDirection;
+	UPaperZDAnimInstance *Anim = GetAnimInstance();
+	Anim->PlayAnimationOverride(
+		TurnLeftAnimationSequence,
+		FName("DefaultSlot"),
+		InteractTimeDirection == EInteractTimeDirection::Forward ? 1.0f : -1.0f,
+		0.0f,
+		OnTurnLeftOverrideEndDelegate);
+}
+
+void AAdventureCharacter::TurnRight(EInteractTimeDirection InteractTimeDirection)
+{
+	UE_LOG(LogTemp, Warning, TEXT("AAdventureCharacter::TurnRight"));
+	LastInteractTimeDirection = InteractTimeDirection;
+	UPaperZDAnimInstance *Anim = GetAnimInstance();
+	Anim->PlayAnimationOverride(
+		TurnRightAnimationSequence,
+		FName("DefaultSlot"),
+		InteractTimeDirection == EInteractTimeDirection::Forward ? 1.0f : -1.0f,
+		0.0f,
+		OnTurnRightOverrideEndDelegate);
 }
 
 void AAdventureCharacter::OnInteractAnimOverrideEnd(bool completed)
@@ -112,6 +150,39 @@ void AAdventureCharacter::OnClimbAnimOverrideEnd(bool completed)
 void AAdventureCharacter::OnSitAnimOverrideEnd(bool completed)
 {
 	//
+}
+
+void AAdventureCharacter::OnTurnLeftAnimOverrideEnd(bool completed)
+{
+	UE_LOG(LogTemp, Warning, TEXT("AAdventureCharacter::TurnRight"));
+	if (completed)
+	{
+		if (LastInteractTimeDirection == EInteractTimeDirection::Forward)
+		{
+			SetFacingDirection(EWalkDirection::Left);
+		}
+		else
+		{
+			SetFacingDirection(EWalkDirection::Down);
+		}
+	}
+}
+
+void AAdventureCharacter::OnTurnRightAnimOverrideEnd(bool completed)
+{
+	UE_LOG(LogTemp, Warning, TEXT("AAdventureCharacter::TurnRight"));
+
+	if (completed)
+	{
+		if (LastInteractTimeDirection == EInteractTimeDirection::Forward)
+		{
+			SetFacingDirection(EWalkDirection::Right);
+		}
+		else
+		{
+			SetFacingDirection(EWalkDirection::Down);
+		}
+	}
 }
 
 void AAdventureCharacter::TeleportToLocation(FVector NewLocation)
@@ -144,6 +215,23 @@ void AAdventureCharacter::SetFacingDirection(EWalkDirection Direction)
 	case EWalkDirection::Down:
 		LastNonZeroMovement = FVector2D(0.0f, 1.0f);
 	}
+}
+
+EWalkDirection AAdventureCharacter::GetFacingDirection()
+{
+	if (LastNonZeroMovement.X > 0.0f)
+	{
+		return EWalkDirection::Right;
+	}
+	else if (LastNonZeroMovement.X < 0.0f)
+	{
+		return EWalkDirection::Left;
+	}
+	else if (LastNonZeroMovement.Y > 0.0f)
+	{
+		return EWalkDirection::Up;
+	}
+	return EWalkDirection::Down;
 }
 
 void AAdventureCharacter::PlayerBark(const FText &NewBarkText)

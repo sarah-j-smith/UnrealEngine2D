@@ -3,6 +3,7 @@
 
 #include "InventoryUI.h"
 
+#include "AdventureGame.h"
 #include "AdventureGameInstance.h"
 #include "AdventurePlayerController.h"
 #include "Kismet/GameplayStatics.h"
@@ -13,73 +14,41 @@ void UInventoryUI::NativeOnInitialized()
 	DownArrowButton->OnClicked.AddDynamic(this, &UInventoryUI::OnDownArrowButtonClicked);
 
 	AddSlotsToArray();
-	CalculateMaxRowIndex();
-	UpdateCurrentRowIndex();
 }
 
 void UInventoryUI::OnDownArrowButtonClicked()
 {
-	UpdateInventoryLength();
-	if (iCurrentInventoryLength > 8)
-	{
-		bArrowButtonClicked = true;
-	}
-	if (CurrentRowIndex < MaxRowIndex)
+	if (InventoryCount > 8 && CurrentRowIndex < MaxRowIndex)
 	{
 		CurrentRowIndex++;
+		PopulateInventory();
 	}
-	PopulateInventory();
 }
 
 void UInventoryUI::OnUpArrowButtonClicked()
 {
-	UpdateInventoryLength();
-	if (iCurrentInventoryLength > 8)
-	{
-		bArrowButtonClicked = true;
-	}
-	if (CurrentRowIndex > 0)
+	if (InventoryCount > 8 && CurrentRowIndex > 0)
 	{
 		CurrentRowIndex--;
+		PopulateInventory();
 	}
-	PopulateInventory();
-}
-
-void UInventoryUI::CalculateMaxRowIndex()
-{
-	UpdateInventoryLength();
-	if (iCurrentInventoryLength > 8)
-	{
-		// Can scroll the rows via the arrow buttons
-		MaxRowIndex = ceilf(static_cast<float>(iCurrentInventoryLength - 8) / 4.0f);
-	}
-	else
-	{
-		// All rows are visible with no scrolling
-		MaxRowIndex = 0;
-	}
-}
-
-void UInventoryUI::UpdateCurrentRowIndex()
-{
-	if (bArrowButtonClicked)
-	{
-		bArrowButtonClicked = false;	
-	}
-	CurrentRowIndex = MaxRowIndex;
 }
 
 void UInventoryUI::PopulateInventory()
 {
 	UGameInstance *GameInstance = UGameplayStatics::GetGameInstance(GetWorld());
 	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
-	CalculateMaxRowIndex();
+	InventoryCount = AdventureGameInstance->Inventory.Num();
+	MaxRowIndex = ceilf((InventoryCount - 8) / 4.0f);
+
+	UE_LOG(LogAdventureGame, Verbose, TEXT("PopulateInventory - Count: %d - MaxRowIndex: %d"), InventoryCount, MaxRowIndex);
+	
 	const int RowMin = CurrentRowIndex * 4;
 	const int RowMax = RowMin + 7;
 	int SlotIndex = 0;
-	for (int i = RowMin; i < RowMax; ++i, ++SlotIndex)
+	for (int i = RowMin; i <= RowMax; ++i, ++SlotIndex)
 	{
-		if (i < iCurrentInventoryLength)
+		if (i < InventoryCount)
 		{
 			InventorySlots[SlotIndex]->AddItem(AdventureGameInstance->Inventory[i]);
 		}
@@ -88,13 +57,6 @@ void UInventoryUI::PopulateInventory()
 			InventorySlots[SlotIndex]->RemoveItem();
 		}
 	}
-}
-
-void UInventoryUI::UpdateInventoryLength()
-{
-	UGameInstance *GameInstance = UGameplayStatics::GetGameInstance(GetWorld());
-	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
-	iCurrentInventoryLength = AdventureGameInstance->Inventory.Num();
 }
 
 void UInventoryUI::AddSlotsToArray()

@@ -9,9 +9,11 @@
 #include "WalkDirection.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/BlueprintAsyncActionBase.h"
+#include "PaperSpriteComponent.h"
 
 #include "HotSpot.generated.h"
 
+class UPaperSprite;
 class AAdventurePlayerController;
 /**
  * 
@@ -42,6 +44,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HotSpot")
 	EWalkDirection FacingDirection;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HotSpot")
+	UPaperSpriteComponent *SpriteComponent;
 
 	//////////////////////////////////
 	///
@@ -93,16 +98,39 @@ public:
 	///
 	/// PLAYER ACTIONS
 	///
+	///
+	///
+
+	/// How far above the player character (closer to the camera) should objects spawn
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Actions")
+	float ZOffsetForSpawn = 5.0;
 	
-	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
+	/// How far above the player character (closer to the camera) should objects spawn
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Actions")
+	FRotator SpawnOrientation = FRotator(0.0, 0.0, -90.0);
+	
+	/// Spawn an actor of the given class on top of the player character.
+	/// Optionally specify a scale and how long it should appear before
+	/// being destroyed automatically. Intended for item interactions,
+	/// where the actor is destroyed on adding to the inventory.
+	UFUNCTION(BlueprintCallable, Category = "Player Actions")
+	AActor *SpawnAtPlayerLocation(TSubclassOf<AActor> SpawnClass, float Scale = 1.0f, float Lifetime = 2.0f);
+	
+	UFUNCTION(BlueprintCallable, Category = "Player Actions")
 	void Bark(const FText &BarkText);
 
-	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
+	UFUNCTION(BlueprintCallable, Category = "Player Actions")
 	AAdventurePlayerController* GetAdventureController() const;
 
-	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
+	UFUNCTION(BlueprintCallable, Category = "Player Actions")
 	void AddToInventory(EItemList ItemToAdd);
 
-	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
+	UFUNCTION(BlueprintCallable, Category = "Player Actions")
 	void RemoveFromInventory(EItemList ItemToRemove);
+
+	UFUNCTION(BlueprintCallable, Category = "Player Actions")
+	void HideSpriteComponent();
+	
+	UFUNCTION(BlueprintCallable, Category = "Player Actions")
+	void ShowSpriteComponent();
 };

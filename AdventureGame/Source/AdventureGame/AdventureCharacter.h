@@ -40,6 +40,10 @@ public:
 
 	FZDOnAnimationOverrideEndSignature OnSitOverrideEndDelegate;
 	
+	FZDOnAnimationOverrideEndSignature OnTurnLeftOverrideEndDelegate;
+	
+	FZDOnAnimationOverrideEndSignature OnTurnRightOverrideEndDelegate;
+	
 	/// Animation sequence for interacting with objects
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Animation)
 	UPaperZDAnimSequence *InteractLeftAnimationSequence;
@@ -62,11 +66,21 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Animation)
 	UPaperZDAnimSequence *SitRightAnimationSequence;
 
-	void Climb();
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Animation)
+	UPaperZDAnimSequence *TurnRightAnimationSequence;
 
-	void Interact();
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Animation)
+	UPaperZDAnimSequence *TurnLeftAnimationSequence;
 
-	void Sit();
+	void Climb(EInteractTimeDirection InteractTimeDirection = EInteractTimeDirection::Forward);
+
+	void Interact(EInteractTimeDirection InteractTimeDirection = EInteractTimeDirection::Forward);
+
+	void Sit(EInteractTimeDirection InteractTimeDirection = EInteractTimeDirection::Forward);
+
+	void TurnLeft(EInteractTimeDirection InteractTimeDirection = EInteractTimeDirection::Forward);
+	
+	void TurnRight(EInteractTimeDirection InteractTimeDirection = EInteractTimeDirection::Forward);
 	
 private:
 	void OnInteractAnimOverrideEnd(bool completed);
@@ -75,6 +89,12 @@ private:
 
 	void OnSitAnimOverrideEnd(bool completed);
 
+	void OnTurnLeftAnimOverrideEnd(bool completed);
+	
+	void OnTurnRightAnimOverrideEnd(bool completed);
+
+	EInteractTimeDirection LastInteractTimeDirection;
+	
 	//////////////////////////////////
 	///
 	/// MOVEMENT
@@ -95,6 +115,8 @@ public:
 	void TeleportToLocation(FVector NewLocation);
 
 	void SetFacingDirection(EWalkDirection Direction);
+
+	EWalkDirection GetFacingDirection();
 
 	//////////////////////////////////
 	///

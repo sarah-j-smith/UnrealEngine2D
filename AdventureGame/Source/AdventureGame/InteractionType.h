@@ -11,6 +11,17 @@ enum class EInteractionType: uint8
 	Interact    = 1 UMETA(DisplayName = "INTERACT"),
 	Sit         = 2 UMETA(DisplayName = "SIT"),
 	Climb       = 3 UMETA(DisplayName = "CLIMB"),
+	TurnLeft    = 4 UMETA(DisplayName = "TURN LEFT"),
+	TurnRight   = 5 UMETA(DisplayName = "TURN RIGHT"),
 };
 
 FString InteractionGetDescriptiveString(EInteractionType InteractionType);
+
+UENUM(BlueprintType)
+enum class EInteractTimeDirection: uint8
+{
+	Forward    = 0 UMETA(DisplayName = "FORWARD"),
+	Backward   = 1 UMETA(DisplayName = "BACKWARD"),
+};
+
+FString TimeDirectionGetDescriptiveString(EInteractTimeDirection InteractTimeDirection);

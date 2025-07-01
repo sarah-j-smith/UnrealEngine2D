@@ -25,7 +25,10 @@ public:
 	///
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemHandling")
-	FString Name;
+	FString Description = "A nameless thing";
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemHandling")
+	EItemList ItemKind = EItemList::None;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemHandling")
 	TObjectPtr<UPaperSprite> Thumbnail;

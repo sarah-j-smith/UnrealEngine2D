@@ -180,6 +180,15 @@ void UAdventureGameInstance::AddItemToInventory(EItemList ItemToAdd)
 		InventoryItem->SetAdventureController(AdventurePlayerController);
 		Inventory.Add(InventoryItem);
 
+		UE_LOG(LogAdventureGame, Verbose, TEXT("AddItemToInventory %s - now %d items"), *(ItemName.ToString()), Inventory.Num());
+
+		FPlatformTypeLayoutParameters LayoutParameters;
+		int ix = 0;
+		for (auto Element : Inventory)
+		{
+			UE_LOG(LogAdventureGame, Verbose, TEXT("   %d - %s"), ix++, *(Element->Description));
+		}
+
 		GetHUD()->InventoryUI->PopulateInventory();
 	}
 }
@@ -187,7 +196,7 @@ void UAdventureGameInstance::AddItemToInventory(EItemList ItemToAdd)
 void UAdventureGameInstance::RemoveItemFromInventory(EItemList ItemToRemove)
 {
 	FName ItemName = FName(ItemGetDescriptiveString(ItemToRemove));
-	if (UInventoryItem **FoundItem = Inventory.FindByPredicate([ItemName](UInventoryItem *Item){ return FName(Item->Name) == ItemName; }))
+	if (UInventoryItem **FoundItem = Inventory.FindByPredicate([ItemToRemove](UInventoryItem *Item){ return Item->ItemKind == ItemToRemove; }))
 	{
 		Inventory.Remove(*FoundItem);
 	}

@@ -9,6 +9,10 @@ FString ItemGetDescriptiveString(const EItemList ItemList)
 	{
 	case EItemList::Pickle:
 		return FString("Pickle");
+	case EItemList::PickleKey:
+		return FString("Pickle Key");
+	case EItemList::Knife:
+		return FString("Knife");
 	case EItemList::None:
 	default:
 		return FString("None");

@@ -53,7 +53,6 @@ void AAdventurePlayerController::MouseEnterInventoryItem(UItemSlot *ItemSlot)
 
 void AAdventurePlayerController::MouseLeaveInventoryItem()
 {
-	if (HotspotInteraction || IsPerformingTaskInteraction) return;
 	if (!CurrentItem) return;
 	CurrentItem = nullptr;
 	TriggerUpdateInteractionText();
@@ -452,7 +451,7 @@ void AAdventurePlayerController::PlayerBark(FText BarkText)
 	PlayerCharacter->PlayerBark(BarkText);
 }
 
-void AAdventurePlayerController::PlayerClimb(int32 UID)
+void AAdventurePlayerController::PlayerClimb(int32 UID, EInteractTimeDirection InteractDirection)
 {
 	PlayerInteractUID = UID;
 	if (PlayerCharacter->LastNonZeroMovement.X != 0)
@@ -467,7 +466,7 @@ void AAdventurePlayerController::PlayerClimb(int32 UID)
 	}
 }
 
-void AAdventurePlayerController::PlayerInteract(int32 UID)
+void AAdventurePlayerController::PlayerInteract(int32 UID, EInteractTimeDirection InteractDirection)
 {
 	PlayerInteractUID = UID;
 	if (PlayerCharacter->LastNonZeroMovement.X != 0)
@@ -482,7 +481,7 @@ void AAdventurePlayerController::PlayerInteract(int32 UID)
 	}
 }
 
-void AAdventurePlayerController::PlayerSit(int32 UID)
+void AAdventurePlayerController::PlayerSit(int32 UID, EInteractTimeDirection InteractDirection)
 {
 	PlayerInteractUID = UID;
 	if (PlayerCharacter->LastNonZeroMovement.X != 0)
@@ -494,6 +493,90 @@ void AAdventurePlayerController::PlayerSit(int32 UID)
 	{
 		OnPlayerSitComplete(false);
 		UE_LOG(LogAdventureGame, Warning, TEXT("PlayerSit called when player not facing left or right."))
+	}
+}
+
+void AAdventurePlayerController::PlayerTurnLeft(int32 UID, EInteractTimeDirection InteractDirection)
+{
+	PlayerInteractUID = UID;
+	EWalkDirection Facing = PlayerCharacter->GetFacingDirection();
+	switch (Facing)
+	{
+	case EWalkDirection::Up:
+		UE_LOG(LogAdventureGame, VeryVerbose, TEXT("Current character does not distinguish front from back, in turn animation"));
+	case EWalkDirection::Down:
+		if (InteractDirection == EInteractTimeDirection::Forward)
+		{
+			// Turn from the front/back to the left
+			SetInputLocked(true);
+			PlayerCharacter->TurnLeft(InteractDirection);
+		}
+		else
+		{
+			UE_LOG(LogAdventureGame, Warning, TEXT("PlayerTurnLeft in Reverse called when player not facing left"))
+			OnPlayerTurnLeftComplete(false);
+		}
+		break;
+	case EWalkDirection::Left:
+		if (InteractDirection == EInteractTimeDirection::Backward)
+		{
+			// Turn from the left back to the front
+			SetInputLocked(true);
+			PlayerCharacter->TurnLeft(InteractDirection);
+		}
+		else
+		{
+			UE_LOG(LogAdventureGame, Warning, TEXT("PlayerTurnLeft called when player already facing left. Use backward?"))
+			OnPlayerTurnLeftComplete(false);
+		}
+		break;
+	case EWalkDirection::Right:
+		UE_LOG(LogAdventureGame, Warning, TEXT("PlayerTurnLeft called when player facing right."))
+		OnPlayerTurnLeftComplete(false);
+		break;
+	}
+}
+
+void AAdventurePlayerController::PlayerTurnRight(int32 UID, EInteractTimeDirection InteractDirection)
+{
+	UE_LOG(LogAdventureGame, Warning, TEXT("AAdventurePlayerController::PlayerTurnRight"));
+
+	PlayerInteractUID = UID;
+	EWalkDirection Facing = PlayerCharacter->GetFacingDirection();
+	switch (Facing)
+	{
+	case EWalkDirection::Up:
+		UE_LOG(LogAdventureGame, VeryVerbose, TEXT("Current character does not distinguish front from back, in turn animation"));
+	case EWalkDirection::Down:
+		if (InteractDirection == EInteractTimeDirection::Forward)
+		{
+			// Turn from the front/back to the left
+			SetInputLocked(true);
+			PlayerCharacter->TurnRight(InteractDirection);
+		}
+		else
+		{
+			UE_LOG(LogAdventureGame, Warning, TEXT("PlayerTurnRight in Reverse called when player not facing left"))
+			OnPlayerTurnRightComplete(false);
+		}
+		break;
+	case EWalkDirection::Right:
+		if (InteractDirection == EInteractTimeDirection::Backward)
+		{
+			// Turn from the left back to the front
+			SetInputLocked(true);
+			PlayerCharacter->TurnRight(InteractDirection);
+		}
+		else
+		{
+			UE_LOG(LogAdventureGame, Warning, TEXT("PlayerTurnRight called when player already facing right. Use backward?"))
+			OnPlayerTurnRightComplete(false);
+		}
+		break;
+	case EWalkDirection::Left:
+		UE_LOG(LogAdventureGame, Warning, TEXT("PlayerTurnRight called when player facing left."))
+		OnPlayerTurnRightComplete(false);
+		break;
 	}
 }
 
@@ -510,4 +593,14 @@ void AAdventurePlayerController::OnPlayerSitComplete(bool Complete)
 void AAdventurePlayerController::OnPlayerClimbComplete(bool Complete)
 {
 	EndTaskAction(EInteractionType::Climb, PlayerClimbUID, Complete);
+}
+
+void AAdventurePlayerController::OnPlayerTurnLeftComplete(bool Complete)
+{
+	EndTaskAction(EInteractionType::TurnLeft, PlayerTurnUID, Complete);
+}
+
+void AAdventurePlayerController::OnPlayerTurnRightComplete(bool Complete)
+{
+	EndTaskAction(EInteractionType::TurnRight, PlayerTurnUID, Complete);
 }

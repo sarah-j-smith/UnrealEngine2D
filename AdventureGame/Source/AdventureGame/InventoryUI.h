@@ -7,6 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "InventoryUI.generated.h"
 
+class UAdventureGameInstance;
 /**
  * 
  */
@@ -35,27 +36,27 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Arrows")
 	void OnUpArrowButtonClicked();
 
-	void CalculateMaxRowIndex();
-
-	void UpdateCurrentRowIndex();
-
 	void PopulateInventory();
 
-	int32 MaxRowIndex = 0;
-	int32 CurrentRowIndex = 0;
-
-private:
-	bool bArrowButtonClicked = false;
-	int32 iCurrentInventoryLength = 0;
-
-	void UpdateInventoryLength();
+	/// Row of inventory displayed in the top row of slots.
+	/// Will be zero unless there are more than 8 items in the inventory.
+	/// When this is non-zero the arrow buttons can be used to see other rows.
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Arrows")
+	int CurrentRowIndex = 0;
+	
+	/// The max value of CurrentRowIndex - ceil((inventory_count - 8)/4)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Arrows")
+	int MaxRowIndex = 0;
+	
+	/// The current number of items in the inventory
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Arrows")
+	int InventoryCount = 0;
 	
 	//////////////////////////////////
 	///
 	/// INVENTORY SLOTS
 	///
-
-public:
+	
 	TArray<UItemSlot *> InventorySlots;
 
 	void AddSlotsToArray();

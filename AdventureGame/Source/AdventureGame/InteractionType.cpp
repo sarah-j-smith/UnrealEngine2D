@@ -5,15 +5,26 @@ FString InteractionGetDescriptiveString(const EInteractionType InteractionType)
 	switch (InteractionType) {
 	case EInteractionType::Interact:
 		return "Interact";
-		break;
 	case EInteractionType::Sit:
 		return "Sit";
-		break;
 	case EInteractionType::Climb:
 		return "Climb";
-		break;
+	case EInteractionType::TurnLeft:
+		return "Turn Left";
+	case EInteractionType::TurnRight:
+		return "Turn Right";
 	default:
 		return "None";
-		break;	
 	}
+}
+
+FString TimeDirectionGetDescriptiveString(EInteractTimeDirection InteractTimeDirection)
+{
+	switch (InteractTimeDirection) {
+	case EInteractTimeDirection::Forward:
+		return "Forward";
+	case EInteractTimeDirection::Backward:
+		return "Backward";
+	}
+	return "Never";
 }

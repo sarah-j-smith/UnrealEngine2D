@@ -12,15 +12,19 @@ UInteractTask::UInteractTask(const FObjectInitializer &ObjectInitializer)
 	: Super(ObjectInitializer)
 	, WorldContextObject(nullptr)
 	, Interaction(EInteractionType::None)
+	, TimeDirection(EInteractTimeDirection::Forward)
 {
 	MyUID = AdvGameUtils::GetUUID();
 }
 
-UInteractTask* UInteractTask::DoInteractTask(const UObject* WorldContextObject, const EInteractionType Interaction)
+UInteractTask* UInteractTask::DoInteractTask(const UObject* WorldContextObject, const EInteractionType Interaction, const EInteractTimeDirection TimeDirection)
 {
 	UInteractTask* BlueprintNode = NewObject<UInteractTask>();
 	BlueprintNode->SetWorldContextObject(WorldContextObject);
 	BlueprintNode->SetInteractionType(Interaction);
+	BlueprintNode->SetTimeDirection(TimeDirection);
+
+	UE_LOG(LogAdventureGame, Log, TEXT("UInteractTask created"));
 	
 	// Register with the game instance to avoid being garbage collected
 	BlueprintNode->RegisterWithGameInstance(WorldContextObject);
@@ -41,6 +45,8 @@ void UInteractTask::Activate()
 {
 	Super::Activate();
 
+	UE_LOG(LogAdventureGame, Log, TEXT("UInteractTask Activate - %s"), *(InteractionGetDescriptiveString(Interaction)));
+	
 	switch (Interaction)
 	{
 	case EInteractionType::Interact:
@@ -52,6 +58,12 @@ void UInteractTask::Activate()
 	case EInteractionType::Climb:
 		Climb();
 		break;
+	case EInteractionType::TurnLeft:
+		TurnLeft();
+		break;
+	case EInteractionType::TurnRight:
+		UE_LOG(LogAdventureGame, Warning, TEXT("TURN RIGHT"));
+		TurnRight();
 	case EInteractionType::None:
 		break;
 	}
@@ -69,7 +81,7 @@ void UInteractTask::Sit()
 {
 	if (AAdventurePlayerController *AdventurePlayerController = GetAdventureController())
 	{
-		AdventurePlayerController->PlayerSit(MyUID);
+		AdventurePlayerController->PlayerSit(MyUID, TimeDirection);
 	}
 }
 
@@ -77,7 +89,24 @@ void UInteractTask::Climb()
 {
 	if (AAdventurePlayerController *AdventurePlayerController = GetAdventureController())
 	{
-		AdventurePlayerController->PlayerClimb(MyUID);
+		AdventurePlayerController->PlayerClimb(MyUID, TimeDirection);
+	}
+}
+
+void UInteractTask::TurnLeft()
+{
+	if (AAdventurePlayerController *AdventurePlayerController = GetAdventureController())
+	{
+		AdventurePlayerController->PlayerTurnLeft(MyUID, TimeDirection);
+	}
+}
+
+void UInteractTask::TurnRight()
+{
+	if (AAdventurePlayerController *AdventurePlayerController = GetAdventureController())
+	{
+		UE_LOG(LogAdventureGame, Warning, TEXT("calling adv controller TURN RIGHT"));
+		AdventurePlayerController->PlayerTurnRight(MyUID, TimeDirection);
 	}
 }
 
@@ -85,7 +114,7 @@ void UInteractTask::Interact()
 {
 	if (AAdventurePlayerController *AdventurePlayerController = GetAdventureController())
 	{
-		AdventurePlayerController->PlayerInteract(MyUID);
+		AdventurePlayerController->PlayerInteract(MyUID, TimeDirection);
 	}
 }
 

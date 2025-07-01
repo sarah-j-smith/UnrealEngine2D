@@ -170,12 +170,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayerBark(FText BarkText);
 	
-	void PlayerClimb(int32 UID);
+	void PlayerClimb(int32 UID, EInteractTimeDirection InteractDirection);
 	
-	void PlayerInteract(int32 UID);
+	void PlayerInteract(int32 UID, EInteractTimeDirection InteractDirection);
 	
-	void PlayerSit(int32 UID);
+	void PlayerSit(int32 UID, EInteractTimeDirection InteractDirection);
 
+	/// Turn from front facing to the left, or left facing to the front if reversed.
+	void PlayerTurnLeft(int32 UID, EInteractTimeDirection InteractDirection);
+
+	/// Turn from front facing to the right, or right facing to the front if reversed.
+	void PlayerTurnRight(int32 UID, EInteractTimeDirection InteractDirection);
 private:
 	UFUNCTION()
 	void OnPlayerInteractComplete(bool Complete);
@@ -188,6 +193,13 @@ private:
 	UFUNCTION()
 	void OnPlayerClimbComplete(bool Complete);
 	int32 PlayerClimbUID = 0;
+
+	UFUNCTION()
+	void OnPlayerTurnLeftComplete(bool Complete);
+
+	UFUNCTION()
+	void OnPlayerTurnRightComplete(bool Complete);
+	int32 PlayerTurnUID = 0;
 
 	void EndTaskAction(EInteractionType InteractionType, int32 UID, bool Complete);
 	

@@ -15,8 +15,14 @@ AHotSpot::AHotSpot()
 	// This is not a "real" sphere - its not a mesh, its just a collision volume defined by dimensions
 	WalkToPoint = CreateDefaultSubobject<USphereComponent>(TEXT("PlayerDetectorSphere"));
 	WalkToPoint->SetupAttachment(RootComponent);
-	
 	WalkToPoint->SetSphereRadius(4.0f);
+
+	SpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("SpriteComponent"));
+	SpriteComponent->SetupAttachment(RootComponent);
+	SpriteComponent->SetRelativeRotation(FRotator(0.0f, 0.0f, -90.0f));
+	SpriteComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 5.0f));
+	SpriteComponent->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	SpriteComponent->SetVisibility(false);
 }
 
 void AHotSpot::BeginPlay()
@@ -140,6 +146,23 @@ void AHotSpot::OnWalkTo_Implementation()
 	}
 }
 
+AActor *AHotSpot::SpawnAtPlayerLocation(TSubclassOf<AActor> SpawnClass, float Scale, float Lifetime)
+{
+	APawn *PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	
+	FVector PlayerLocation = PlayerPawn->GetTransform().GetLocation();
+	FVector SpawnLocation(PlayerLocation.X, PlayerLocation.Y, PlayerLocation.Z + ZOffsetForSpawn);
+	check(SpawnClass)
+	AActor* Item = GetWorld()->SpawnActor<AActor>(
+		SpawnClass,
+		SpawnLocation,
+		SpawnOrientation);
+	Item->SetLifeSpan(Lifetime);
+	Item->SetActorScale3D(FVector(Scale, Scale, Scale));
+
+	return Item;
+}
+
 void AHotSpot::Bark(const FText &BarkText)
 {
 	if (AAdventurePlayerController *AdventurePlayerController = GetAdventureController())
@@ -163,4 +186,14 @@ void AHotSpot::AddToInventory(EItemList ItemToAdd)
 void AHotSpot::RemoveFromInventory(EItemList ItemToRemove)
 {
 	GetAdventureController()->OnItemRemoveFromInventory(ItemToRemove);
+}
+
+void AHotSpot::HideSpriteComponent()
+{
+	SpriteComponent->SetVisibility(false);
+}
+
+void AHotSpot::ShowSpriteComponent()
+{
+	SpriteComponent->SetVisibility(true);
 }
