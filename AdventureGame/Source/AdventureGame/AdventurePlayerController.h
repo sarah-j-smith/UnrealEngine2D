@@ -121,6 +121,11 @@ public:
 	void MouseLeaveInventoryItem();
 
 	void PerformItemInteraction(UInventoryItem *InventoryItem);
+
+	UFUNCTION(BlueprintCallable, Category="Items")
+	void CombineItems(UInventoryItem *InventoryItemSource,
+		const UInventoryItem *InventoryItemToCombineWith,
+		EItemList ResultingItem, FText TextToBark, FText ResultDescription = FText::GetEmpty());
 	
 	/// Tell the UI to put the current verb and any current inventory item into the text display
 	/// and if the InventoryItemInteraction is true, highlight the text.
@@ -128,9 +133,22 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
 	TObjectPtr<UInventoryItem> CurrentItem;
-	
+
+	/// True if the player character is currently interacting with an item
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
 	bool ItemInteraction = false;
+
+	/// True if the player character is currently using via the "Use" verb on an item
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
+	bool IsUsingItem = false;
+
+	/// True if the player character is currently giving via the "Give" verb on an item
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
+	bool IsGivingItem = false;
+
+	/// An item current in process of "Use" or "Give"
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
+	EItemList ActiveItem = EItemList::None;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
 	UItemSlot *CurrentItemSlot;
@@ -164,6 +182,9 @@ public:
 	EVerbType CurrentVerb = EVerbType::WalkTo;
 
 	void AssignVerb(EVerbType NewVerb);
+
+	/// Stops any current action, items and hotspots, clearing the status
+	UFUNCTION(BlueprintCallable, Category="Verb", DisplayName="ClearAction")
 	void InterruptCurrentAction();
 
 	FRunInterruptedActionDelegate RunInterruptedActionDelegate;

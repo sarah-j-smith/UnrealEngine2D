@@ -13,6 +13,8 @@ enum class EInteractionType: uint8
 	Climb       = 3 UMETA(DisplayName = "CLIMB"),
 	TurnLeft    = 4 UMETA(DisplayName = "TURN LEFT"),
 	TurnRight   = 5 UMETA(DisplayName = "TURN RIGHT"),
+	UseItem     = 6 UMETA(DisplayName = "USE ITEM"),
+	GiveItem	= 7 UMETA(DisplayName = "GIVE ITEM"),
 };
 
 FString InteractionGetDescriptiveString(EInteractionType InteractionType);

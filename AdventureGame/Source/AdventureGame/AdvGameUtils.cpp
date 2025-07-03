@@ -1,5 +1,8 @@
 #include "AdvGameUtils.h"
 
+#include "HotSpot.h"
+#include "InventoryItem.h"
+
 /**
  * Test to see if Current has changed more than DBL_EPSILON compared to Previous in either `X` or `Y`.
  * @param Current `FVector2D` Value to check to see if it differs
@@ -16,4 +19,44 @@ int32 AdvGameUtils::GetUUID()
 	uuid_t UUIDLatent;
 	uuid_generate(UUIDLatent);
 	return UUIDLatent[0] | UUIDLatent[1] << 8 | UUIDLatent[2] << 16 | UUIDLatent[3] << 24;
+}
+
+FString AdvGameUtils::GetGivingItemString(
+		const UInventoryItem *CurrentItem,
+		UInventoryItem *TargetItem,
+		AHotSpot *HotSpot
+		)
+{
+	FString InventoryText;
+	FString TargetItemString;
+	if (HotSpot) // Using an item on a hotspot
+	{
+		TargetItemString = HotSpot->HotSpotDescription;
+	}
+	else if (CurrentItem) // Using an item on another item
+	{
+		TargetItemString = TargetItem ? TargetItem->Description : ItemGetDescriptiveString(CurrentItem->InteractableItem);
+	}
+	return FString::Printf(TEXT("Give %s to %s"), *TargetItem->GetName(), *TargetItemString);
+}
+
+FString AdvGameUtils::GetUsingItemString(const UInventoryItem* CurrentItem, UInventoryItem* TargetItem, AHotSpot* HotSpot)
+{
+	FString InventoryText;
+	FString TargetItemString;
+	if (HotSpot) // Using an item on a hotspot
+	{
+		TargetItemString = HotSpot->HotSpotDescription;
+	}
+	else if (CurrentItem) // Using an item on another item
+	{
+		TargetItemString = TargetItem ? TargetItem->Description : ItemGetDescriptiveString(CurrentItem->InteractableItem);
+	}
+	return FString::Printf(TEXT("Use %s on %s"), *TargetItem->GetName(), *TargetItemString);
+}
+
+FString AdvGameUtils::GetVerbWithItemString(const UInventoryItem* CurrentItem, const EVerbType Verb)
+{
+	return FString::Printf(TEXT("%s %s"),
+		*VerbGetDescriptiveString(Verb), *CurrentItem->Description);
 }

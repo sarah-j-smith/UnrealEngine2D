@@ -6,6 +6,7 @@
 #include "AdventureGame.h"
 #include "Kismet/GameplayStatics.h"
 #include "AdventurePlayerController.h"
+#include "AdvGameUtils.h"
 
 void UAdventureGameHUD::NativeOnInitialized()
 {
@@ -15,9 +16,11 @@ void UAdventureGameHUD::NativeOnInitialized()
 	AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
 	check(AdventurePlayerController);
 	AdventurePlayerController->BeginActionDelegate.AddUObject(this, &UAdventureGameHUD::BeginActionEvent);
-	AdventurePlayerController->UpdateInteractionTextDelegate.AddUObject(this, &UAdventureGameHUD::UpdateInteractionTextEvent);
+	AdventurePlayerController->UpdateInteractionTextDelegate.AddUObject(
+		this, &UAdventureGameHUD::UpdateInteractionTextEvent);
 	AdventurePlayerController->InterruptActionDelegate.AddUObject(this, &UAdventureGameHUD::InterruptActionEvent);
-	AdventurePlayerController->UpdateInventoryTextDelegate.AddUObject(this, &UAdventureGameHUD::UpdateInventoryTextEvent);
+	AdventurePlayerController->UpdateInventoryTextDelegate.AddUObject(
+		this, &UAdventureGameHUD::UpdateInventoryTextEvent);
 
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameHUD::NativeOnInitialized"));
 }
@@ -55,25 +58,35 @@ void UAdventureGameHUD::SetInteractionText()
 
 void UAdventureGameHUD::SetInventoryText()
 {
-	UItemSlot *ItemSlot = AdventurePlayerController->CurrentItemSlot;
-	if (IsValid(ItemSlot) && ItemSlot->HasItem)
+	UItemSlot* ItemSlot = AdventurePlayerController->CurrentItemSlot;
+	UInventoryItem* Item = nullptr; // Item a char is acting on from an item slot
+	if (IsValid(ItemSlot) && ItemSlot->HasItem && IsValid(ItemSlot->InventoryItem))
 	{
-		UInventoryItem *Item = ItemSlot->InventoryItem;
-		if (IsValid(Item))
-		{
-			if (AdventurePlayerController->CurrentVerb == EVerbType::WalkTo)
-			{
-				FString InteractionText = FString::Printf(TEXT("Look at %s"), *Item->GetName());
-				InteractionUI->SetText(InteractionText);
-			}
-			else
-			{
-				FString VerbText = VerbGetDescriptiveString(AdventurePlayerController->CurrentVerb);
-				FString InteractionText = FString::Printf(TEXT("%s %s"), *VerbText, *Item->GetName());
-				InteractionUI->SetText(InteractionText);
-			}
-		}
+		Item = ItemSlot->InventoryItem;
 	}
+	else
+	{
+		UE_LOG(LogAdventureGame, Warning, TEXT("SetInventoryText called when not inventory slot item available."));
+	}
+	UInventoryItem* CurrentItem = AdventurePlayerController->CurrentItem; // Item a char has
+	AHotSpot* HotSpot = AdventurePlayerController->CurrentHotSpot;
+	const EVerbType Verb = AdventurePlayerController->CurrentVerb;
+	FString InventoryText;
+	if (AdventurePlayerController->IsUsingItem)
+	{
+		InventoryText = AdvGameUtils::GetUsingItemString(CurrentItem, Item, HotSpot);
+	}
+	else if (AdventurePlayerController->IsGivingItem)
+	{
+		InventoryText = AdvGameUtils::GetGivingItemString(CurrentItem, Item, HotSpot);
+	}
+	else if (Item)
+	{
+		InventoryText = (Verb == EVerbType::WalkTo)
+			                ? AdvGameUtils::GetVerbWithItemString(Item, EVerbType::LookAt)
+			                : AdvGameUtils::GetVerbWithItemString(Item, Verb);
+	}
+	InteractionUI->SetText(InventoryText);
 }
 
 void UAdventureGameHUD::UpdateInteractionTextEvent()
@@ -106,7 +119,6 @@ void UAdventureGameHUD::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	{
 		AdventurePlayerController->IsMouseOverUI = MouseIsOverUI;
 		UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameHUD::NativeTick set IsMouseOverUI %s"),
-			*(FString(MouseIsOverUI ? "true" : "false")));
+		       *(FString(MouseIsOverUI ? "true" : "false")));
 	}
 }
-

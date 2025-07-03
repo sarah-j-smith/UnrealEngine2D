@@ -32,7 +32,9 @@ public:
 	/// Add the given item to the current players inventory of held
 	/// items. Instantiates an `UInventoryItem` instance of the class
 	/// from the `InventoryDataTable` and displays it in the inventory UI
-	void AddItemToInventory(EItemList ItemToAdd);
+	/// @param ItemToAdd EItemList to create an instance of.
+	/// @param Description FText optional description to give to the item
+	void AddItemToInventory(EItemList ItemToAdd, FText Description = FText::GetEmpty());
 
 	/// Removes the given item from the current players inventory of held
 	/// items. Destroys the `UInventoryItem` instance of the class

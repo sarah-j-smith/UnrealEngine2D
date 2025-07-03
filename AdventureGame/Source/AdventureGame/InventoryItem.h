@@ -24,22 +24,32 @@ public:
 	/// ITEM HANDLING
 	///
 
+	/// Very short description to distinguish this thing from others of the same kind
+	/// eg "Blunt red knife" - "Old tattered book"
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemHandling")
 	FString Description = "A nameless thing";
-	
+
+	/// Enum ItemKind for this thing. Defaults to `None`. Add new
+	/// item kinds in the `EItemList` enum.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemHandling")
 	EItemList ItemKind = EItemList::None;
-	
+
+	/// Thumbnail image to represent this item inside the inventory.
+	/// Images used for the item while in the level or scene should
+	/// be attached to a hotspot pickup instead.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemHandling")
 	TObjectPtr<UPaperSprite> Thumbnail;
-	
+
+	/// An item kind that can meaningfully interact with this one.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemHandling")
 	EItemList InteractableItem = EItemList::None;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "ItemHandling")
+	void OnItemCombineSuccess();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "ItemHandling")
+	void OnItemCombineFailure();
 	
-	virtual void OnItemCombineSuccess();
-
-	virtual void OnItemCombineFailure();
-
 	//////////////////////////////////
 	///
 	/// VERB INTERACTION
@@ -76,7 +86,10 @@ public:
 	virtual void OnWalkTo_Implementation() override;
 
 	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
-	virtual void OnItemUsed_Implementation(EItemList ItemUsed) override;
+	virtual void OnItemUsed_Implementation() override;
+
+	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
+	virtual void OnItemGiven_Implementation() override;
 
 	//////////////////////////////////
 	///
@@ -116,15 +129,23 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VerbInteractions")
 	FText ItemUsedDefaultText = FText::FromString("That won't work...");
 
-	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
-	void Bark(const FText &BarkText);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VerbInteractions")
+	FText ItemGivenDefaultText = FText::FromString("Could not give it");
 
-	
 	//////////////////////////////////
 	///
 	/// BARK TEXT
 	///
 		
+	UFUNCTION(BlueprintCallable, Category = "Player Actions")
+	void Bark(const FText &BarkText);
+
+	UFUNCTION(BlueprintCallable, Category = "Player Actions")
+	AAdventurePlayerController *GetAdventureController() const
+	{
+		return this->AdventurePlayerController;
+	}
+	
 	void SetAdventureController(AAdventurePlayerController *AdventurePlayerController)
 	{
 		this->AdventurePlayerController = AdventurePlayerController;

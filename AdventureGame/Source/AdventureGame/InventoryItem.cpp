@@ -13,12 +13,12 @@ UInventoryItem::UInventoryItem(FObjectInitializer const& ObjectInitializer)
 	//
 }
 
-void UInventoryItem::OnItemCombineSuccess()
+void UInventoryItem::OnItemCombineSuccess_Implementation()
 {
 	UE_LOG(LogAdventureGame, Log, TEXT("OnItemCombineSuccess Success"));
 }
 
-void UInventoryItem::OnItemCombineFailure()
+void UInventoryItem::OnItemCombineFailure_Implementation()
 {
 	Bark(ItemUsedDefaultText);
 }
@@ -82,6 +82,10 @@ void UInventoryItem::OnPush_Implementation()
 void UInventoryItem::OnUse_Implementation()
 {
 	IVerbInteractions::OnUse_Implementation();
+	AdventurePlayerController->ActiveItem = ItemKind;
+	AdventurePlayerController->IsUsingItem = true;
+	AdventurePlayerController->CurrentVerb = EVerbType::UseItem;
+	AdventurePlayerController->TriggerUpdateInventoryText();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On use"));
 	Bark(UseDefaultText);
 }
@@ -91,17 +95,36 @@ void UInventoryItem::OnWalkTo_Implementation()
 	// WalkToDefaultText
 }
 
-void UInventoryItem::OnItemUsed_Implementation(EItemList ItemUsed)
+void UInventoryItem::OnItemUsed_Implementation()
 {
-	if (ItemUsed == InteractableItem && InteractableItem != EItemList::None)
+	IVerbInteractions::OnItemUsed_Implementation();
+
+	if (AdventurePlayerController->ActiveItem == ItemKind)
 	{
-		IVerbInteractions::OnItemUsed_Implementation(ItemUsed);
-		OnItemCombineSuccess();
+		// Item is used on itself
+		AdventurePlayerController->InterruptCurrentAction();
+		OnItemCombineFailure();
+	}
+	else if (AdventurePlayerController->ActiveItem == InteractableItem)
+	{
+		OnItemCombineSuccess();	
 	}
 	else
 	{
+		// Item is not the one that can be used with this
+		AdventurePlayerController->InterruptCurrentAction();
 		OnItemCombineFailure();
 	}
+}
+
+void UInventoryItem::OnItemGiven_Implementation()
+{
+	IVerbInteractions::OnItemGiven_Implementation();
+	AdventurePlayerController->ActiveItem = ItemKind;
+	AdventurePlayerController->IsGivingItem = true;
+	AdventurePlayerController->CurrentVerb = EVerbType::GiveItem;
+	AdventurePlayerController->TriggerUpdateInventoryText();
+	Bark(ItemGivenDefaultText);
 }
 
 void UInventoryItem::Bark(const FText &BarkText)

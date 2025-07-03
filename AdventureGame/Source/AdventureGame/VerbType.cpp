@@ -24,6 +24,10 @@ FString VerbGetDescriptiveString(EVerbType Verb)
 		return FString("Pull");
 	case EVerbType::WalkTo:
 		return FString("Walk to");
+	case EVerbType::UseItem:
+		return FString("Use item");
+	case EVerbType::GiveItem:
+		return FString("Give item");
 	default:
 		return FString("None");
 	}

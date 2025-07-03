@@ -50,14 +50,14 @@ void AAdventurePlayerController::MouseLeaveHotSpot()
 
 void AAdventurePlayerController::MouseEnterInventoryItem(UItemSlot *ItemSlot)
 {
-	if (HotspotInteraction || IsPerformingTaskInteraction) return;
+	if (HotspotInteraction || IsPerformingTaskInteraction || IsGivingItem || IsUsingItem) return;
 	CurrentItem = ItemSlot->InventoryItem;
 	TriggerUpdateInventoryText();
 }
 
 void AAdventurePlayerController::MouseLeaveInventoryItem()
 {
-	if (HotspotInteraction || IsPerformingTaskInteraction) return;
+	if (HotspotInteraction || IsPerformingTaskInteraction || IsGivingItem || IsUsingItem) return;
 	if (!CurrentItem) return;
 	CurrentItem = nullptr;
 	TriggerUpdateInventoryText();
@@ -413,7 +413,34 @@ void AAdventurePlayerController::PerformItemInteraction(UInventoryItem *Inventor
 	case EVerbType::WalkTo:
 		UInventoryItem::Execute_OnWalkTo(InventoryItem);
 		break;
+	case EVerbType::UseItem:
+		UInventoryItem::Execute_OnItemUsed(InventoryItem);
+		break;
+	case EVerbType::GiveItem:
+		UInventoryItem::Execute_OnItemGiven(InventoryItem);
+		break;
 	}
+}
+
+void AAdventurePlayerController::CombineItems(UInventoryItem* InventoryItemSource,
+	const UInventoryItem* InventoryItemToCombineWith, EItemList ResultingItem, FText TextToBark, FText ResultDescription)
+{
+	if (CurrentItem == InventoryItemSource)
+	{
+		CurrentItem = nullptr;
+	}
+	if (CurrentItemSlot && CurrentItemSlot->InventoryItem == InventoryItemToCombineWith)
+	{
+		CurrentItemSlot = nullptr;
+	}
+	UGameInstance *GameInstance = GetGameInstance();
+	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
+	
+	AdventureGameInstance->RemoveItemFromInventory(InventoryItemSource->ItemKind);
+	AdventureGameInstance->RemoveItemFromInventory(InventoryItemToCombineWith->ItemKind);
+	AdventureGameInstance->AddItemToInventory(ResultingItem);
+	PlayerBark(TextToBark);
+	InterruptCurrentAction();
 }
 
 void AAdventurePlayerController::TriggerUpdateInventoryText()
@@ -476,6 +503,10 @@ void AAdventurePlayerController::InterruptCurrentAction()
 	CurrentVerb = EVerbType::WalkTo;
 	CurrentHotSpot = nullptr;
 	HotspotInteraction = false;
+	ActiveItem = EItemList::None;
+	IsGivingItem = false;
+	IsUsingItem = false;
+	ItemInteraction = false;
 	TriggerInterruptAction();
 	RunInterruptedActionDelegate.ExecuteIfBound();
 }

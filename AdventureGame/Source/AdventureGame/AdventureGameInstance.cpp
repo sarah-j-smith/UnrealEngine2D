@@ -174,7 +174,7 @@ void UAdventureGameInstance::LoadDoor(const ADoor* Door)
 	AdventureCharacter->SetupCamera();
 }
 
-void UAdventureGameInstance::AddItemToInventory(EItemList ItemToAdd)
+void UAdventureGameInstance::AddItemToInventory(EItemList ItemToAdd, FText Description)
 {
 	FName ItemName = FName(ItemGetDescriptiveString(ItemToAdd));
 	check(InventoryDataTable);
@@ -185,6 +185,7 @@ void UAdventureGameInstance::AddItemToInventory(EItemList ItemToAdd)
 		AAdventurePlayerController* AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
 		UInventoryItem* InventoryItem = NewObject<UInventoryItem>(this, ItemData->ItemClass, ItemName);
 		InventoryItem->SetAdventureController(AdventurePlayerController);
+		InventoryItem->Description = Description.ToString();
 		Inventory.Add(InventoryItem);
 
 		UE_LOG(LogAdventureGame, Verbose, TEXT("AddItemToInventory %s - now %d items"), *(ItemName.ToString()),

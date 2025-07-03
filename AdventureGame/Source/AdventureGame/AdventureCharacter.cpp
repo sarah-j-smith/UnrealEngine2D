@@ -102,10 +102,10 @@ void AAdventureCharacter::Interact(EInteractTimeDirection InteractTimeDirection)
 
 void AAdventureCharacter::Sit(EInteractTimeDirection InteractTimeDirection)
 {
-	LastInteractTimeDirection = InteractTimeDirection;
-	UE_LOG(LogAdventureGame, Warning, TEXT("AAdventureCharacter::Sit - %s"),
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AAdventureCharacter::Sit - %s"),
 		*(TimeDirectionGetDescriptiveString(InteractTimeDirection)));
 
+	LastInteractTimeDirection = InteractTimeDirection;
 	UPaperZDAnimInstance *Anim = GetAnimInstance();
 	Anim->PlayAnimationOverride(
 		LastNonZeroMovement.X > 0 ? SitRightAnimationSequence : SitLeftAnimationSequence,
@@ -117,6 +117,9 @@ void AAdventureCharacter::Sit(EInteractTimeDirection InteractTimeDirection)
 
 void AAdventureCharacter::TurnLeft(EInteractTimeDirection InteractTimeDirection)
 {
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AAdventureCharacter::TurnLeft - %s"),
+		*(TimeDirectionGetDescriptiveString(InteractTimeDirection)));
+
 	LastInteractTimeDirection = InteractTimeDirection;
 	UPaperZDAnimInstance *Anim = GetAnimInstance();
 	Anim->PlayAnimationOverride(
@@ -129,7 +132,9 @@ void AAdventureCharacter::TurnLeft(EInteractTimeDirection InteractTimeDirection)
 
 void AAdventureCharacter::TurnRight(EInteractTimeDirection InteractTimeDirection)
 {
-	UE_LOG(LogTemp, Warning, TEXT("AAdventureCharacter::TurnRight"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AAdventureCharacter::TurnRight - %s"),
+		*(TimeDirectionGetDescriptiveString(InteractTimeDirection)));
+
 	LastInteractTimeDirection = InteractTimeDirection;
 	UPaperZDAnimInstance *Anim = GetAnimInstance();
 	Anim->PlayAnimationOverride(
@@ -157,7 +162,6 @@ void AAdventureCharacter::OnSitAnimOverrideEnd(bool completed)
 
 void AAdventureCharacter::OnTurnLeftAnimOverrideEnd(bool completed)
 {
-	UE_LOG(LogTemp, Warning, TEXT("AAdventureCharacter::TurnRight"));
 	if (completed)
 	{
 		if (LastInteractTimeDirection == EInteractTimeDirection::Forward)
@@ -174,8 +178,6 @@ void AAdventureCharacter::OnTurnLeftAnimOverrideEnd(bool completed)
 
 void AAdventureCharacter::OnTurnRightAnimOverrideEnd(bool completed)
 {
-	UE_LOG(LogTemp, Warning, TEXT("AAdventureCharacter::TurnRight"));
-
 	if (completed)
 	{
 		if (LastInteractTimeDirection == EInteractTimeDirection::Forward)

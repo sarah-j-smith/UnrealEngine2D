@@ -12,77 +12,22 @@
   <component name="ChangeListManager">
     <list default="true" id="e7d87409-0359-4ca5-b933-df4b7b2a98d8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEditor.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEditor.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/Gameplay/BP_AdventureGameModeBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/Gameplay/BP_AdventureGameModeBase.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/PlayerCharacter/BP_AdventurePlayerController.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/PlayerCharacter/BP_AdventurePlayerController.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/Widgets/BP_BarkText.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/Widgets/BP_BarkText.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Hotspots/BP_HotSpot_Pickup_Knife.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Hotspots/BP_HotSpot_Pickup_Knife.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Hotspots/BP_HotSpot_Poster.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Hotspots/BP_HotSpot_Poster.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/Inventory/Items/BP_InventoryItem_Pickle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/Inventory/Items/BP_InventoryItem_Pickle.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Levels/AdventureData.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Levels/AdventureData.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/3-4_Idle-Sheet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/3-4_Idle-Sheet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/3-4_Idle1R.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/3-4_Idle1R.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/3-4_Idle3R.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/3-4_Idle3R.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/3-4_Idle4R.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/3-4_Idle4R.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Button_Push-Sheet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Button_Push-Sheet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Chair_Sit_Left-Sheet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Chair_Sit_Left-Sheet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Chair_Sit_Right-Sheet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Chair_Sit_Right-Sheet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Climb_Ledge_-_Sheet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Climb_Ledge_-_Sheet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Death_Sprite-Sheet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Death_Sprite-Sheet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Idle_Front-Sheet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Idle_Front-Sheet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Idle_Side-Sheet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Idle_Side-Sheet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Idle_Side-_Sheet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Idle_Side-_Sheet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Push-Sheet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Push-Sheet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Run_Left-Sheet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Run_Left-Sheet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Run_Right-Sheet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Run_Right-Sheet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Shrug_Side-Sheet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Shrug_Side-Sheet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Turn_Left1-Sheet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Turn_Left1-Sheet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Turn_Right-Sheet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Turn_Right-Sheet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Walk_Front_Back-Sheet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Walk_Front_Back-Sheet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Walk_Sprite-Sheet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/AdventureCharacter/ImageAssets/Walk_Sprite-Sheet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/Environments/TowerBackground.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/Environments/TowerBackground.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/Environments/TowerDoor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/Environments/TowerDoor.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/Environments/TowerForeground.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/Environments/TowerForeground.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/Environments/TowerInterior.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/Environments/TowerInterior.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/Items/ImageAssets/Pickle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/Items/ImageAssets/Pickle.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/Items/ImageAssets/Pickle_key.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/Items/ImageAssets/Pickle_key.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/Items/ImageAssets/knife.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/Items/ImageAssets/knife.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/Items/ImageAssets/pickup_knife.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/Items/ImageAssets/pickup_knife.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Close_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Close_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Close_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Close_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/DownArrow_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/DownArrow_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/DownArrow_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/DownArrow_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Give_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Give_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Give_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Give_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Lookat_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Lookat_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Lookat_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Lookat_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Open_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Open_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Open_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Open_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Pickup_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Pickup_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Pickup_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Pickup_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Pull_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Pull_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Pull_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Pull_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Push_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Push_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Push_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Push_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Talkto_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Talkto_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Talkto_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Talkto_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/UpArrow_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/UpArrow_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/UpArrow_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/UpArrow_Sel.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Use_Norm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Use_Norm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Use_Sel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Textures/UI_Assets/Use_Sel.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdvGameUtils.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdvGameUtils.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdvGameUtils.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdvGameUtils.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureCharacter.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameHUD.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameHUD.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameHUD.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameHUD.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameInstance.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureGameInstance.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventurePlayerController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventurePlayerController.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventurePlayerController.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventurePlayerController.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HotSpot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HotSpot.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HotSpot.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HotSpot.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/InventoryUI.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/InventoryUI.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/InventoryUI.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/InventoryUI.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/ItemSlot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/ItemSlot.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/InteractionType.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/InteractionType.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/InventoryItem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/InventoryItem.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/InventoryItem.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/InventoryItem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/VerbInteractions.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/VerbInteractions.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/VerbType.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/VerbType.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/VerbType.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/VerbType.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -159,6 +104,7 @@
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Persona/Private/SPoseWatchManager.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Persona/Public/PersonaUtils.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/PropertyEditor/Private/EditConditionParser.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/SequenceRecorder/Private/ActorRecording.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/SequenceRecorder/SequenceRecorder.Build.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/UATHelper/UATHelperModule.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/UMGEditor/Private/Templates/WidgetTemplateImageClass.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -186,6 +132,7 @@
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/CinematicCamera/Private/CineCameraSettings.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/ClothingSystemRuntimeNv/ClothingSystemRuntimeNv.Build.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Core.Build.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Private/FramePro/FrameProProfiler.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Private/Windows/WindowsPlatformStackWalk.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Public/Containers/Array.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Public/Containers/ContainerAllocationPolicies.h" root0="FORCE_HIGHLIGHTING" />
@@ -243,11 +190,14 @@
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Public/Slate/SGameLayerManager.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Experimental/Chaos/Public/Chaos/Evolution/ABTestingConstraintContainerSolver.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Experimental/Iris/Core/IrisCore.natvis" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/GeometryCore/Public/MathUtil.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/GeometryFramework/GeometryFramework.Build.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/HeadMountedDisplay/HeadMountedDisplay.Build.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/ImageWrapper/Private/ImageWrapperBase.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Launch/Launch.Build.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Linux/AudioMixerSDL/AudioMixerSDL.Build.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/MeshConversion/MeshConversion.Build.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/MovieSceneTracks/Private/Sections/MovieSceneColorSection.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Navmesh/Public/DebugUtils/DebugDraw.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Online/BuildPatchServices/BuildPatchServices.Build.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/PacketHandlers/EncryptionComponents/SymmetricEncryption/BlockEncryption/TwoFishBlockEncryptor/TwoFishBlockEncryptor.Build.cs" root0="FORCE_HIGHLIGHTING" />
@@ -256,6 +206,7 @@
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Slate/Public/Framework/Styling/ButtonWidgetStyle.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/SlateCore/Public/Styling/SlateTypes.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/SlateCore/Public/Styling/SlateWidgetStyle.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/SlateCore/Public/Styling/SlateWidgetStyleAsset.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/SlateCore/Public/Styling/SlateWidgetStyleContainerBase.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/SlateCore/SlateCore.Build.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/SlateNullRenderer/SlateNullRenderer.Build.cs" root0="FORCE_HIGHLIGHTING" />
@@ -467,7 +418,8 @@
       <workItem from="1751245535905" duration="20998000" />
       <workItem from="1751326548671" duration="25930000" />
       <workItem from="1751433094687" duration="888000" />
-      <workItem from="1751454150758" duration="14127000" />
+      <workItem from="1751454150758" duration="27927000" />
+      <workItem from="1751536590196" duration="2744000" />
     </task>
     <servers />
   </component>

@@ -54,5 +54,8 @@ public:
 	void OnWalkTo();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "VerbInteractions")
-	void OnItemUsed(EItemList ItemUsed);
+	void OnItemUsed();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "VerbInteractions")
+	void OnItemGiven();
 };
