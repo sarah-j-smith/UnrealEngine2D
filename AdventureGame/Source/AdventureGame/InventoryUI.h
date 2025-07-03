@@ -36,7 +36,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Arrows")
 	void OnUpArrowButtonClicked();
 
-	void PopulateInventory();
+	void PopulateInventory(bool ScrollToLastAdded = false);
 
 	/// Row of inventory displayed in the top row of slots.
 	/// Will be zero unless there are more than 8 items in the inventory.

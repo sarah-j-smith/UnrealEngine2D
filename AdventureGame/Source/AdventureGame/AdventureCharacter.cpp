@@ -103,9 +103,12 @@ void AAdventureCharacter::Interact(EInteractTimeDirection InteractTimeDirection)
 void AAdventureCharacter::Sit(EInteractTimeDirection InteractTimeDirection)
 {
 	LastInteractTimeDirection = InteractTimeDirection;
+	UE_LOG(LogAdventureGame, Warning, TEXT("AAdventureCharacter::Sit - %s"),
+		*(TimeDirectionGetDescriptiveString(InteractTimeDirection)));
+
 	UPaperZDAnimInstance *Anim = GetAnimInstance();
 	Anim->PlayAnimationOverride(
-		LastNonZeroMovement.X > 0 ? InteractRightAnimationSequence : InteractLeftAnimationSequence,
+		LastNonZeroMovement.X > 0 ? SitRightAnimationSequence : SitLeftAnimationSequence,
 		FName("DefaultSlot"),
 		InteractTimeDirection == EInteractTimeDirection::Forward ? 1.0f : -1.0f,
 		0.0f,
@@ -139,17 +142,17 @@ void AAdventureCharacter::TurnRight(EInteractTimeDirection InteractTimeDirection
 
 void AAdventureCharacter::OnInteractAnimOverrideEnd(bool completed)
 {
-	//
+	AnimationCompleteDelegate.Broadcast(EInteractionType::Interact, completed);
 }
 
 void AAdventureCharacter::OnClimbAnimOverrideEnd(bool completed)
 {
-	//
+	AnimationCompleteDelegate.Broadcast(EInteractionType::Climb, completed);
 }
 
 void AAdventureCharacter::OnSitAnimOverrideEnd(bool completed)
 {
-	//
+	AnimationCompleteDelegate.Broadcast(EInteractionType::Sit, completed);
 }
 
 void AAdventureCharacter::OnTurnLeftAnimOverrideEnd(bool completed)
@@ -166,6 +169,7 @@ void AAdventureCharacter::OnTurnLeftAnimOverrideEnd(bool completed)
 			SetFacingDirection(EWalkDirection::Down);
 		}
 	}
+	AnimationCompleteDelegate.Broadcast(EInteractionType::TurnLeft, completed);
 }
 
 void AAdventureCharacter::OnTurnRightAnimOverrideEnd(bool completed)
@@ -183,6 +187,7 @@ void AAdventureCharacter::OnTurnRightAnimOverrideEnd(bool completed)
 			SetFacingDirection(EWalkDirection::Down);
 		}
 	}
+	AnimationCompleteDelegate.Broadcast(EInteractionType::TurnRight, completed);
 }
 
 void AAdventureCharacter::TeleportToLocation(FVector NewLocation)

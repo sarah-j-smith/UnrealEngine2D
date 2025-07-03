@@ -39,6 +39,10 @@ public:
 	/// from the `InventoryDataTable` and deletes it in the inventory UI
 	void RemoveItemFromInventory(EItemList ItemToRemove);
 
+	bool IsInventoryEmpty() const;
+
+	bool IsInInventory(EItemList ItemToCheck);
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UDataTable *InventoryDataTable;
 	

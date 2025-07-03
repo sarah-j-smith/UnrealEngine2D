@@ -34,7 +34,7 @@ void UAdventureGameInstance::LoadStartingRoom()
 	RoomTransitionPhase = ERoomTransitionPhase::LoadStartingRoom;
 	FLatentActionInfo LatentActionInfo = GetLatentActionForHandler(OnRoomLoadedName);
 	UGameplayStatics::LoadStreamLevel(GetWorld(), StartingLevelName,
-									  true, false, LatentActionInfo);
+	                                  true, false, LatentActionInfo);
 }
 
 void UAdventureGameInstance::OnRoomLoaded()
@@ -53,13 +53,14 @@ void UAdventureGameInstance::OnRoomLoaded()
 		UnloadRoom();
 	default:
 		UE_LOG(LogAdventureGame, Warning, TEXT("Unexpected state during OnRoomLoaded"));
-		break;	
+		break;
 	}
 }
 
-void UAdventureGameInstance::NewRoomDelay() {
+void UAdventureGameInstance::NewRoomDelay()
+{
 	RoomTransitionPhase = ERoomTransitionPhase::DelayProcessing;
-	
+
 	AAdventurePlayerController* AdventurePlayerController = GetAdventureController();
 	AdventurePlayerController->GetWorldTimerManager().SetTimer(
 		RoomLoadTimer, this,
@@ -147,17 +148,23 @@ ADoor* UAdventureGameInstance::FindDoor(FName DoorLabel)
 		return Cast<ADoor>(Element)->DoorLabel == DoorLabel;
 	}))
 	{
-		UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::FindDoor - got: %s"), *(Cast<ADoor>(*FoundDoor)->HotSpotDescription));
+		UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::FindDoor - got: %s"),
+		       *(Cast<ADoor>(*FoundDoor)->HotSpotDescription));
 		return Cast<ADoor>(*FoundDoor);
 	}
-	UE_LOG(LogAdventureGame, Error, TEXT("UAdventureGameInstance::FindDoor failed to find %s"), *(DoorLabel.ToString()));
+	UE_LOG(LogAdventureGame, Error, TEXT("UAdventureGameInstance::FindDoor failed to find %s"),
+	       *(DoorLabel.ToString()));
 	return nullptr;
 }
 
 void UAdventureGameInstance::LoadDoor(const ADoor* Door)
 {
-	if (!Door) return;
-	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::LoadDoor: %s"), *(Cast<ADoor>(Door)->HotSpotDescription));
+	if (!Door)
+	{
+		return;
+	}
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::LoadDoor: %s"),
+	       *(Cast<ADoor>(Door)->HotSpotDescription));
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	AAdventurePlayerController* AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
 	AAdventureCharacter* AdventureCharacter = AdventurePlayerController->PlayerCharacter;
@@ -171,16 +178,17 @@ void UAdventureGameInstance::AddItemToInventory(EItemList ItemToAdd)
 {
 	FName ItemName = FName(ItemGetDescriptiveString(ItemToAdd));
 	check(InventoryDataTable);
-	FItemData *ItemData = InventoryDataTable->FindRow<FItemData>(ItemName, "AddItemToInventory");
+	FItemData* ItemData = InventoryDataTable->FindRow<FItemData>(ItemName, "AddItemToInventory");
 	if (ItemData)
 	{
 		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 		AAdventurePlayerController* AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
-		UInventoryItem *InventoryItem = NewObject<UInventoryItem>(this, ItemData->ItemClass, ItemName);
+		UInventoryItem* InventoryItem = NewObject<UInventoryItem>(this, ItemData->ItemClass, ItemName);
 		InventoryItem->SetAdventureController(AdventurePlayerController);
 		Inventory.Add(InventoryItem);
 
-		UE_LOG(LogAdventureGame, Verbose, TEXT("AddItemToInventory %s - now %d items"), *(ItemName.ToString()), Inventory.Num());
+		UE_LOG(LogAdventureGame, Verbose, TEXT("AddItemToInventory %s - now %d items"), *(ItemName.ToString()),
+		       Inventory.Num());
 
 		FPlatformTypeLayoutParameters LayoutParameters;
 		int ix = 0;
@@ -188,19 +196,41 @@ void UAdventureGameInstance::AddItemToInventory(EItemList ItemToAdd)
 		{
 			UE_LOG(LogAdventureGame, Verbose, TEXT("   %d - %s"), ix++, *(Element->Description));
 		}
-
-		GetHUD()->InventoryUI->PopulateInventory();
+		GetHUD()->InventoryUI->PopulateInventory(true);
 	}
 }
 
 void UAdventureGameInstance::RemoveItemFromInventory(EItemList ItemToRemove)
 {
-	FName ItemName = FName(ItemGetDescriptiveString(ItemToRemove));
-	if (UInventoryItem **FoundItem = Inventory.FindByPredicate([ItemToRemove](UInventoryItem *Item){ return Item->ItemKind == ItemToRemove; }))
+	if (Inventory.Num() == 0)
+	{
+		return;
+	}
+	if (UInventoryItem** FoundItem = Inventory.FindByPredicate([ItemToRemove](const UInventoryItem* Item)
+	{
+		return Item && Item->ItemKind == ItemToRemove;
+	}))
 	{
 		Inventory.Remove(*FoundItem);
 	}
 	GetHUD()->InventoryUI->PopulateInventory();
+}
+
+bool UAdventureGameInstance::IsInventoryEmpty() const
+{
+	return (Inventory.Num() == 0);
+}
+
+bool UAdventureGameInstance::IsInInventory(EItemList ItemToCheck)
+{
+	if (UInventoryItem** FoundItem = Inventory.FindByPredicate([ItemToCheck](const UInventoryItem* Item)
+	{
+		return Item && Item->ItemKind == ItemToCheck;
+	}))
+	{
+		return true;
+	}
+	return false;
 }
 
 void UAdventureGameInstance::LoadRoom(ADoor* FromDoor)

@@ -49,8 +49,13 @@ public:
 
 	void SetInteractionText();
 
+	void SetInventoryText();
+
 	UFUNCTION(BlueprintCallable)
 	void UpdateInteractionTextEvent();
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateInventoryTextEvent();
 
 	UFUNCTION(BlueprintCallable)
 	void BeginActionEvent();

@@ -12,6 +12,8 @@
 
 class UWidgetComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCharacterAnimComplete, EInteractionType, Interaction, bool, Complete);
+
 /**
  * 
  */
@@ -34,6 +36,7 @@ public:
 	/// CUSTOM ANIMATIONS
 	///
 
+private:
 	FZDOnAnimationOverrideEndSignature OnClimbOverrideEndDelegate;
 
 	FZDOnAnimationOverrideEndSignature OnInteractOverrideEndDelegate;
@@ -44,6 +47,7 @@ public:
 	
 	FZDOnAnimationOverrideEndSignature OnTurnRightOverrideEndDelegate;
 	
+public:	
 	/// Animation sequence for interacting with objects
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Animation)
 	UPaperZDAnimSequence *InteractLeftAnimationSequence;
@@ -81,6 +85,8 @@ public:
 	void TurnLeft(EInteractTimeDirection InteractTimeDirection = EInteractTimeDirection::Forward);
 	
 	void TurnRight(EInteractTimeDirection InteractTimeDirection = EInteractTimeDirection::Forward);
+
+	FCharacterAnimComplete AnimationCompleteDelegate;
 	
 private:
 	void OnInteractAnimOverrideEnd(bool completed);
@@ -130,7 +136,7 @@ public:
 	TObjectPtr<UBarkText> BarkText;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Barking)
-	FVector2D BarkTextSize = FVector2D(400, 180);
+	FVector2D BarkTextSize = FVector2D(800, 180);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Barking)
 	TObjectPtr<UWidgetComponent> BarkTextComponent;

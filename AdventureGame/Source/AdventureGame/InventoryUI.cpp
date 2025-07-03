@@ -34,19 +34,24 @@ void UInventoryUI::OnUpArrowButtonClicked()
 	}
 }
 
-void UInventoryUI::PopulateInventory()
+void UInventoryUI::PopulateInventory(bool ScrollToLastAdded)
 {
 	UGameInstance *GameInstance = UGameplayStatics::GetGameInstance(GetWorld());
 	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
 	InventoryCount = AdventureGameInstance->Inventory.Num();
-	MaxRowIndex = ceilf((InventoryCount - 8) / 4.0f);
+	MaxRowIndex = InventoryCount > 8 ? ceilf((InventoryCount - 8) / 4.0f) : 0;
 
 	UE_LOG(LogAdventureGame, Verbose, TEXT("PopulateInventory - Count: %d - MaxRowIndex: %d"), InventoryCount, MaxRowIndex);
+
+	if (ScrollToLastAdded)
+	{
+		CurrentRowIndex = MaxRowIndex;
+	}
 	
 	const int RowMin = CurrentRowIndex * 4;
 	const int RowMax = RowMin + 7;
 	int SlotIndex = 0;
-	for (int i = RowMin; i <= RowMax; ++i, ++SlotIndex)
+	for (int i = RowMin; i <= RowMax; i++, SlotIndex++)
 	{
 		if (i < InventoryCount)
 		{

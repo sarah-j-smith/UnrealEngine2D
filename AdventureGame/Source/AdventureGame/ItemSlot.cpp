@@ -61,6 +61,9 @@ void UItemSlot::HandleOnClicked()
 
 void UItemSlot::HandleOnHover()
 {
+	GEngine->AddOnScreenDebugMessage(1, 3.0, FColor::White,
+		TEXT("UItemSlot::HandleOnHover"),
+								 false, FVector2D(2.0, 2.0));
 	if (HasItem)
 	{
 		APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
@@ -73,6 +76,11 @@ void UItemSlot::HandleOnHover()
 
 void UItemSlot::HandleOnUnhover()
 {
+	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController))
+	{
+		AdventurePlayerController->MouseLeaveInventoryItem();
+	}		
 }
 
 void UItemSlot::SetButtonImageFromInventoryItem(const UInventoryItem* InventoryItem)

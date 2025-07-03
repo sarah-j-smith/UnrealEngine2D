@@ -54,10 +54,10 @@ public:
 	///
 
 	UFUNCTION(BlueprintCallable, Category = "HotSpot")
-	void OnBeginCursorOver(UPrimitiveComponent* Component);
+	void OnBeginCursorOver(AActor *TouchedActor);
 
 	UFUNCTION(BlueprintCallable, Category = "HotSpot")
-	void OnEndCursorOver(UPrimitiveComponent* Component);
+	void OnEndCursorOver(AActor *TouchedActor);
 
 	//////////////////////////////////
 	///
@@ -133,4 +133,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Player Actions")
 	void ShowSpriteComponent();
+
+	UFUNCTION(BlueprintCallable, Category = "Player Actions")
+	void ClearVerb();
 };

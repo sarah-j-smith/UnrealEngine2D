@@ -17,6 +17,7 @@ void UAdventureGameHUD::NativeOnInitialized()
 	AdventurePlayerController->BeginActionDelegate.AddUObject(this, &UAdventureGameHUD::BeginActionEvent);
 	AdventurePlayerController->UpdateInteractionTextDelegate.AddUObject(this, &UAdventureGameHUD::UpdateInteractionTextEvent);
 	AdventurePlayerController->InterruptActionDelegate.AddUObject(this, &UAdventureGameHUD::InterruptActionEvent);
+	AdventurePlayerController->UpdateInventoryTextDelegate.AddUObject(this, &UAdventureGameHUD::UpdateInventoryTextEvent);
 
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameHUD::NativeOnInitialized"));
 }
@@ -50,6 +51,10 @@ void UAdventureGameHUD::SetInteractionText()
 	{
 		InteractionUI->SetText(VerbStr);
 	}
+}
+
+void UAdventureGameHUD::SetInventoryText()
+{
 	UItemSlot *ItemSlot = AdventurePlayerController->CurrentItemSlot;
 	if (IsValid(ItemSlot) && ItemSlot->HasItem)
 	{
@@ -74,6 +79,11 @@ void UAdventureGameHUD::SetInteractionText()
 void UAdventureGameHUD::UpdateInteractionTextEvent()
 {
 	SetInteractionText();
+}
+
+void UAdventureGameHUD::UpdateInventoryTextEvent()
+{
+	SetInventoryText();
 }
 
 void UAdventureGameHUD::BeginActionEvent()

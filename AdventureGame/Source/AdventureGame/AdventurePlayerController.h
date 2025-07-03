@@ -121,6 +121,10 @@ public:
 	void MouseLeaveInventoryItem();
 
 	void PerformItemInteraction(UInventoryItem *InventoryItem);
+	
+	/// Tell the UI to put the current verb and any current inventory item into the text display
+	/// and if the InventoryItemInteraction is true, highlight the text.
+	void TriggerUpdateInventoryText();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
 	TObjectPtr<UInventoryItem> CurrentItem;
@@ -166,6 +170,7 @@ public:
 	FBeginAction BeginActionDelegate;
 	FInterruptAction InterruptActionDelegate;
 	FUpdateInteractionText UpdateInteractionTextDelegate;
+	FUpdateInteractionText UpdateInventoryTextDelegate;
 
 	UFUNCTION(BlueprintCallable)
 	void PlayerBark(FText BarkText);
@@ -182,6 +187,9 @@ public:
 	/// Turn from front facing to the right, or right facing to the front if reversed.
 	void PlayerTurnRight(int32 UID, EInteractTimeDirection InteractDirection);
 private:
+	UFUNCTION()
+	void OnPlayerAnimationComplete(EInteractionType Interaction, bool Complete);
+	
 	UFUNCTION()
 	void OnPlayerInteractComplete(bool Complete);
 	int32 PlayerInteractUID = 0;

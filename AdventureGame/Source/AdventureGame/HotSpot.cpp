@@ -11,7 +11,6 @@
 AHotSpot::AHotSpot()
 	: AStaticMeshActor()
 {
-
 	// This is not a "real" sphere - its not a mesh, its just a collision volume defined by dimensions
 	WalkToPoint = CreateDefaultSubobject<USphereComponent>(TEXT("PlayerDetectorSphere"));
 	WalkToPoint->SetupAttachment(RootComponent);
@@ -31,9 +30,13 @@ void AHotSpot::BeginPlay()
 	if (StaticMeshComponent && StaticMeshComponent->GetStaticMesh())
 	{
 		UE_LOG(LogAdventureGame, Verbose, TEXT("HotSpot::BeginPlay()- static mesh is valid"));
-		StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		// StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
 		StaticMeshComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 		StaticMeshComponent->SetGenerateOverlapEvents(true);
+
+		Super::OnBeginCursorOver.AddDynamic(this, &AHotSpot::OnBeginCursorOver);
+		Super::OnEndCursorOver.AddDynamic(this, &AHotSpot::OnEndCursorOver);
 	}
 	else
 	{
@@ -46,8 +49,11 @@ void AHotSpot::BeginPlay()
 	WalkToPosition.Z = PlayerPawn->GetActorLocation().Z;
 }
 
-void AHotSpot::OnBeginCursorOver(UPrimitiveComponent *Component)
+void AHotSpot::OnBeginCursorOver(AActor *TouchedActor)
 {
+	GEngine->AddOnScreenDebugMessage(1, 3.0, FColor::White, TEXT("HotSpot::OnBeginCursorOver()"),
+								 false, FVector2D(2.0, 2.0));
+
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("OnBeginCursorOver"));
 	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
@@ -57,7 +63,7 @@ void AHotSpot::OnBeginCursorOver(UPrimitiveComponent *Component)
 	}
 }
 
-void AHotSpot::OnEndCursorOver(UPrimitiveComponent *Component)
+void AHotSpot::OnEndCursorOver(AActor *TouchedActor)
 {
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("OnEndCursorOver"));
 	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
@@ -196,4 +202,9 @@ void AHotSpot::HideSpriteComponent()
 void AHotSpot::ShowSpriteComponent()
 {
 	SpriteComponent->SetVisibility(true);
+}
+
+void AHotSpot::ClearVerb()
+{
+	GetAdventureController()->InterruptCurrentAction();
 }

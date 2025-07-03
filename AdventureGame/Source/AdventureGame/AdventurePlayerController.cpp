@@ -19,6 +19,7 @@ AAdventurePlayerController::AAdventurePlayerController()
 {
 	SetShowMouseCursor(true);
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
+	bEnableMouseOverEvents = true;
 
 	MovementCompleteTimerDelegate.BindUObject(this, &AAdventurePlayerController::HandleMovementComplete);
 	
@@ -29,8 +30,11 @@ void AAdventurePlayerController::MouseEnterHotSpot(AHotSpot* HotSpot)
 {
 	GEngine->AddOnScreenDebugMessage(1, 3.0, FColor::White, HotSpot->GetName(),
 	                                 false, FVector2D(2.0, 2.0));
-	CurrentHotSpot = HotSpot;
-	TriggerUpdateInteractionText();
+	if (!HotspotInteraction)
+	{
+		CurrentHotSpot = HotSpot;
+		TriggerUpdateInteractionText();
+	}
 }
 
 void AAdventurePlayerController::MouseLeaveHotSpot()
@@ -48,14 +52,15 @@ void AAdventurePlayerController::MouseEnterInventoryItem(UItemSlot *ItemSlot)
 {
 	if (HotspotInteraction || IsPerformingTaskInteraction) return;
 	CurrentItem = ItemSlot->InventoryItem;
-	TriggerUpdateInteractionText();
+	TriggerUpdateInventoryText();
 }
 
 void AAdventurePlayerController::MouseLeaveInventoryItem()
 {
+	if (HotspotInteraction || IsPerformingTaskInteraction) return;
 	if (!CurrentItem) return;
 	CurrentItem = nullptr;
-	TriggerUpdateInteractionText();
+	TriggerUpdateInventoryText();
 }
 
 void AAdventurePlayerController::SetInputLocked(bool bLocked)
@@ -103,7 +108,7 @@ void AAdventurePlayerController::SetupHUD()
 
 void AAdventurePlayerController::SetupAnimationDelegates()
 {
-	PlayerCharacter->OnInteractOverrideEndDelegate.BindUObject(this, &AAdventurePlayerController::OnPlayerInteractComplete);
+	PlayerCharacter->AnimationCompleteDelegate.AddDynamic(this, &AAdventurePlayerController::OnPlayerAnimationComplete);
 }
 
 APawn *AAdventurePlayerController::SetupPuck(AAdventureCharacter *PlayerCharacter)
@@ -179,6 +184,7 @@ void AAdventurePlayerController::OnItemAddToInventory(EItemList ItemToAdd)
 	UGameInstance *GameInstance = GetGameInstance();
 	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
 	if (!AdventureGameInstance) return;
+	if (AdventureGameInstance->IsInInventory(ItemToAdd)) return;
 	AdventureGameInstance->AddItemToInventory(ItemToAdd);
 }
 
@@ -249,7 +255,12 @@ bool AAdventurePlayerController::GetMouseClickPosition(float &LocationX, float &
 
 void AAdventurePlayerController::EndTaskAction(EInteractionType InteractionType, int32 UID, bool Complete)
 {
-	EndAction.Broadcast(InteractionType, UID, Complete);
+	UE_LOG(LogAdventureGame, Warning, TEXT("AAdventurePlayerController::EndTaskAction - %s"),
+		*(InteractionGetDescriptiveString(InteractionType)));
+	if (InteractionType != EInteractionType::None)
+	{
+		EndAction.Broadcast(InteractionType, UID, Complete);
+	}
 	PlayerInteractUID = 0;
 	SetInputLocked(false);
 }
@@ -369,7 +380,45 @@ void AAdventurePlayerController::AssignVerb(EVerbType NewVerb)
 
 void AAdventurePlayerController::PerformItemInteraction(UInventoryItem *InventoryItem)
 {
-	//
+	check(InventoryItem);
+	switch (CurrentVerb)
+	{
+	case EVerbType::Give:
+		UInventoryItem::Execute_OnGive(InventoryItem);
+		break;
+	case EVerbType::Open:
+		UInventoryItem::Execute_OnOpen(InventoryItem);
+		break;
+	case EVerbType::Close:
+		UInventoryItem::Execute_OnClose(InventoryItem);
+		break;
+	case EVerbType::PickUp:
+		UInventoryItem::Execute_OnPickUp(InventoryItem);
+		break;
+	case EVerbType::LookAt:
+		UInventoryItem::Execute_OnLookAt(InventoryItem);
+		break;
+	case EVerbType::TalkTo:
+		UInventoryItem::Execute_OnTalkTo(InventoryItem);
+		break;
+	case EVerbType::Use:
+		UInventoryItem::Execute_OnUse(InventoryItem);
+		break;
+	case EVerbType::Push:
+		UInventoryItem::Execute_OnPush(InventoryItem);
+		break;
+	case EVerbType::Pull:
+		UInventoryItem::Execute_OnPull(InventoryItem);
+		break;
+	case EVerbType::WalkTo:
+		UInventoryItem::Execute_OnWalkTo(InventoryItem);
+		break;
+	}
+}
+
+void AAdventurePlayerController::TriggerUpdateInventoryText()
+{
+	UpdateInventoryTextDelegate.Broadcast();
 }
 
 void AAdventurePlayerController::PerformInteraction()
@@ -453,7 +502,7 @@ void AAdventurePlayerController::PlayerBark(FText BarkText)
 
 void AAdventurePlayerController::PlayerClimb(int32 UID, EInteractTimeDirection InteractDirection)
 {
-	PlayerInteractUID = UID;
+	PlayerClimbUID = UID;
 	if (PlayerCharacter->LastNonZeroMovement.X != 0)
 	{
 		SetInputLocked(true);
@@ -483,10 +532,12 @@ void AAdventurePlayerController::PlayerInteract(int32 UID, EInteractTimeDirectio
 
 void AAdventurePlayerController::PlayerSit(int32 UID, EInteractTimeDirection InteractDirection)
 {
-	PlayerInteractUID = UID;
+	UE_LOG(LogAdventureGame, Warning, TEXT("AAdventurePlayerController::PlayerSit"));
+	PlayerSitUID = UID;
 	if (PlayerCharacter->LastNonZeroMovement.X != 0)
 	{
 		SetInputLocked(true);
+		UE_LOG(LogAdventureGame, Warning, TEXT("     >>> PlayerSit"));
 		PlayerCharacter->Sit();
 	}
 	else
@@ -498,7 +549,7 @@ void AAdventurePlayerController::PlayerSit(int32 UID, EInteractTimeDirection Int
 
 void AAdventurePlayerController::PlayerTurnLeft(int32 UID, EInteractTimeDirection InteractDirection)
 {
-	PlayerInteractUID = UID;
+	PlayerTurnUID = UID;
 	EWalkDirection Facing = PlayerCharacter->GetFacingDirection();
 	switch (Facing)
 	{
@@ -541,7 +592,7 @@ void AAdventurePlayerController::PlayerTurnRight(int32 UID, EInteractTimeDirecti
 {
 	UE_LOG(LogAdventureGame, Warning, TEXT("AAdventurePlayerController::PlayerTurnRight"));
 
-	PlayerInteractUID = UID;
+	PlayerTurnUID = UID;
 	EWalkDirection Facing = PlayerCharacter->GetFacingDirection();
 	switch (Facing)
 	{
@@ -576,6 +627,30 @@ void AAdventurePlayerController::PlayerTurnRight(int32 UID, EInteractTimeDirecti
 	case EWalkDirection::Left:
 		UE_LOG(LogAdventureGame, Warning, TEXT("PlayerTurnRight called when player facing left."))
 		OnPlayerTurnRightComplete(false);
+		break;
+	}
+}
+
+void AAdventurePlayerController::OnPlayerAnimationComplete(EInteractionType Interaction, bool Complete)
+{
+	switch (Interaction) {
+	case EInteractionType::None:
+		EndTaskAction(Interaction, 0, true);
+		break;
+	case EInteractionType::Interact:
+		OnPlayerInteractComplete(Complete);
+		break;
+	case EInteractionType::Sit:
+		OnPlayerSitComplete(Complete);
+		break;
+	case EInteractionType::Climb:
+		OnPlayerClimbComplete(Complete);
+		break;
+	case EInteractionType::TurnLeft:
+		OnPlayerTurnLeftComplete(Complete);
+		break;
+	case EInteractionType::TurnRight:
+		OnPlayerTurnRightComplete(Complete);
 		break;
 	}
 }
