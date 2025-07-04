@@ -287,6 +287,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UAdventureGameHUD *AdventureHUDWidget;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gameplay")
+	void SetMouseOverUI(bool IsMouseOverUI)
+	{
+		if (IsMouseOverUI == this->IsMouseOverUI) return;
+		UpdateMouseOverUI(IsMouseOverUI);
+	}
+	
+private:
 	bool IsMouseOverUI = false;
+
+	void UpdateMouseOverUI(bool NewMouseIsOverUI);
 };

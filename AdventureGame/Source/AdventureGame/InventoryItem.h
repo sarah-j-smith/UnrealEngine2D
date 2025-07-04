@@ -124,7 +124,7 @@ public:
 	FText UseDefaultText = FText::FromString("Can't use it");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VerbInteractions")
-	FText WalkToDefaultText = FText::FromString("What?");
+	FText WalkToDefaultText = FText::FromString("What? I'm carrying it.");
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VerbInteractions")
 	FText ItemUsedDefaultText = FText::FromString("That won't work...");
@@ -138,7 +138,7 @@ public:
 	///
 		
 	UFUNCTION(BlueprintCallable, Category = "Player Actions")
-	void Bark(const FText &BarkText);
+	void BarkAndEnd(const FText &BarkText);
 
 	UFUNCTION(BlueprintCallable, Category = "Player Actions")
 	AAdventurePlayerController *GetAdventureController() const

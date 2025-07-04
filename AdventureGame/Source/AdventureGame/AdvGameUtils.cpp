@@ -57,6 +57,12 @@ FString AdvGameUtils::GetUsingItemString(const UInventoryItem* CurrentItem, UInv
 
 FString AdvGameUtils::GetVerbWithItemString(const UInventoryItem* CurrentItem, const EVerbType Verb)
 {
+	FString ItemString = CurrentItem->Description;
+	if (ItemString.IsEmpty())
+	{
+		ItemString = ItemGetDescriptiveString(CurrentItem->ItemKind);
+		UE_LOG(LogTemp, Warning, TEXT("Item string is empty for %s"), *ItemString);
+	}
 	return FString::Printf(TEXT("%s %s"),
-		*VerbGetDescriptiveString(Verb), *CurrentItem->Description);
+		*VerbGetDescriptiveString(Verb), *ItemString);
 }

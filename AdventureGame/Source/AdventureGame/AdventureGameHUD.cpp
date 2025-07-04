@@ -66,27 +66,36 @@ void UAdventureGameHUD::SetInventoryText()
 	}
 	else
 	{
-		UE_LOG(LogAdventureGame, Warning, TEXT("SetInventoryText called when not inventory slot item available."));
+		InteractionUI->ResetText();
+		return;
 	}
 	UInventoryItem* CurrentItem = AdventurePlayerController->CurrentItem; // Item a char has
 	AHotSpot* HotSpot = AdventurePlayerController->CurrentHotSpot;
 	const EVerbType Verb = AdventurePlayerController->CurrentVerb;
 	FString InventoryText;
+	bool ShouldHighlightText = false;
 	if (AdventurePlayerController->IsUsingItem)
 	{
 		InventoryText = AdvGameUtils::GetUsingItemString(CurrentItem, Item, HotSpot);
+		ShouldHighlightText = true;
 	}
 	else if (AdventurePlayerController->IsGivingItem)
 	{
 		InventoryText = AdvGameUtils::GetGivingItemString(CurrentItem, Item, HotSpot);
+		ShouldHighlightText = true;
 	}
 	else if (Item)
 	{
 		InventoryText = (Verb == EVerbType::WalkTo)
 			                ? AdvGameUtils::GetVerbWithItemString(Item, EVerbType::LookAt)
 			                : AdvGameUtils::GetVerbWithItemString(Item, Verb);
+		ShouldHighlightText = AdventurePlayerController->ItemInteraction;
 	}
 	InteractionUI->SetText(InventoryText);
+	if (ShouldHighlightText)
+	{
+		InteractionUI->HighlightText();
+	}
 }
 
 void UAdventureGameHUD::UpdateInteractionTextEvent()
@@ -115,10 +124,5 @@ void UAdventureGameHUD::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
 	bool MouseIsOverUI = IsHovered();
-	if (MouseIsOverUI != AdventurePlayerController->IsMouseOverUI)
-	{
-		AdventurePlayerController->IsMouseOverUI = MouseIsOverUI;
-		UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameHUD::NativeTick set IsMouseOverUI %s"),
-		       *(FString(MouseIsOverUI ? "true" : "false")));
-	}
+	AdventurePlayerController->SetMouseOverUI(MouseIsOverUI);
 }

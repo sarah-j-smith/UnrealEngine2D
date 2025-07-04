@@ -20,63 +20,70 @@ void UInventoryItem::OnItemCombineSuccess_Implementation()
 
 void UInventoryItem::OnItemCombineFailure_Implementation()
 {
-	Bark(ItemUsedDefaultText);
+	BarkAndEnd(ItemUsedDefaultText);
 }
 
 void UInventoryItem::OnClose_Implementation()
 {
 	IVerbInteractions::OnClose_Implementation();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On close"));
-	Bark(CloseDefaultText);
+	BarkAndEnd(CloseDefaultText);
 }
 
 void UInventoryItem::OnOpen_Implementation()
 {
 	IVerbInteractions::OnOpen_Implementation();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On open"));
-	Bark(OpenDefaultText);
+	BarkAndEnd(OpenDefaultText);
 }
 
 void UInventoryItem::OnGive_Implementation()
 {
 	IVerbInteractions::OnGive_Implementation();
-	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On give"));
-	Bark(GiveDefaultText);
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On give inventory item defaultasdfasdfasdf"));
+	BarkAndEnd(GiveDefaultText);
 }
 
 void UInventoryItem::OnPickUp_Implementation()
 {
 	IVerbInteractions::OnPickUp_Implementation();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On Pickup"));
-	Bark(PickUpDefaultText);
+	BarkAndEnd(PickUpDefaultText);
 }
 
 void UInventoryItem::OnTalkTo_Implementation()
 {
 	IVerbInteractions::OnTalkTo_Implementation();
-	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On talk to"));
-	Bark(TalkToDefaultText);
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On talk"));
+	BarkAndEnd(TalkToDefaultText);
 }
 
 void UInventoryItem::OnLookAt_Implementation()
 {
 	IVerbInteractions::OnLookAt_Implementation();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On look at"));
-	Bark(LookAtDefaultText);
+	if (Description.IsEmpty())
+	{
+		BarkAndEnd(LookAtDefaultText);
+	}
+	else
+	{
+		BarkAndEnd(FText::FromString(Description));
+	}
 }
 
 void UInventoryItem::OnPull_Implementation()
 {
 	IVerbInteractions::OnPull_Implementation();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On pull"));
-	Bark(PullDefaultText);
+	BarkAndEnd(PullDefaultText);
 }
 
 void UInventoryItem::OnPush_Implementation()
 {
 	IVerbInteractions::OnPush_Implementation();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On push"));
-	Bark(PushDefaultText);
+	BarkAndEnd(PushDefaultText);
 }
 
 void UInventoryItem::OnUse_Implementation()
@@ -87,12 +94,12 @@ void UInventoryItem::OnUse_Implementation()
 	AdventurePlayerController->CurrentVerb = EVerbType::UseItem;
 	AdventurePlayerController->TriggerUpdateInventoryText();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On use"));
-	Bark(UseDefaultText);
 }
 
 void UInventoryItem::OnWalkTo_Implementation()
 {
-	// WalkToDefaultText
+	IVerbInteractions::OnWalkTo_Implementation();
+	BarkAndEnd(WalkToDefaultText);
 }
 
 void UInventoryItem::OnItemUsed_Implementation()
@@ -124,13 +131,14 @@ void UInventoryItem::OnItemGiven_Implementation()
 	AdventurePlayerController->IsGivingItem = true;
 	AdventurePlayerController->CurrentVerb = EVerbType::GiveItem;
 	AdventurePlayerController->TriggerUpdateInventoryText();
-	Bark(ItemGivenDefaultText);
+	BarkAndEnd(ItemGivenDefaultText);
 }
 
-void UInventoryItem::Bark(const FText &BarkText)
+void UInventoryItem::BarkAndEnd(const FText &BarkText)
 {
 	if (AdventurePlayerController)
 	{
 		AdventurePlayerController->PlayerBark(BarkText);
+		AdventurePlayerController->InterruptCurrentAction();
 	}
 }

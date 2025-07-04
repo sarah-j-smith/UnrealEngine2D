@@ -133,7 +133,7 @@ void AHotSpot::OnPush_Implementation()
 void AHotSpot::OnUse_Implementation()
 {
 	IVerbInteractions::OnUse_Implementation();
-	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On use"));
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On use from AHotSpot default implement."));
 	Bark(FText::FromString("Can't use that."));
 }
 

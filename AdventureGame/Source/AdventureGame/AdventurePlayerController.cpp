@@ -52,6 +52,7 @@ void AAdventurePlayerController::MouseEnterInventoryItem(UItemSlot *ItemSlot)
 {
 	if (HotspotInteraction || IsPerformingTaskInteraction || IsGivingItem || IsUsingItem) return;
 	CurrentItem = ItemSlot->InventoryItem;
+	CurrentItemSlot = ItemSlot;
 	TriggerUpdateInventoryText();
 }
 
@@ -60,6 +61,7 @@ void AAdventurePlayerController::MouseLeaveInventoryItem()
 	if (HotspotInteraction || IsPerformingTaskInteraction || IsGivingItem || IsUsingItem) return;
 	if (!CurrentItem) return;
 	CurrentItem = nullptr;
+	CurrentItemSlot = nullptr;
 	TriggerUpdateInventoryText();
 }
 
@@ -109,6 +111,29 @@ void AAdventurePlayerController::SetupHUD()
 void AAdventurePlayerController::SetupAnimationDelegates()
 {
 	PlayerCharacter->AnimationCompleteDelegate.AddDynamic(this, &AAdventurePlayerController::OnPlayerAnimationComplete);
+}
+
+void AAdventurePlayerController::UpdateMouseOverUI(bool NewMouseIsOverUI)
+{
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AAdventurePlayerController set IsMouseOverUI %s"),
+	   *(FString(NewMouseIsOverUI ? "true" : "false")));
+	this->IsMouseOverUI = NewMouseIsOverUI;
+	if (NewMouseIsOverUI)
+	{
+		if (CurrentVerb == EVerbType::WalkTo && !IsPerformingTaskInteraction)
+		{
+			CurrentVerb = EVerbType::LookAt;
+			TriggerUpdateInteractionText();
+		}
+	}
+	else
+	{
+		if (CurrentVerb == EVerbType::LookAt && !ItemInteraction)
+		{
+			CurrentVerb = EVerbType::WalkTo;
+			TriggerUpdateInteractionText();
+		}
+	}
 }
 
 APawn *AAdventurePlayerController::SetupPuck(AAdventureCharacter *PlayerCharacter)
@@ -198,39 +223,50 @@ void AAdventurePlayerController::OnItemRemoveFromInventory(EItemList ItemToRemov
 
 void AAdventurePlayerController::HandleInventoryItemClicked(UItemSlot* ItemSlot)
 {
+	FString DebugString = ItemSlot->InventoryItem->Description.IsEmpty() ? ItemGetDescriptiveString(ItemSlot->InventoryItem->ItemKind) : ItemSlot->InventoryItem->Description;
+	UE_LOG(LogAdventureGame, Warning, TEXT("HandleInventoryItemClicked - %s"), *DebugString);
 	CurrentItemSlot = ItemSlot;
+	ItemInteraction = true;
 	UInventoryItem *Item = ItemSlot->InventoryItem;
 	switch (CurrentVerb)
 	{
 	case EVerbType::Give:
-		// Special behaviour
+		UE_LOG(LogAdventureGame, Warning, TEXT("EVerbType::Give - %s"), *DebugString);
+		UInventoryItem::Execute_OnGive(Item);
 		break;
 	case EVerbType::Open:
-		Item->Execute_OnOpen(Item);
+		UInventoryItem::Execute_OnOpen(Item);
 		break;
 	case EVerbType::Close:
-		Item->Execute_OnClose(Item);
+		UInventoryItem::Execute_OnClose(Item);
 		break;
 	case EVerbType::PickUp:
-		Item->Execute_OnPickUp(Item);
+		UInventoryItem::Execute_OnPickUp(Item);
 		break;
 	case EVerbType::LookAt:
-		Item->Execute_OnLookAt(Item);
+		UInventoryItem::Execute_OnLookAt(Item);
 		break;
 	case EVerbType::TalkTo:
-		Item->Execute_OnTalkTo(Item);
+		UE_LOG(LogAdventureGame, Warning, TEXT("EVerbType::TalkTo - %s"), *DebugString);
+		UInventoryItem::Execute_OnTalkTo(Item);
 		break;
 	case EVerbType::Use:
-		Item->Execute_OnUse(Item);
+		UInventoryItem::Execute_OnUse(Item);
 		break;
 	case EVerbType::Push:
-		Item->Execute_OnPush(Item);
+		UInventoryItem::Execute_OnPush(Item);
 		break;
 	case EVerbType::Pull:
-		Item->Execute_OnPull(Item);
+		UInventoryItem::Execute_OnPull(Item);
 		break;
 	case EVerbType::WalkTo:
-		Item->Execute_OnWalkTo(Item);
+		UInventoryItem::Execute_OnLookAt(Item);
+		break;
+	case EVerbType::UseItem:
+		UInventoryItem::Execute_OnItemUsed(Item);
+		break;
+	case EVerbType::GiveItem:
+		UInventoryItem::Execute_OnItemGiven(Item);
 		break;
 	}
 }
