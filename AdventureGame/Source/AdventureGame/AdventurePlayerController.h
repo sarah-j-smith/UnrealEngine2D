@@ -110,20 +110,38 @@ private:
 	///
 
 public:
-	void OnItemAddToInventory(EItemList ItemToAdd);
+	void OnItemAddToInventory(const EItemList &ItemToAdd);
 
-	void OnItemRemoveFromInventory(EItemList ItemToRemove);
-	
+	void OnItemRemoveFromInventory(const EItemList &ItemToRemove);
+
+	/// Handle a mouse click on an item button.
 	void HandleInventoryItemClicked(UItemSlot *ItemSlot);
 	
 	void MouseEnterInventoryItem(UItemSlot *ItemSlot);
 
 	void MouseLeaveInventoryItem();
 
-	void PerformItemInteraction(UInventoryItem *InventoryItem);
+	/// Perform an interaction on an item.
+	void PerformItemInteraction(const UInventoryItem *InventoryItem);
+
+	void UseAnItem(const EItemList ItemToUse)
+	{
+		ActiveItem = ItemToUse;
+		IsUsingItem = true;
+		CurrentVerb = EVerbType::UseItem;
+		TriggerUpdateInventoryText();
+	}
+
+	void GiveAnItem(const EItemList ItemToGive)
+	{
+		ActiveItem = ItemToGive;
+		IsUsingItem = true;
+		CurrentVerb = EVerbType::GiveItem;
+		TriggerUpdateInventoryText();
+	}
 
 	UFUNCTION(BlueprintCallable, Category="Items")
-	void CombineItems(UInventoryItem *InventoryItemSource,
+	void CombineItems(const UInventoryItem *InventoryItemSource,
 		const UInventoryItem *InventoryItemToCombineWith,
 		EItemList ResultingItem, FText TextToBark, FText ResultDescription = FText::GetEmpty());
 	
@@ -132,7 +150,7 @@ public:
 	void TriggerUpdateInventoryText();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
-	TObjectPtr<UInventoryItem> CurrentItem;
+	const UInventoryItem *CurrentItem;
 
 	/// True if the player character is currently interacting with an item
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")

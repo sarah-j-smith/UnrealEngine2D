@@ -69,7 +69,7 @@ void UAdventureGameHUD::SetInventoryText()
 		InteractionUI->ResetText();
 		return;
 	}
-	UInventoryItem* CurrentItem = AdventurePlayerController->CurrentItem; // Item a char has
+	const UInventoryItem* CurrentItem = AdventurePlayerController->CurrentItem; // Item a char has
 	AHotSpot* HotSpot = AdventurePlayerController->CurrentHotSpot;
 	const EVerbType Verb = AdventurePlayerController->CurrentVerb;
 	FString InventoryText;

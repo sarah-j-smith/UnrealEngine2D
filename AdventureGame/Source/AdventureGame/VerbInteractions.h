@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ItemList.h"
 #include "UObject/Interface.h"
 #include "VerbInteractions.generated.h"
 

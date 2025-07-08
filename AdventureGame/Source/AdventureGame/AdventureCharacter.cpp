@@ -292,7 +292,7 @@ void AAdventureCharacter::SetupCamera()
 		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 		PlayerController->SetViewTarget(Camera);
 		Camera->SetupCamera();
-		UE_LOG(LogAdventureGame, Verbose, TEXT("### Camera loaded - level size: %s"), *(Camera->CameraConfines->GetLocalBounds().ToString()));
+		UE_LOG(LogAdventureGame, Verbose, TEXT("Camera loaded - level size: %s"), *(Camera->CameraConfines->GetLocalBounds().ToString()));
 	}
 	else
 	{
@@ -304,10 +304,8 @@ void AAdventureCharacter::SetupCamera()
 void AAdventureCharacter::InitializeBarkTextConfines(AFollowCamera *Camera)
 {
 	Camera->GetSceneBounds(BarkConfineMax, BarkConfineMin);
-	UE_LOG(LogAdventureGame, Log, TEXT("### AAdventureCharacter::InitializeBarkTextConfines - GetSceneBounds - ConfineMax: %s - ConfineMin: %s"),
+	UE_LOG(LogAdventureGame, Log, TEXT("InitializeBarkTextConfines - GetSceneBounds - ConfineMax: %s - ConfineMin: %s"),
 		*(BarkConfineMax.ToString()), *(BarkConfineMin.ToString()));
-
-	UE_LOG(LogAdventureGame, Log, TEXT("### BarkTextSize: %s"), *(BarkTextSize.ToString()));
 }
 
 void AAdventureCharacter::UpdateBarkTextConfines()
@@ -324,7 +322,7 @@ void AAdventureCharacter::UpdateBarkTextConfines()
 
 	auto WorldContextObject = GetWorld();
 	FVector2D ViewportSize = UWidgetLayoutLibrary::GetViewportSize(WorldContextObject);
-	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("### UpdateBarkTextConfines - ViewportSize w x h: %f x %f"), ViewportSize.X, ViewportSize.Y);
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UpdateBarkTextConfines - ViewportSize w x h: %f x %f"), ViewportSize.X, ViewportSize.Y);
 
 	float WidgetScale = ViewportSize.X / (fabs(BarkConfineMax.X) + fabs(BarkConfineMin.X));
 	
@@ -336,6 +334,6 @@ void AAdventureCharacter::UpdateBarkTextConfines()
 	UpdatedBarkConfineMax = BarkConfineMax - FVector(halfWidth, height, 0.0);
 	UpdatedBarkConfineMin = BarkConfineMin + FVector(halfWidth, 0, 0.0);
 	
-	UE_LOG(LogAdventureGame, Log, TEXT("### UpdateBarkTextConfines - UpdatedBarkConfineMax: %s - UpdatedBarkConfineMin: %s"),
+	UE_LOG(LogAdventureGame, Log, TEXT("UpdateBarkTextConfines - UpdatedBarkConfineMax: %s - UpdatedBarkConfineMin: %s"),
 		*(UpdatedBarkConfineMax.ToString()), *(UpdatedBarkConfineMin.ToString()));
 }

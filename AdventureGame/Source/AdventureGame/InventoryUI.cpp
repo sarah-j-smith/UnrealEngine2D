@@ -38,7 +38,8 @@ void UInventoryUI::PopulateInventory(bool ScrollToLastAdded)
 {
 	UGameInstance *GameInstance = UGameplayStatics::GetGameInstance(GetWorld());
 	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
-	InventoryCount = AdventureGameInstance->Inventory.Num();
+	auto Items = AdventureGameInstance->Inventory->Items;
+	InventoryCount = Items.Num();
 	MaxRowIndex = InventoryCount > 8 ? ceilf((InventoryCount - 8) / 4.0f) : 0;
 
 	UE_LOG(LogAdventureGame, Verbose, TEXT("PopulateInventory - Count: %d - MaxRowIndex: %d"), InventoryCount, MaxRowIndex);
@@ -55,7 +56,7 @@ void UInventoryUI::PopulateInventory(bool ScrollToLastAdded)
 	{
 		if (i < InventoryCount)
 		{
-			InventorySlots[SlotIndex]->AddItem(AdventureGameInstance->Inventory[i]);
+			InventorySlots[SlotIndex]->AddItem(Items[i]);
 		}
 		else
 		{

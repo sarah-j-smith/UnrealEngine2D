@@ -174,66 +174,6 @@ void UAdventureGameInstance::LoadDoor(const ADoor* Door)
 	AdventureCharacter->SetupCamera();
 }
 
-void UAdventureGameInstance::AddItemToInventory(EItemList ItemToAdd, FText Description)
-{
-	FName ItemName = FName(ItemGetDescriptiveString(ItemToAdd));
-	check(InventoryDataTable);
-	FItemData* ItemData = InventoryDataTable->FindRow<FItemData>(ItemName, "AddItemToInventory");
-	if (ItemData)
-	{
-		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-		AAdventurePlayerController* AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
-		UInventoryItem* InventoryItem = NewObject<UInventoryItem>(this, ItemData->ItemClass, ItemName);
-		InventoryItem->SetAdventureController(AdventurePlayerController);
-		InventoryItem->Description = Description.ToString();
-		Inventory.Add(InventoryItem);
-
-		UE_LOG(LogAdventureGame, Verbose, TEXT("AddItemToInventory %s - now %d items"), *(ItemName.ToString()),
-		       Inventory.Num());
-
-		FPlatformTypeLayoutParameters LayoutParameters;
-		int ix = 0;
-		for (auto Element : Inventory)
-		{
-			UE_LOG(LogAdventureGame, Verbose, TEXT("   %d - %s"), ix++, *(Element->Description));
-		}
-		GetHUD()->InventoryUI->PopulateInventory(true);
-	}
-}
-
-void UAdventureGameInstance::RemoveItemFromInventory(EItemList ItemToRemove)
-{
-	if (Inventory.Num() == 0)
-	{
-		return;
-	}
-	if (UInventoryItem** FoundItem = Inventory.FindByPredicate([ItemToRemove](const UInventoryItem* Item)
-	{
-		return Item && Item->ItemKind == ItemToRemove;
-	}))
-	{
-		Inventory.Remove(*FoundItem);
-	}
-	GetHUD()->InventoryUI->PopulateInventory();
-}
-
-bool UAdventureGameInstance::IsInventoryEmpty() const
-{
-	return (Inventory.Num() == 0);
-}
-
-bool UAdventureGameInstance::IsInInventory(EItemList ItemToCheck)
-{
-	if (UInventoryItem** FoundItem = Inventory.FindByPredicate([ItemToCheck](const UInventoryItem* Item)
-	{
-		return Item && Item->ItemKind == ItemToCheck;
-	}))
-	{
-		return true;
-	}
-	return false;
-}
-
 void UAdventureGameInstance::LoadRoom(ADoor* FromDoor)
 {
 	UWorld* World = FromDoor->GetWorld();

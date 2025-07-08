@@ -1,5 +1,6 @@
 #include "AdvGameUtils.h"
 
+#include "AdventureGame.h"
 #include "HotSpot.h"
 #include "InventoryItem.h"
 
@@ -23,46 +24,29 @@ int32 AdvGameUtils::GetUUID()
 
 FString AdvGameUtils::GetGivingItemString(
 		const UInventoryItem *CurrentItem,
-		UInventoryItem *TargetItem,
+		const UInventoryItem *TargetItem,
 		AHotSpot *HotSpot
 		)
 {
-	FString InventoryText;
-	FString TargetItemString;
-	if (HotSpot) // Using an item on a hotspot
-	{
-		TargetItemString = HotSpot->HotSpotDescription;
-	}
-	else if (CurrentItem) // Using an item on another item
-	{
-		TargetItemString = TargetItem ? TargetItem->Description : ItemGetDescriptiveString(CurrentItem->InteractableItem);
-	}
-	return FString::Printf(TEXT("Give %s to %s"), *TargetItem->GetName(), *TargetItemString);
+	verifyf(CurrentItem, TEXT("GetGivingItemString expects CurrentItem to be non-null"));
+	verifyf(TargetItem || HotSpot, TEXT("GetGivingItemString expects either TargetItem or HotSpot to be non-null"));
+	FString InventoryText = CurrentItem->GetDescription().ToString();
+	FString TargetItemString = HotSpot ? HotSpot->HotSpotDescription : TargetItem->GetDescription().ToString();
+	return FString::Printf(TEXT("Give %s to %s"), *InventoryText, *TargetItemString);
 }
 
-FString AdvGameUtils::GetUsingItemString(const UInventoryItem* CurrentItem, UInventoryItem* TargetItem, AHotSpot* HotSpot)
+FString AdvGameUtils::GetUsingItemString(const UInventoryItem* CurrentItem, const UInventoryItem* TargetItem, AHotSpot* HotSpot)
 {
-	FString InventoryText;
-	FString TargetItemString;
-	if (HotSpot) // Using an item on a hotspot
-	{
-		TargetItemString = HotSpot->HotSpotDescription;
-	}
-	else if (CurrentItem) // Using an item on another item
-	{
-		TargetItemString = TargetItem ? TargetItem->Description : ItemGetDescriptiveString(CurrentItem->InteractableItem);
-	}
+	verifyf(CurrentItem, TEXT("GetGivingItemString expects CurrentItem to be non-null"));
+	verifyf(TargetItem || HotSpot, TEXT("GetGivingItemString expects either TargetItem or HotSpot to be non-null"));
+	FString InventoryText = CurrentItem->GetDescription().ToString();
+	FString TargetItemString = HotSpot ? HotSpot->HotSpotDescription : TargetItem->GetDescription().ToString();
 	return FString::Printf(TEXT("Use %s on %s"), *TargetItem->GetName(), *TargetItemString);
 }
 
 FString AdvGameUtils::GetVerbWithItemString(const UInventoryItem* CurrentItem, const EVerbType Verb)
 {
-	FString ItemString = CurrentItem->Description;
-	if (ItemString.IsEmpty())
-	{
-		ItemString = ItemGetDescriptiveString(CurrentItem->ItemKind);
-		UE_LOG(LogTemp, Warning, TEXT("Item string is empty for %s"), *ItemString);
-	}
+	FString ItemString = CurrentItem->GetDescription().ToString();
 	return FString::Printf(TEXT("%s %s"),
 		*VerbGetDescriptiveString(Verb), *ItemString);
 }

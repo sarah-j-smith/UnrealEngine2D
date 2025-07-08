@@ -26,10 +26,13 @@ AHotSpot::AHotSpot()
 
 void AHotSpot::BeginPlay()
 {
+	FString HotSpotType = IsPickup() ? "PickUp" : "HotSpot";
+	FString HotSpotName = HotSpotDescription.IsEmpty() ? GetClass()->GetName() : HotSpotDescription;
 	UStaticMeshComponent* StaticMeshComponent = GetStaticMeshComponent();
 	if (StaticMeshComponent && StaticMeshComponent->GetStaticMesh())
 	{
-		UE_LOG(LogAdventureGame, Verbose, TEXT("HotSpot::BeginPlay()- static mesh is valid"));
+		UE_LOG(LogAdventureGame, Verbose, TEXT("%s %s - BeginPlay()- static mesh is valid."),
+			*HotSpotType, *HotSpotName);
 		// StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
 		StaticMeshComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
@@ -40,7 +43,7 @@ void AHotSpot::BeginPlay()
 	}
 	else
 	{
-		UE_LOG(LogAdventureGame, Warning, TEXT("HotSpot::BeginPlay()- static mesh NOT valid"));
+		UE_LOG(LogAdventureGame, Warning, TEXT("%s %s - BeginPlay()- static mesh NOT valid"), *HotSpotType, *HotSpotName);
 	}
 	Super::BeginPlay();
 

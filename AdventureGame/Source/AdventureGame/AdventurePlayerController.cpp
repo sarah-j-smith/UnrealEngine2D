@@ -204,30 +204,36 @@ void AAdventurePlayerController::HandlePointAndClickInput()
 	}
 }
 
-void AAdventurePlayerController::OnItemAddToInventory(EItemList ItemToAdd)
+void AAdventurePlayerController::OnItemAddToInventory(const EItemList &ItemToAdd)
 {
 	UGameInstance *GameInstance = GetGameInstance();
 	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
-	if (!AdventureGameInstance) return;
-	if (AdventureGameInstance->IsInInventory(ItemToAdd)) return;
-	AdventureGameInstance->AddItemToInventory(ItemToAdd);
+	if (!AdventureGameInstance || !AdventureGameInstance->Inventory) return;
+	if (AdventureGameInstance->Inventory->Contains(ItemToAdd)) return;
+	AdventureGameInstance->Inventory->AddItemToInventory(ItemToAdd);
 }
 
-void AAdventurePlayerController::OnItemRemoveFromInventory(EItemList ItemToRemove)
+void AAdventurePlayerController::OnItemRemoveFromInventory(const EItemList &ItemToRemove)
 {
 	UGameInstance *GameInstance = GetGameInstance();
 	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
 	if (!AdventureGameInstance) return;
-	AdventureGameInstance->RemoveItemFromInventory(ItemToRemove);
+	AdventureGameInstance->Inventory->RemoveItemFromInventory(ItemToRemove);
 }
 
 void AAdventurePlayerController::HandleInventoryItemClicked(UItemSlot* ItemSlot)
 {
-	FString DebugString = ItemSlot->InventoryItem->Description.IsEmpty() ? ItemGetDescriptiveString(ItemSlot->InventoryItem->ItemKind) : ItemSlot->InventoryItem->Description;
+	FString DebugString = ItemSlot->InventoryItem ? ItemSlot->InventoryItem->GetDescription().ToString() : "Empty Slot";
 	UE_LOG(LogAdventureGame, Warning, TEXT("HandleInventoryItemClicked - %s"), *DebugString);
+	if (CurrentItemSlot && ItemInteraction)
+	{
+		PerformItemInteraction(ItemSlot->InventoryItem);
+		return;
+	}
 	CurrentItemSlot = ItemSlot;
 	ItemInteraction = true;
-	UInventoryItem *Item = ItemSlot->InventoryItem;
+	CurrentItem = ItemSlot->InventoryItem;
+	UInventoryItem *Item = const_cast<UInventoryItem *>(ItemSlot->InventoryItem);
 	switch (CurrentVerb)
 	{
 	case EVerbType::Give:
@@ -414,53 +420,38 @@ void AAdventurePlayerController::AssignVerb(EVerbType NewVerb)
 	TriggerUpdateInteractionText();
 }
 
-void AAdventurePlayerController::PerformItemInteraction(UInventoryItem *InventoryItem)
+void AAdventurePlayerController::PerformItemInteraction(const UInventoryItem *InventoryItem)
 {
 	check(InventoryItem);
 	switch (CurrentVerb)
 	{
 	case EVerbType::Give:
-		UInventoryItem::Execute_OnGive(InventoryItem);
-		break;
-	case EVerbType::Open:
-		UInventoryItem::Execute_OnOpen(InventoryItem);
-		break;
-	case EVerbType::Close:
-		UInventoryItem::Execute_OnClose(InventoryItem);
-		break;
-	case EVerbType::PickUp:
-		UInventoryItem::Execute_OnPickUp(InventoryItem);
-		break;
-	case EVerbType::LookAt:
-		UInventoryItem::Execute_OnLookAt(InventoryItem);
-		break;
-	case EVerbType::TalkTo:
-		UInventoryItem::Execute_OnTalkTo(InventoryItem);
-		break;
-	case EVerbType::Use:
-		UInventoryItem::Execute_OnUse(InventoryItem);
-		break;
-	case EVerbType::Push:
-		UInventoryItem::Execute_OnPush(InventoryItem);
-		break;
-	case EVerbType::Pull:
-		UInventoryItem::Execute_OnPull(InventoryItem);
-		break;
-	case EVerbType::WalkTo:
-		UInventoryItem::Execute_OnWalkTo(InventoryItem);
+		UInventoryItem::Execute_OnItemGiven(const_cast<UInventoryItem *>(InventoryItem));
 		break;
 	case EVerbType::UseItem:
-		UInventoryItem::Execute_OnItemUsed(InventoryItem);
+		UInventoryItem::Execute_OnItemUsed(const_cast<UInventoryItem *>(InventoryItem));
 		break;
-	case EVerbType::GiveItem:
-		UInventoryItem::Execute_OnItemGiven(InventoryItem);
-		break;
+	default:
+		UE_LOG(LogAdventureGame, Warning, TEXT("Unexpected interaction verb %s for perform item interaction with %s"),
+			*VerbGetDescriptiveString(CurrentVerb), *(InventoryItem->GetDescription().ToString()));
 	}
 }
 
-void AAdventurePlayerController::CombineItems(UInventoryItem* InventoryItemSource,
+void AAdventurePlayerController::CombineItems(const UInventoryItem* InventoryItemSource,
 	const UInventoryItem* InventoryItemToCombineWith, EItemList ResultingItem, FText TextToBark, FText ResultDescription)
 {
+	check(InventoryItemSource);
+	check(InventoryItemToCombineWith);
+	check(InventoryItemToCombineWith != InventoryItemSource);
+	check(InventoryItemToCombineWith->ItemKind != InventoryItemSource->ItemKind);
+	UGameInstance *GameInstance = GetGameInstance();
+	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
+	AdventureGameInstance->Inventory->RemoveItemListFromInventory({
+		InventoryItemSource->ItemKind,
+		InventoryItemToCombineWith->ItemKind
+	});
+	UInventoryItem *NewItem = AdventureGameInstance->Inventory->AddItemToInventory(ResultingItem, ResultDescription);
+	NewItem->SetAdventureController(TSharedRef<AAdventurePlayerController>(this));
 	if (CurrentItem == InventoryItemSource)
 	{
 		CurrentItem = nullptr;
@@ -469,12 +460,6 @@ void AAdventurePlayerController::CombineItems(UInventoryItem* InventoryItemSourc
 	{
 		CurrentItemSlot = nullptr;
 	}
-	UGameInstance *GameInstance = GetGameInstance();
-	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
-	
-	AdventureGameInstance->RemoveItemFromInventory(InventoryItemSource->ItemKind);
-	AdventureGameInstance->RemoveItemFromInventory(InventoryItemToCombineWith->ItemKind);
-	AdventureGameInstance->AddItemToInventory(ResultingItem);
 	PlayerBark(TextToBark);
 	InterruptCurrentAction();
 }

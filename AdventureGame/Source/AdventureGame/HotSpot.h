@@ -98,9 +98,16 @@ public:
 	///
 	/// PLAYER ACTIONS
 	///
-	///
-	///
 
+	/// Is this HotSpot a _Pickup_ - that has a sprite component for displaying
+	/// an in-game appearance - or is it just a hotspot with a clickable mesh?
+	/// @returns true if this has a valid `USpriteComponent`.
+	UFUNCTION(BlueprintCallable, Category = "Player Actions")
+	bool IsPickup() const
+	{
+		return IsValid(SpriteComponent);
+	}
+	
 	/// How far above the player character (closer to the camera) should objects spawn
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Actions")
 	float ZOffsetForSpawn = 5.0;
