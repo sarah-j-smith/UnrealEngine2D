@@ -98,6 +98,14 @@ void UAdventureGameHUD::SetInventoryText()
 	}
 }
 
+void UAdventureGameHUD::HandleInventoryChanged(FName Identifier)
+{
+	if (Identifier == "Inventory")
+	{
+		InventoryUI->PopulateInventory(true);
+	}
+}
+
 void UAdventureGameHUD::UpdateInteractionTextEvent()
 {
 	SetInteractionText();

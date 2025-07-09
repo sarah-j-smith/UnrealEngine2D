@@ -51,6 +51,9 @@ public:
 
 	void SetInventoryText();
 
+	UFUNCTION()
+	void HandleInventoryChanged(FName Identifier);
+
 	UFUNCTION(BlueprintCallable)
 	void UpdateInteractionTextEvent();
 

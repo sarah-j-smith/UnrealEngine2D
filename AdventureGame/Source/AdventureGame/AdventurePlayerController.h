@@ -170,6 +170,10 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
 	UItemSlot *CurrentItemSlot;
+	
+	/// Read-only display of player inventory.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
+	UItemList *Inventory;
 
 	//////////////////////////////////
 	///

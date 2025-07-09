@@ -70,6 +70,11 @@ UInventoryItem *UItemList::AddItemToInventory(EItemList ItemToAdd, FText Descrip
 	UInventoryItem* InventoryItem = NewObject<UInventoryItem>(this, ItemData->ItemClass, ItemName);
 	InventoryItem->Description = Description;
 	AddItemToInventory(InventoryItem);
+	OnInventoryChanged.Broadcast(Identifier);
+	if (UNLIKELY(GetWorld()->IsEditorWorld()))
+	{
+		DumpInventoryToLog();
+	}
 	return InventoryItem;
 }
 
@@ -95,10 +100,15 @@ void UItemList::RemoveItemListFromInventory(const TSet<EItemList>& ItemsToRemove
 			if (RemovingItems.Num() == 0) break;			
 		}
 	}
+	OnInventoryChanged.Broadcast(Identifier);
 	if (RemovingItems.Num() > 0)
 	{
-		UE_LOG(LogAdventureGame, Warning, TEXT("Removing items from Inventory - %s"),
+		UE_LOG(LogAdventureGame, Warning, TEXT("Failed to remove some items from Inventory - %s"),
 			*GetListDescription(ItemsToRemove.Array()));
+	}
+	if (UNLIKELY(GetWorld()->IsEditorWorld()))
+	{
+		DumpInventoryToLog();
 	}
 }
 

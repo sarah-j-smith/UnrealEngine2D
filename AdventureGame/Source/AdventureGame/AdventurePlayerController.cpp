@@ -91,6 +91,8 @@ void AAdventurePlayerController::BeginPlay()
 	UGameInstance *GameInstance = UGameplayStatics::GetGameInstance(GetWorld());
 	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
 	AdventureGameInstance->OnLoadRoom();
+
+	this->Inventory = AdventureGameInstance->Inventory;
 	
 	TriggerUpdateInteractionText();
 	APawn *Pawn = SetupPuck(PlayerCharacter);
@@ -208,8 +210,8 @@ void AAdventurePlayerController::OnItemAddToInventory(const EItemList &ItemToAdd
 {
 	UGameInstance *GameInstance = GetGameInstance();
 	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
-	if (!AdventureGameInstance || !AdventureGameInstance->Inventory) return;
-	if (AdventureGameInstance->Inventory->Contains(ItemToAdd)) return;
+	if (!AdventureGameInstance) return;
+	if (AdventureGameInstance->Inventory && AdventureGameInstance->Inventory->Contains(ItemToAdd)) return;
 	AdventureGameInstance->Inventory->AddItemToInventory(ItemToAdd);
 }
 

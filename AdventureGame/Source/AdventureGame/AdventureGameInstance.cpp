@@ -79,9 +79,18 @@ void UAdventureGameInstance::SetupRoom()
 	// Find the door with the label.
 	const ADoor* Door = FindDoor(CurrentDoorLabel);
 	LoadDoor(Door);
-
-	UAdventureGameHUD* HUD = UAdventureGameInstance::GetHUD();
-	HUD->HideBlackScreen();
+	
+	if (UAdventureGameHUD* HUD = UAdventureGameInstance::GetHUD())
+	{
+		HUD->HideBlackScreen();
+		if (Inventory)
+		{
+			if (UAdventureGameHUD *Hud = GetHUD())
+			{
+				Inventory->OnInventoryChanged.AddDynamic(Hud, &UAdventureGameHUD::HandleInventoryChanged);
+			}
+		}
+	}
 
 	AAdventurePlayerController* AdventurePlayerController = GetAdventureController();
 	AdventurePlayerController->InterruptCurrentAction();
@@ -124,6 +133,13 @@ void UAdventureGameInstance::LoadRoom()
 
 void UAdventureGameInstance::UnloadRoom()
 {
+	if (Inventory)
+	{
+		if (UAdventureGameHUD *Hud = GetHUD())
+		{
+			Inventory->OnInventoryChanged.RemoveDynamic(Hud, &UAdventureGameHUD::HandleInventoryChanged);
+		}
+	}
 	RoomTransitionPhase = ERoomTransitionPhase::UnloadOldRoom;
 	FLatentActionInfo LatentActionInfo = GetLatentActionForHandler(OnRoomUnloadedName);
 	UGameplayStatics::UnloadStreamLevel(GetWorld(), CurrentDoor->CurrentLevel, LatentActionInfo, false);
@@ -174,6 +190,24 @@ void UAdventureGameInstance::LoadDoor(const ADoor* Door)
 	AdventureCharacter->SetupCamera();
 }
 
+void UAdventureGameInstance::Init()
+{
+	Super::Init();
+
+	if (!Inventory)
+	{
+		if (InventoryClass)
+		{
+			Inventory = NewObject<UItemList>(this, InventoryClass, TEXT("Inventory"));
+		}
+		else
+		{
+			Inventory = NewObject<UItemList>(this, TEXT("Inventory"));
+			UE_LOG(LogAdventureGame, Log, TEXT("Created new inventory of UItemList type. Set InventoryClass property in AdventureGameInstance to customise this."));
+		}
+	}
+}
+
 void UAdventureGameInstance::LoadRoom(ADoor* FromDoor)
 {
 	UWorld* World = FromDoor->GetWorld();
@@ -186,8 +220,14 @@ void UAdventureGameInstance::LoadRoom(ADoor* FromDoor)
 
 UAdventureGameHUD* UAdventureGameInstance::GetHUD()
 {
-	UWorld* World = GEngine->GameViewport->GetWorld();
-	TArray<UUserWidget*> FoundWidgets;
-	UWidgetBlueprintLibrary::GetAllWidgetsOfClass(World, FoundWidgets, UAdventureGameHUD::StaticClass(), true);
-	return FoundWidgets.IsEmpty() ? nullptr : Cast<UAdventureGameHUD>(FoundWidgets[0]);
+	if (GEngine->GameViewport)
+	{
+		if (UWorld* World = GEngine->GameViewport->GetWorld())
+		{
+			TArray<UUserWidget*> FoundWidgets;
+			UWidgetBlueprintLibrary::GetAllWidgetsOfClass(World, FoundWidgets, UAdventureGameHUD::StaticClass(), true);
+			return FoundWidgets.IsEmpty() ? nullptr : Cast<UAdventureGameHUD>(FoundWidgets[0]);
+		}
+	}
+	return nullptr;
 }

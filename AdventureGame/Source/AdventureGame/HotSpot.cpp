@@ -3,6 +3,7 @@
 
 #include "HotSpot.h"
 
+#include "AdvBlueprintFunctionLibrary.h"
 #include "AdventureCharacter.h"
 #include "AdventureGame.h"
 #include "AdventurePlayerController.h"
@@ -54,26 +55,24 @@ void AHotSpot::BeginPlay()
 
 void AHotSpot::OnBeginCursorOver(AActor *TouchedActor)
 {
-	GEngine->AddOnScreenDebugMessage(1, 3.0, FColor::White, TEXT("HotSpot::OnBeginCursorOver()"),
-								 false, FVector2D(2.0, 2.0));
+	// GEngine->AddOnScreenDebugMessage(1, 3.0, FColor::White, TEXT("HotSpot::OnBeginCursorOver()"),
+	// 							 false, FVector2D(2.0, 2.0));
 
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("OnBeginCursorOver"));
-	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
-	if (IsValid(AdventurePlayerController))
+	APlayerController *PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (AAdventurePlayerController *APC = Cast<AAdventurePlayerController>(PC); IsValid(APC))
 	{
-		AdventurePlayerController->MouseEnterHotSpot(this);
+		APC->MouseEnterHotSpot(this);
 	}
 }
 
 void AHotSpot::OnEndCursorOver(AActor *TouchedActor)
 {
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("OnEndCursorOver"));
-	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
-	if (IsValid(AdventurePlayerController))
+	APlayerController *PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (AAdventurePlayerController *APC = Cast<AAdventurePlayerController>(PC); IsValid(APC))
 	{
-		AdventurePlayerController->MouseLeaveHotSpot();
+		APC->MouseLeaveHotSpot();
 	}
 }
 
@@ -144,14 +143,18 @@ void AHotSpot::OnWalkTo_Implementation()
 {
 	IVerbInteractions::OnWalkTo_Implementation();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On walk to"));
-	AAdventurePlayerController *PC = GetAdventureController();
-	if (PC->IsAlreadyAtHotspotClicked())
+	APlayerController *PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (AAdventurePlayerController *APC = Cast<AAdventurePlayerController>(PC); IsValid(APC))
 	{
-		PC->PlayerBark(FText::FromString("I'm here, what should I do?"));
-	}
-	else
-	{
-		PC->PlayerBark(FText::FromString("Arrived here. What now?"));;
+		if (APC->IsAlreadyAtHotspotClicked())
+		{
+			FString AlreadyHere = FString::Printf(TEXT("I'm already at %s, what should I do?"), *HotSpotDescription);
+			APC->PlayerBark(FText::FromString(AlreadyHere));
+		}
+		else
+		{
+			APC->PlayerBark(FText::FromString("Arrived here. What now?"));;
+		}
 	}
 }
 
@@ -172,31 +175,6 @@ AActor *AHotSpot::SpawnAtPlayerLocation(TSubclassOf<AActor> SpawnClass, float Sc
 	return Item;
 }
 
-void AHotSpot::Bark(const FText &BarkText)
-{
-	if (AAdventurePlayerController *AdventurePlayerController = GetAdventureController())
-	{
-		AdventurePlayerController->PlayerBark(BarkText);
-	}
-}
-
-AAdventurePlayerController* AHotSpot::GetAdventureController() const
-{
-	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
-	return AdventurePlayerController;
-}
-
-void AHotSpot::AddToInventory(EItemList ItemToAdd)
-{
-	GetAdventureController()->OnItemAddToInventory(ItemToAdd);
-}
-
-void AHotSpot::RemoveFromInventory(EItemList ItemToRemove)
-{
-	GetAdventureController()->OnItemRemoveFromInventory(ItemToRemove);
-}
-
 void AHotSpot::HideSpriteComponent()
 {
 	SpriteComponent->SetVisibility(false);
@@ -207,7 +185,11 @@ void AHotSpot::ShowSpriteComponent()
 	SpriteComponent->SetVisibility(true);
 }
 
-void AHotSpot::ClearVerb()
+void AHotSpot::Bark(const FText &Text) const
 {
-	GetAdventureController()->InterruptCurrentAction();
+	APlayerController *PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (AAdventurePlayerController *APC = Cast<AAdventurePlayerController>(PC); IsValid(APC))
+	{
+		APC->PlayerBark(Text);
+	}
 }

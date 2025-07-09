@@ -1,0 +1,39 @@
+// (c) 2025 Sarah Smith
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Kismet/BlueprintFunctionLibrary.h"
+#include "AdvBlueprintFunctionLibrary.generated.h"
+
+class AAdventurePlayerController;
+
+/**
+ * 
+ */
+UCLASS()
+class ADVENTUREGAME_API UAdvBlueprintFunctionLibrary : public UBlueprintFunctionLibrary
+{
+	GENERATED_BODY()
+public:
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player Actions",  meta = (WorldContext = "WorldContextObject"))
+	static AAdventurePlayerController* GetAdventureController(const UObject* WorldContextObject);
+	
+	UFUNCTION(BlueprintCallable, Category = "Player Actions", meta = (WorldContext = "WorldContextObject"))
+	static void Bark(const UObject* WorldContextObject, FText BarkText);
+	
+	UFUNCTION(BlueprintCallable, Category = "Player Actions", meta = (WorldContext = "WorldContextObject"))
+	static void ClearVerb(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category = "Player Actions", meta = (WorldContext = "WorldContextObject"))
+	static void AddToInventory(const UObject* WorldContextObject, EItemList ItemToAdd);
+
+	UFUNCTION(BlueprintCallable, Category = "Player Actions", meta = (WorldContext = "WorldContextObject"))
+	static void RemoveFromInventory(const UObject* WorldContextObject, EItemList ItemToRemove);
+
+	UFUNCTION(BlueprintPure, Category = "Debug", meta = (WorldContext = "WorldContextObject"))
+	static int32 PIEInstance(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintPure)
+	static FString GetProjectVersion();
+};

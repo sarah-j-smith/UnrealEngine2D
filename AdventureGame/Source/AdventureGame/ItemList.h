@@ -10,7 +10,7 @@
 
 class UInventoryItem;
 
-UENUM(BlueprintType)
+UENUM(BlueprintType, meta = (ScriptName = "ItemKind"))
 enum class EItemList: uint8
 {
     None = 0 UMETA(DisplayName = "NONE"),
@@ -19,10 +19,12 @@ enum class EItemList: uint8
     Knife = 3 UMETA(DisplayName = "KNIFE"),
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChangedSignature, FName, Identifier);
+
 /**
- * 
+ * Manage a list of items, for example as in a players inventory.
  */
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class ADVENTUREGAME_API UItemList : public UObject
 {
     GENERATED_BODY()
@@ -45,7 +47,6 @@ private:
     FInventoryList* Inventory = nullptr;
     uint InventorySize = 0;
 
-
     /**
     * Low-level helper that adds the inventory item in the list, creating a
     * `FInventoryList` element to hold it.
@@ -64,10 +65,30 @@ private:
     void DumpInventoryToLog() const;
 
 public:
+    
+    //////////////////////////////////
+    ///
+    /// CONFIGURATION
+    ///
+
+    /// In the case of multiple item lists this identifier distinguishes which one is updated.
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Configuration")
+    FName Identifier = "Inventory";
+
+    /// Event for notifications of the inventory changing.
+    UPROPERTY(BlueprintAssignable, Category = "Configuration")
+    FOnInventoryChangedSignature OnInventoryChanged;
+
+    /// Table of class references for creating instances of items.
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     UDataTable* InventoryDataTable;
 
-    /// A string describing a list of items.
+    //////////////////////////////////
+    ///
+    /// ITEM REPORTING
+    ///
+
+    /// A string describing a list of items. Mostly for debug purposes.
     static FString GetListDescription(const TArray<EItemList>& List);
 
     /// Text for a generic item of that kind, used as a fallback to show to
@@ -84,14 +105,21 @@ public:
     UFUNCTION()
     bool IsEmpty() const;
 
-    /// Add the given item to the current players inventory of held
-    /// items. Instantiates an `UInventoryItem` instance of the class
-    /// from the `InventoryDataTable`. Caller should populate other fields
-    /// including `AdventureController`. If the Description field is empty
-    /// it defaults to using the enum's descriptive string.
-    /// @param ItemToAdd EItemList to create an InventoryItem instance of.
-    /// @param Description FText optional description to give to the item
-    /// @return InventoryItem Created and added.
+    //////////////////////////////////
+    ///
+    /// ITEM MANAGEMENT
+    ///
+
+    /**
+    * Add the given item to the current players inventory of held
+    * items. Instantiates an `UInventoryItem` instance of the class
+    * from the `InventoryDataTable`. Caller should populate other fields
+    * including `AdventureController`. If the Description field is empty
+    * it defaults to using the enum's descriptive string.
+    * @param ItemToAdd EItemList to create an InventoryItem instance of.
+    * @param Description FText optional description to give to the item
+    * @return InventoryItem Created and added.
+    */
     UFUNCTION(BlueprintCallable)
     UInventoryItem* AddItemToInventory(EItemList ItemToAdd, FText Description = FText::GetEmpty());
 

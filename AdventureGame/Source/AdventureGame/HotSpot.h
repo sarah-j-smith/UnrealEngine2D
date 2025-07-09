@@ -99,7 +99,7 @@ public:
 	/// PLAYER ACTIONS
 	///
 
-	/// Is this HotSpot a _Pickup_ - that has a sprite component for displaying
+	/// True if this HotSpot a **Pickup**, which has a sprite component for displaying
 	/// an in-game appearance - or is it just a hotspot with a clickable mesh?
 	/// @returns true if this has a valid `USpriteComponent`.
 	UFUNCTION(BlueprintCallable, Category = "Player Actions")
@@ -122,25 +122,14 @@ public:
 	/// where the actor is destroyed on adding to the inventory.
 	UFUNCTION(BlueprintCallable, Category = "Player Actions")
 	AActor *SpawnAtPlayerLocation(TSubclassOf<AActor> SpawnClass, float Scale = 1.0f, float Lifetime = 2.0f);
-	
-	UFUNCTION(BlueprintCallable, Category = "Player Actions")
-	void Bark(const FText &BarkText);
-
-	UFUNCTION(BlueprintCallable, Category = "Player Actions")
-	AAdventurePlayerController* GetAdventureController() const;
-
-	UFUNCTION(BlueprintCallable, Category = "Player Actions")
-	void AddToInventory(EItemList ItemToAdd);
-
-	UFUNCTION(BlueprintCallable, Category = "Player Actions")
-	void RemoveFromInventory(EItemList ItemToRemove);
 
 	UFUNCTION(BlueprintCallable, Category = "Player Actions")
 	void HideSpriteComponent();
 	
 	UFUNCTION(BlueprintCallable, Category = "Player Actions")
 	void ShowSpriteComponent();
-
-	UFUNCTION(BlueprintCallable, Category = "Player Actions")
-	void ClearVerb();
+private:
+	/// Internal convenience function. Do not expose to blueprints, they should use
+	/// AdvBlueprintFunctionLibrary::Bark() instead.
+	void Bark(const FText &Text) const;
 };

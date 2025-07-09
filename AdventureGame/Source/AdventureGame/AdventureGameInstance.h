@@ -23,11 +23,21 @@ class ADVENTUREGAME_API UAdventureGameInstance : public UGameInstance
 public:
 	//////////////////////////////////
 	///
+	/// EVENT HANDLERS
+	///
+
+	virtual void Init() override;
+	
+	//////////////////////////////////
+	///
 	/// INVENTORY
 	///
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	UItemList *Inventory;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
+	TSubclassOf<UItemList> InventoryClass;
 
 	//////////////////////////////////
 	///

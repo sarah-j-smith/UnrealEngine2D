@@ -11,8 +11,8 @@ void FAdventureGame::StartupModule()
 {
     FDefaultGameModuleImpl::StartupModule();
 
-    LOCTABLE_FROMFILE_GAME(ITEM_STRINGS_KEY, "ItemsNamespace", "Localization/ItemStrings.csv");
-    LOCTABLE_FROMFILE_GAME(ITEM_DESCRIPTIONS_KEY, "ItemsNamespace", "Localization/ItemDescriptions.csv");
+    LOCTABLE_FROMFILE_GAME(ITEM_STRINGS_KEY, "ItemsNamespace", ITEM_STRINGS_CSV_PATH);
+    LOCTABLE_FROMFILE_GAME(ITEM_DESCRIPTIONS_KEY, "ItemsNamespace", ITEM_DESCRIPTIONS_CSV_PATH);
 }
 
 void FAdventureGame::ShutdownModule()
@@ -20,5 +20,5 @@ void FAdventureGame::ShutdownModule()
     FDefaultGameModuleImpl::ShutdownModule();
 }
 
-IMPLEMENT_PRIMARY_GAME_MODULE( FAdventureGame, FAdventureGame, "AdventureGame" );
+IMPLEMENT_PRIMARY_GAME_MODULE( FAdventureGame, AdventureGame, "AdventureGame" );
 
