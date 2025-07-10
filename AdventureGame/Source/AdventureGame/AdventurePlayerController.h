@@ -24,6 +24,25 @@ DECLARE_MULTICAST_DELEGATE(FUpdateInteractionText);
 
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FEndAction, EInteractionType /* Interaction */, int32 /* UID */, bool /* Completed */);
 
+/// What commands has the player current issued in the UX.
+/// Note that sometimes the game will default the CurrentAction if the player
+/// has not specifically clicked on a command verb, eg WalkTo if over the game
+/// window, and LookAt if over the inventory. These states are for when the player
+/// has specifically given a command.
+UENUM(BlueprintType)
+enum class EPlayerCommand : uint8
+{
+	/// The player has not clicked to activate any command
+	None = 0           UMETA(DisplayName = "NONE"),
+
+	/// The player has activated by clicking on the CurrentVerb
+	VerbActivated = 1  UMETA(DisplayName = "VERB_ACTIVATED"),
+
+	/// A verb was activated (implicitly or explicitly) and now is being actioned
+	/// because the player clicked on a target for the verb
+	VerbInProgress = 2 UMETA(DisplayName = "VERB_INPROGRESS"),
+};
+
 /**
  * 
  */
@@ -110,9 +129,9 @@ private:
 	///
 
 public:
-	void OnItemAddToInventory(const EItemList &ItemToAdd);
+	void OnItemAddToInventory(const EItemKind &ItemToAdd);
 
-	void OnItemRemoveFromInventory(const EItemList &ItemToRemove);
+	void OnItemRemoveFromInventory(const EItemKind &ItemToRemove);
 
 	/// Handle a mouse click on an item button.
 	void HandleInventoryItemClicked(UItemSlot *ItemSlot);
@@ -124,7 +143,7 @@ public:
 	/// Perform an interaction on an item.
 	void PerformItemInteraction(const UInventoryItem *InventoryItem);
 
-	void UseAnItem(const EItemList ItemToUse)
+	void UseAnItem(const EItemKind ItemToUse)
 	{
 		ActiveItem = ItemToUse;
 		IsUsingItem = true;
@@ -132,7 +151,7 @@ public:
 		TriggerUpdateInventoryText();
 	}
 
-	void GiveAnItem(const EItemList ItemToGive)
+	void GiveAnItem(const EItemKind ItemToGive)
 	{
 		ActiveItem = ItemToGive;
 		IsUsingItem = true;
@@ -143,7 +162,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Items")
 	void CombineItems(const UInventoryItem *InventoryItemSource,
 		const UInventoryItem *InventoryItemToCombineWith,
-		EItemList ResultingItem, FText TextToBark, FText ResultDescription = FText::GetEmpty());
+		EItemKind ResultingItem, FText TextToBark, FText ResultDescription = FText::GetEmpty());
 	
 	/// Tell the UI to put the current verb and any current inventory item into the text display
 	/// and if the InventoryItemInteraction is true, highlight the text.
@@ -166,7 +185,7 @@ public:
 
 	/// An item current in process of "Use" or "Give"
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
-	EItemList ActiveItem = EItemList::None;
+	EItemKind ActiveItem = EItemKind::None;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
 	UItemSlot *CurrentItemSlot;
@@ -200,6 +219,10 @@ private:
 	/// ....or a HSM - see readme for State Trees.
 
 public:
+	/// Has the player currently issued a command?
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Verb")
+	EPlayerCommand CurrentCommand = EPlayerCommand::None;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	EVerbType CurrentVerb = EVerbType::WalkTo;
 
@@ -283,7 +306,7 @@ public:
 
 	/// The current `AAdventureCharacter` managed by this adventure controller
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<AAdventureCharacter> PlayerCharacter;
+	AAdventureCharacter *PlayerCharacter;
 
 	/// An object of this class will be spawned and will be controlled by the AI pathfinder
 	/// then the player will follow this puck. This is needed because the player character cannot

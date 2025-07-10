@@ -10,14 +10,7 @@
 
 class UInventoryItem;
 
-UENUM(BlueprintType, meta = (ScriptName = "ItemKind"))
-enum class EItemList: uint8
-{
-    None = 0 UMETA(DisplayName = "NONE"),
-    Pickle = 1 UMETA(DisplayName = "PICKLE"),
-    PickleKey = 2 UMETA(DisplayName = "PICKLE KEY"),
-    Knife = 3 UMETA(DisplayName = "KNIFE"),
-};
+// https://unreal-garden.com/tutorials/delegates-advanced/#choosing-a-delegate-type
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChangedSignature, FName, Identifier);
 
@@ -45,7 +38,6 @@ private:
     typedef TList<UInventoryItem*> FInventoryList;
     typedef TArray<UInventoryItem*> FInventoryArray;
     FInventoryList* Inventory = nullptr;
-    uint InventorySize = 0;
 
     /**
     * Low-level helper that adds the inventory item in the list, creating a
@@ -89,21 +81,24 @@ public:
     ///
 
     /// A string describing a list of items. Mostly for debug purposes.
-    static FString GetListDescription(const TArray<EItemList>& List);
+    static FString GetListDescription(const TArray<EItemKind>& List);
 
     /// Text for a generic item of that kind, used as a fallback to show to
     /// players, i18n via strings file. Generally overridden in a blueprint.
-    static FText GetDescription(const EItemList& ItemKind);
+    static FText GetDescription(const EItemKind& ItemKind);
 
     /// Name that is unique among all items, not shown to player, used to locate
     /// the item in the data tables.
-    static FName GetUniqueName(const EItemList& ItemKind);
+    static FName GetUniqueName(const EItemKind& ItemKind);
 
     UFUNCTION()
-    bool Contains(EItemList Item) const;
+    bool Contains(EItemKind Item) const;
 
     UFUNCTION()
     bool IsEmpty() const;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
+    int InventorySize = 0;
 
     //////////////////////////////////
     ///
@@ -116,30 +111,31 @@ public:
     * from the `InventoryDataTable`. Caller should populate other fields
     * including `AdventureController`. If the Description field is empty
     * it defaults to using the enum's descriptive string.
-    * @param ItemToAdd EItemList to create an InventoryItem instance of.
+    *
+    * At present only one instance of any `ItemKind` can exist in the inventory
+    * at a time. This might change in the future, but for now its not supported
+    * to have more than one of anything.
+    * 
+    * @param ItemToAdd EItemKind to create an InventoryItem instance of.
     * @param Description FText optional description to give to the item
     * @return InventoryItem Created and added.
     */
     UFUNCTION(BlueprintCallable)
-    UInventoryItem* AddItemToInventory(EItemList ItemToAdd, FText Description = FText::GetEmpty());
+    UInventoryItem* AddItemToInventory(EItemKind ItemToAdd, FText Description = FText::GetEmpty());
 
     /// Removes the given item from the current players inventory of held
     /// items. Destroys the `UInventoryItem` instance of the class
     /// from the `InventoryDataTable` and deletes it in the inventory UI
     UFUNCTION(BlueprintCallable)
-    void RemoveItemFromInventory(EItemList ItemToRemove);
+    void RemoveItemKindFromInventory(EItemKind ItemToRemove);
 
     /// Removes the given items from the current players inventory of held
     /// items. Destroys the `UInventoryItem` instances of the class
     /// from the `InventoryDataTable` and deletes them in the inventory UI
     UFUNCTION(BlueprintCallable)
-    void RemoveItemListFromInventory(const TSet<EItemList>& ItemsToRemove);
+    void RemoveItemKindsFromInventory(const TSet<EItemKind>& ItemsToRemove);
 
-    UFUNCTION(BlueprintGetter)
-    TArray<UInventoryItem*> GetInventoryItemsArray() const;
-
-    /// Copy of the inventory Items exposed as a TArray as Blueprints will not
-    /// work with a List.
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, BlueprintGetter="GetInventoryItemsArray")
-    TArray<UInventoryItem*> Items;
+    /// Copy pointers to the current inventory into the given array out argument.
+    /// @param Result Reference to an array of Inventory Item pointers. This array will be emptied and over-written.
+    void GetInventoryItemsArray(TArray<UInventoryItem *> &Result) const;
 };

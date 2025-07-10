@@ -87,6 +87,7 @@ void UAdventureGameInstance::SetupRoom()
 		{
 			if (UAdventureGameHUD *Hud = GetHUD())
 			{
+				UE_LOG(LogAdventureGame, Verbose, TEXT("Added handler for inventory changed"));
 				Inventory->OnInventoryChanged.AddDynamic(Hud, &UAdventureGameHUD::HandleInventoryChanged);
 			}
 		}

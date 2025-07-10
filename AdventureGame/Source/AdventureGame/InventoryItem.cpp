@@ -5,14 +5,21 @@
 #include "Constants.h"
 #include "AdventureGame.h"
 #include "AdventurePlayerController.h"
+#include "AdventureGame/ItemList.h"
 #include "Internationalization/StringTableRegistry.h"
+#include "Kismet/GameplayStatics.h"
+
+//////////////////////////////////
+///
+/// STATIC IMPLEMENTATIONS
+///
 
 FText UInventoryItem::GetDescription(const UInventoryItem *Item)
 {
     if (Item->Description.IsEmpty())
     {
         FText Text;
-        if (UItemList *ItemList = Item->ItemList.Get())
+        if (UItemList *ItemList = Item->ItemList)
         {
             Text = ItemList->GetDescription(Item->ItemKind);
         }
@@ -34,13 +41,6 @@ FText UInventoryItem::GetDescription() const
     return UInventoryItem::GetDescription(this);
 }
 
-UInventoryItem::UInventoryItem(const FObjectInitializer& ObjectInitializer)
-    : Super(ObjectInitializer)
-      , AdventurePlayerController(nullptr)
-{
-    //
-}
-
 void UInventoryItem::OnItemCombineSuccess_Implementation()
 {
     UE_LOG(LogAdventureGame, Log, TEXT("OnItemCombineSuccess Success - default."));
@@ -51,24 +51,24 @@ void UInventoryItem::OnItemCombineFailure_Implementation()
     BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "ItemUsedDefaultText"));
 }
 
-void UInventoryItem::CombineWithInteractableItem(EItemList ResultingItem, FText BarkText, FText Desc)
+void UInventoryItem::CombineWithInteractableItem(EItemKind ResultingItem, FText BarkText, FText Desc)
 {
-    if (const TSharedPtr<AAdventurePlayerController> AdventurePlayerController = this->AdventurePlayerController.Pin())
+    if (const auto Apc = this->AdventurePlayerController)
     {
-        if (AdventurePlayerController->CurrentItem)
+        if (Apc->CurrentItem)
         {
-            AdventurePlayerController->CombineItems(
-                AdventurePlayerController->CurrentItem,
+            Apc->CombineItems(
+                Apc->CurrentItem,
                 this, ResultingItem,
                 BarkText.IsEmpty() ? LOCTABLE(ITEM_STRINGS_KEY, "CombineSuccessResultText") : BarkText,
                 Desc.IsEmpty() ? LOCTABLE(ITEM_STRINGS_KEY, "DefaultCombineDescriptionText") : Desc
             );
             return;
         }
-        const FString DebugString = Desc.IsEmpty() ? UItemList::GetDescription(ResultingItem).ToString() : Desc.ToString();
-        UE_LOG(LogAdventureGame, Warning, TEXT("Could not make %s - AdventurePlayerController->CurrentItem null."),
-            *(DebugString));
     }
+    UE_LOG(LogAdventureGame, Warning,
+        TEXT("Could not make %s - AdventurePlayerController->CurrentItem null."),
+        *(Desc.IsEmpty() ? UItemList::GetDescription(ResultingItem).ToString() : Desc.ToString()));
 }
 
 void UInventoryItem::OnClose_Implementation()
@@ -137,9 +137,9 @@ void UInventoryItem::OnPush_Implementation()
 void UInventoryItem::OnUse_Implementation()
 {
     IVerbInteractions::OnUse_Implementation();
-    if (const TSharedPtr<AAdventurePlayerController> AdventurePlayerController = this->AdventurePlayerController.Pin())
+    if (AAdventurePlayerController *Apc = AdventurePlayerController)
     {
-        AdventurePlayerController->UseAnItem(ItemKind);
+        Apc->UseAnItem(ItemKind);
     }
     UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On use"));
 }
@@ -153,7 +153,7 @@ void UInventoryItem::OnWalkTo_Implementation()
 void UInventoryItem::OnItemUsed_Implementation()
 {
     IVerbInteractions::OnItemUsed_Implementation();
-    if (const TSharedPtr<AAdventurePlayerController> AdventurePlayerController = this->AdventurePlayerController.Pin())
+    if (AAdventurePlayerController *Apc = AdventurePlayerController)
     {
         if (AdventurePlayerController->ActiveItem == ItemKind)
         {
@@ -177,24 +177,18 @@ void UInventoryItem::OnItemUsed_Implementation()
 void UInventoryItem::OnItemGiven_Implementation()
 {
     IVerbInteractions::OnItemGiven_Implementation();
-    if (const TSharedPtr<AAdventurePlayerController> AdventurePlayerController = this->AdventurePlayerController.Pin())
+    if (AAdventurePlayerController *Apc = AdventurePlayerController)
     {
         AdventurePlayerController->GiveAnItem(ItemKind);
     }
     BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "ItemGivenDefaultText"));
 }
 
-AAdventurePlayerController *UInventoryItem::GetAdventureController() const
+void UInventoryItem::BarkAndEnd(FText BarkText)
 {
-    APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-    return Cast<AAdventurePlayerController>(PlayerController);
-}
-
-void UInventoryItem::BarkAndEnd(const FText& BarkText)
-{
-    if (const TSharedPtr<AAdventurePlayerController> AdventurePlayerController = this->AdventurePlayerController.Pin())
+    if (AAdventurePlayerController *Apc = AdventurePlayerController)
     {
-        AdventurePlayerController->PlayerBark(BarkText);
-        AdventurePlayerController->InterruptCurrentAction();
+        Apc->PlayerBark(BarkText);
+        Apc->InterruptCurrentAction();
     }
 }

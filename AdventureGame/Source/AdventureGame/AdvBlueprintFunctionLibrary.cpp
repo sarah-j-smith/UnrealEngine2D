@@ -3,7 +3,7 @@
 
 #include "AdvBlueprintFunctionLibrary.h"
 #include "AdventurePlayerController.h"
-#include "ItemList.h"
+#include "ItemKind.h"
 #include "Kismet/GameplayStatics.h"
 
 AAdventurePlayerController* UAdvBlueprintFunctionLibrary::GetAdventureController(const UObject* WorldContextObject)
@@ -16,7 +16,7 @@ AAdventurePlayerController* UAdvBlueprintFunctionLibrary::GetAdventureController
     return nullptr;
 }
 
-void UAdvBlueprintFunctionLibrary::Bark(const UObject* WorldContextObject, FText BarkText)
+void UAdvBlueprintFunctionLibrary::PlayerBark(const UObject* WorldContextObject, FText BarkText)
 {
     if (AAdventurePlayerController *AdventurePlayerController = GetAdventureController(WorldContextObject))
     {
@@ -49,7 +49,7 @@ int32 UAdvBlueprintFunctionLibrary::PIEInstance(const UObject* WorldContextObjec
     return -1;
 }
 
-void UAdvBlueprintFunctionLibrary::AddToInventory(const UObject* WorldContextObject, EItemList ItemToAdd)
+void UAdvBlueprintFunctionLibrary::AddToInventory(const UObject* WorldContextObject, EItemKind ItemToAdd)
 {
     if (AAdventurePlayerController *AdventurePlayerController = GetAdventureController(WorldContextObject))
     {
@@ -57,7 +57,7 @@ void UAdvBlueprintFunctionLibrary::AddToInventory(const UObject* WorldContextObj
     }
 }
 
-void UAdvBlueprintFunctionLibrary::RemoveFromInventory(const UObject* WorldContextObject, EItemList ItemToRemove)
+void UAdvBlueprintFunctionLibrary::RemoveFromInventory(const UObject* WorldContextObject, EItemKind ItemToRemove)
 {
     if (AAdventurePlayerController *AdventurePlayerController = GetAdventureController(WorldContextObject))
     {

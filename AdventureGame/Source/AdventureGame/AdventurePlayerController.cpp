@@ -10,6 +10,8 @@
 #include "AdvGameUtils.h"
 #include "InventoryItem.h"
 #include "ItemSlot.h"
+#include "ItemKind.h"
+#include "ItemList.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -122,7 +124,7 @@ void AAdventurePlayerController::UpdateMouseOverUI(bool NewMouseIsOverUI)
 	this->IsMouseOverUI = NewMouseIsOverUI;
 	if (NewMouseIsOverUI)
 	{
-		if (CurrentVerb == EVerbType::WalkTo && !IsPerformingTaskInteraction)
+		if (CurrentVerb == EVerbType::WalkTo && CurrentCommand == EPlayerCommand::None)
 		{
 			CurrentVerb = EVerbType::LookAt;
 			TriggerUpdateInteractionText();
@@ -130,7 +132,7 @@ void AAdventurePlayerController::UpdateMouseOverUI(bool NewMouseIsOverUI)
 	}
 	else
 	{
-		if (CurrentVerb == EVerbType::LookAt && !ItemInteraction)
+		if (CurrentVerb == EVerbType::LookAt && CurrentCommand == EPlayerCommand::None)
 		{
 			CurrentVerb = EVerbType::WalkTo;
 			TriggerUpdateInteractionText();
@@ -206,7 +208,7 @@ void AAdventurePlayerController::HandlePointAndClickInput()
 	}
 }
 
-void AAdventurePlayerController::OnItemAddToInventory(const EItemList &ItemToAdd)
+void AAdventurePlayerController::OnItemAddToInventory(const EItemKind &ItemToAdd)
 {
 	UGameInstance *GameInstance = GetGameInstance();
 	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
@@ -215,12 +217,12 @@ void AAdventurePlayerController::OnItemAddToInventory(const EItemList &ItemToAdd
 	AdventureGameInstance->Inventory->AddItemToInventory(ItemToAdd);
 }
 
-void AAdventurePlayerController::OnItemRemoveFromInventory(const EItemList &ItemToRemove)
+void AAdventurePlayerController::OnItemRemoveFromInventory(const EItemKind &ItemToRemove)
 {
 	UGameInstance *GameInstance = GetGameInstance();
 	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
 	if (!AdventureGameInstance) return;
-	AdventureGameInstance->Inventory->RemoveItemFromInventory(ItemToRemove);
+	AdventureGameInstance->Inventory->RemoveItemKindFromInventory(ItemToRemove);
 }
 
 void AAdventurePlayerController::HandleInventoryItemClicked(UItemSlot* ItemSlot)
@@ -232,6 +234,7 @@ void AAdventurePlayerController::HandleInventoryItemClicked(UItemSlot* ItemSlot)
 		PerformItemInteraction(ItemSlot->InventoryItem);
 		return;
 	}
+	CurrentCommand = EPlayerCommand::VerbInProgress;
 	CurrentItemSlot = ItemSlot;
 	ItemInteraction = true;
 	CurrentItem = ItemSlot->InventoryItem;
@@ -418,6 +421,7 @@ void AAdventurePlayerController::HandleMovementComplete()
 
 void AAdventurePlayerController::AssignVerb(EVerbType NewVerb)
 {
+	CurrentCommand = EPlayerCommand::VerbActivated;
 	CurrentVerb = NewVerb;
 	TriggerUpdateInteractionText();
 }
@@ -440,7 +444,7 @@ void AAdventurePlayerController::PerformItemInteraction(const UInventoryItem *In
 }
 
 void AAdventurePlayerController::CombineItems(const UInventoryItem* InventoryItemSource,
-	const UInventoryItem* InventoryItemToCombineWith, EItemList ResultingItem, FText TextToBark, FText ResultDescription)
+	const UInventoryItem* InventoryItemToCombineWith, EItemKind ResultingItem, FText TextToBark, FText ResultDescription)
 {
 	check(InventoryItemSource);
 	check(InventoryItemToCombineWith);
@@ -448,12 +452,12 @@ void AAdventurePlayerController::CombineItems(const UInventoryItem* InventoryIte
 	check(InventoryItemToCombineWith->ItemKind != InventoryItemSource->ItemKind);
 	UGameInstance *GameInstance = GetGameInstance();
 	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
-	AdventureGameInstance->Inventory->RemoveItemListFromInventory({
+	AdventureGameInstance->Inventory->RemoveItemKindsFromInventory({
 		InventoryItemSource->ItemKind,
 		InventoryItemToCombineWith->ItemKind
 	});
 	UInventoryItem *NewItem = AdventureGameInstance->Inventory->AddItemToInventory(ResultingItem, ResultDescription);
-	NewItem->SetAdventureController(TSharedRef<AAdventurePlayerController>(this));
+	NewItem->AdventurePlayerController = this;
 	if (CurrentItem == InventoryItemSource)
 	{
 		CurrentItem = nullptr;
@@ -519,14 +523,15 @@ void AAdventurePlayerController::PerformInteraction()
  */
 void AAdventurePlayerController::InterruptCurrentAction()
 {
-	if (IsValid(PlayerCharacter))
+	if (const AAdventureCharacter *Pc = PlayerCharacter)
 	{
-		PlayerCharacter->GetMovementComponent()->StopActiveMovement();
+		Pc->GetMovementComponent()->StopActiveMovement();
 	}
-	CurrentVerb = EVerbType::WalkTo;
+	CurrentVerb = IsMouseOverUI ? EVerbType::LookAt : EVerbType::WalkTo;
+	CurrentCommand = EPlayerCommand::None;
 	CurrentHotSpot = nullptr;
 	HotspotInteraction = false;
-	ActiveItem = EItemList::None;
+	ActiveItem = EItemKind::None;
 	IsGivingItem = false;
 	IsUsingItem = false;
 	ItemInteraction = false;

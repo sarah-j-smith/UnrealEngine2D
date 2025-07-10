@@ -13,14 +13,16 @@ void UAdventureGameHUD::NativeOnInitialized()
 	PlayerCharacter = GetOwningPlayerPawn<AAdventureCharacter>();
 
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
-	check(AdventurePlayerController);
-	AdventurePlayerController->BeginActionDelegate.AddUObject(this, &UAdventureGameHUD::BeginActionEvent);
-	AdventurePlayerController->UpdateInteractionTextDelegate.AddUObject(
-		this, &UAdventureGameHUD::UpdateInteractionTextEvent);
-	AdventurePlayerController->InterruptActionDelegate.AddUObject(this, &UAdventureGameHUD::InterruptActionEvent);
-	AdventurePlayerController->UpdateInventoryTextDelegate.AddUObject(
-		this, &UAdventureGameHUD::UpdateInventoryTextEvent);
+	if (AAdventurePlayerController *APC = Cast<AAdventurePlayerController>(PlayerController))
+	{
+		APC->BeginActionDelegate.AddUObject(this, &UAdventureGameHUD::BeginActionEvent);
+		APC->UpdateInteractionTextDelegate.AddUObject(
+			this, &UAdventureGameHUD::UpdateInteractionTextEvent);
+		APC->InterruptActionDelegate.AddUObject(this, &UAdventureGameHUD::InterruptActionEvent);
+		APC->UpdateInventoryTextDelegate.AddUObject(
+			this, &UAdventureGameHUD::UpdateInventoryTextEvent);
+		AdventurePlayerController = APC;
+	}
 
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameHUD::NativeOnInitialized"));
 }
@@ -37,22 +39,25 @@ void UAdventureGameHUD::HideBlackScreen()
 
 void UAdventureGameHUD::SetInteractionText()
 {
-	auto CurrentVerb = AdventurePlayerController->CurrentVerb;
-	auto CurrentHotspot = AdventurePlayerController->CurrentHotSpot;
-	FString VerbStr = VerbGetDescriptiveString(CurrentVerb);
-	if (CurrentHotspot)
+	if (TStrongObjectPtr<AAdventurePlayerController> APC = AdventurePlayerController.Pin())
 	{
-		FString HotspotStr = CurrentHotspot->HotSpotDescription;
-		FString hpStr = FString::Printf(TEXT("%s %s"), *VerbStr, *HotspotStr);
-		InteractionUI->SetText(hpStr);
-		if (AdventurePlayerController->HotspotInteraction)
+		auto CurrentVerb = APC->CurrentVerb;
+		auto CurrentHotspot = APC->CurrentHotSpot;
+		FString VerbStr = VerbGetDescriptiveString(CurrentVerb);
+		if (CurrentHotspot)
 		{
-			InteractionUI->HighlightText();
+			FString HotspotStr = CurrentHotspot->HotSpotDescription;
+			FString hpStr = FString::Printf(TEXT("%s %s"), *VerbStr, *HotspotStr);
+			InteractionUI->SetText(hpStr);
+			if (APC->HotspotInteraction)
+			{
+				InteractionUI->HighlightText();
+			}
 		}
-	}
-	else
-	{
-		InteractionUI->SetText(VerbStr);
+		else
+		{
+			InteractionUI->SetText(VerbStr);
+		}
 	}
 }
 

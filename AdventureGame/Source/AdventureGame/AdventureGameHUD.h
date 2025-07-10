@@ -39,18 +39,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UImage *BlackScreen;
 
-	TObjectPtr<AAdventureCharacter> PlayerCharacter;
-
-	TObjectPtr<AAdventurePlayerController> AdventurePlayerController;
-
-	void ShowBlackScreen();
-
-	void HideBlackScreen();
-
-	void SetInteractionText();
-
-	void SetInventoryText();
-
 	UFUNCTION()
 	void HandleInventoryChanged(FName Identifier);
 
@@ -65,4 +53,16 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void InterruptActionEvent();
+	
+	void ShowBlackScreen();
+
+	void HideBlackScreen();
+
+	void SetInteractionText();
+
+	void SetInventoryText();
+private:
+	TWeakObjectPtr<AAdventureCharacter> PlayerCharacter;
+
+	TWeakObjectPtr<AAdventurePlayerController> AdventurePlayerController;
 };

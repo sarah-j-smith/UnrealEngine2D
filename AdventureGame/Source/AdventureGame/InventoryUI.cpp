@@ -2,7 +2,7 @@
 
 
 #include "InventoryUI.h"
-
+#include "ItemList.h"
 #include "AdventureGame.h"
 #include "AdventureGameInstance.h"
 #include "AdventurePlayerController.h"
@@ -38,9 +38,16 @@ void UInventoryUI::PopulateInventory(bool ScrollToLastAdded)
 {
 	UGameInstance *GameInstance = UGameplayStatics::GetGameInstance(GetWorld());
 	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
-	auto Items = AdventureGameInstance->Inventory->Items;
-	InventoryCount = Items.Num();
-	MaxRowIndex = InventoryCount > 8 ? ceilf((InventoryCount - 8) / 4.0f) : 0;
+	TArray<UInventoryItem*> Items; 
+	if (const UItemList *ItemsList = AdventureGameInstance->Inventory)
+	{
+		InventoryCount = ItemsList->InventorySize;
+		if (InventoryCount > 0)
+		{
+			MaxRowIndex = InventoryCount > 8 ? ceilf((InventoryCount - 8) / 4.0f) : 0;
+			ItemsList->GetInventoryItemsArray(Items);
+		}
+	}
 
 	UE_LOG(LogAdventureGame, Verbose, TEXT("PopulateInventory - Count: %d - MaxRowIndex: %d"), InventoryCount, MaxRowIndex);
 

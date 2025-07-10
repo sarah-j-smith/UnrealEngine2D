@@ -20,16 +20,16 @@ public:
 	static AAdventurePlayerController* GetAdventureController(const UObject* WorldContextObject);
 	
 	UFUNCTION(BlueprintCallable, Category = "Player Actions", meta = (WorldContext = "WorldContextObject"))
-	static void Bark(const UObject* WorldContextObject, FText BarkText);
+	static void PlayerBark(const UObject* WorldContextObject, FText BarkText);
 	
 	UFUNCTION(BlueprintCallable, Category = "Player Actions", meta = (WorldContext = "WorldContextObject"))
 	static void ClearVerb(const UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintCallable, Category = "Player Actions", meta = (WorldContext = "WorldContextObject"))
-	static void AddToInventory(const UObject* WorldContextObject, EItemList ItemToAdd);
+	static void AddToInventory(const UObject* WorldContextObject, EItemKind ItemToAdd);
 
 	UFUNCTION(BlueprintCallable, Category = "Player Actions", meta = (WorldContext = "WorldContextObject"))
-	static void RemoveFromInventory(const UObject* WorldContextObject, EItemList ItemToRemove);
+	static void RemoveFromInventory(const UObject* WorldContextObject, EItemKind ItemToRemove);
 
 	UFUNCTION(BlueprintPure, Category = "Debug", meta = (WorldContext = "WorldContextObject"))
 	static int32 PIEInstance(const UObject* WorldContextObject);

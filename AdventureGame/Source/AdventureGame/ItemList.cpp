@@ -6,7 +6,7 @@
 #include "Constants.h"
 #include "ItemData.h"
 
-FString UItemList::GetListDescription(const TArray<EItemList>& List)
+FString UItemList::GetListDescription(const TArray<EItemKind>& List)
 {
 	FString Accum = "";
 	FString Concat = "";
@@ -19,30 +19,31 @@ FString UItemList::GetListDescription(const TArray<EItemList>& List)
 	return Accum;
 }
 
-FText UItemList::GetDescription(const EItemList &ItemKind)
+FText UItemList::GetDescription(const EItemKind &ItemKind)
 {
-	if (ItemKind == EItemList::None) return FText::GetEmpty();
+	if (ItemKind == EItemKind::None) return FText::GetEmpty();
 	const FName ItemName = GetUniqueName(ItemKind);
 	return FText::FromStringTable(ITEM_DESCRIPTIONS_KEY, ItemName.ToString());
 }
 
-FName UItemList::GetUniqueName(const EItemList &ItemKind)
+FName UItemList::GetUniqueName(const EItemKind &ItemKind)
 {
+	// These values must match the data table row names, see DT_ItemTable for example
 	switch (ItemKind)
 	{
-	case EItemList::Pickle:
+	case EItemKind::Pickle:
 		return FName("Pickle");
-	case EItemList::PickleKey:
-		return FName("Pickle_Key");
-	case EItemList::Knife:
+	case EItemKind::PickleKey:
+		return FName("PickleKey");
+	case EItemKind::Knife:
 		return FName("Knife");
-	case EItemList::None:
+	case EItemKind::None:
 	default:
 		return FName("None");
 	}
 }
 
-bool UItemList::Contains(EItemList Item) const
+bool UItemList::Contains(EItemKind Item) const
 {
 	for (const FInventoryList *Iterator = Inventory; Iterator; Iterator = Iterator->Next)
 	{
@@ -56,41 +57,49 @@ bool UItemList::IsEmpty() const
 	return Inventory == nullptr;
 }
 
-UInventoryItem *UItemList::AddItemToInventory(EItemList ItemToAdd, FText Description)
+UInventoryItem *UItemList::AddItemToInventory(EItemKind ItemToAdd, FText Description)
 {
-	if (ItemToAdd == EItemList::None)
+	if (ItemToAdd == EItemKind::None)
 	{
-		UE_LOG(LogAdventureGame, Warning, TEXT("Refusing to add EItemList::None to inventory."));
+		UE_LOG(LogAdventureGame, Warning, TEXT("Refusing to add EItemKind::None to inventory."));
 		return nullptr;
 	}
-	FName ItemName = GetUniqueName(ItemToAdd);
-	verifyf(InventoryDataTable, TEXT("ItemList could not load the InventoryDataTable"));
-	FItemData* ItemData = InventoryDataTable->FindRow<FItemData>(ItemName, "AddItemToInventory");
-	verifyf(ItemData, TEXT("ItemData could not be loaded for name \"%s\""), *ItemName.ToString());
+	const FItemData* ItemData = nullptr;
+	const FName ItemName = GetUniqueName(ItemToAdd);
+	if (const UDataTable *Dt = InventoryDataTable)
+	{
+		ItemData = Dt->FindRow<FItemData>(ItemName, "AddItemToInventory");
+	}
+	if (ItemData == nullptr)
+	{
+		UE_LOG(LogAdventureGame, Warning,
+			TEXT("ItemData could not be loaded for name \"%s\". Check the InventoryDataTable set in ItemList."),
+			*ItemName.ToString());
+		return nullptr;
+	}
 	UInventoryItem* InventoryItem = NewObject<UInventoryItem>(this, ItemData->ItemClass, ItemName);
 	InventoryItem->Description = Description;
 	AddItemToInventory(InventoryItem);
 	OnInventoryChanged.Broadcast(Identifier);
-	if (UNLIKELY(GetWorld()->IsEditorWorld()))
-	{
-		DumpInventoryToLog();
-	}
+#if WITH_EDITOR
+	DumpInventoryToLog();
+#endif
 	return InventoryItem;
 }
 
-void UItemList::RemoveItemFromInventory(EItemList ItemToRemove)
+void UItemList::RemoveItemKindFromInventory(EItemKind ItemToRemove)
 {
 	if (IsEmpty()) return;
-	const TSet<EItemList> Items({ItemToRemove});
-	RemoveItemListFromInventory(Items);
+	const TSet<EItemKind> Items({ItemToRemove});
+	RemoveItemKindsFromInventory(Items);
 }
 
 
-void UItemList::RemoveItemListFromInventory(const TSet<EItemList>& ItemsToRemove)
+void UItemList::RemoveItemKindsFromInventory(const TSet<EItemKind>& ItemsToRemove)
 {
 	if (IsEmpty()) return;
 	FInventoryList *Item = Inventory;
-	TSet<EItemList> RemovingItems(ItemsToRemove);
+	TSet<EItemKind> RemovingItems(ItemsToRemove);
 	for (FInventoryList *Iterator = Inventory; Iterator; Iterator = Iterator->Next)
 	{
 		if (RemovingItems.Contains(Iterator->Element->ItemKind))
@@ -112,14 +121,13 @@ void UItemList::RemoveItemListFromInventory(const TSet<EItemList>& ItemsToRemove
 	}
 }
 
-TArray<UInventoryItem *> UItemList::GetInventoryItemsArray() const
+void UItemList::GetInventoryItemsArray(TArray<UInventoryItem *> &Result) const
 {
-	TArray<UInventoryItem *> Result;
+	Result.Empty();
 	for (const FInventoryList *Iterator = Inventory; Iterator; Iterator = Iterator->Next)
 	{
 		Result.Add(Iterator->Element);
 	}
-	return Result;
 }
 
 
