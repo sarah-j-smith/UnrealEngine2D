@@ -7,7 +7,6 @@
 #include "AdventurePlayerController.h"
 #include "AdventureGame/ItemList.h"
 #include "Internationalization/StringTableRegistry.h"
-#include "Kismet/GameplayStatics.h"
 
 //////////////////////////////////
 ///
@@ -19,7 +18,7 @@ FText UInventoryItem::GetDescription(const UInventoryItem *Item)
     if (Item->Description.IsEmpty())
     {
         FText Text;
-        if (UItemList *ItemList = Item->ItemList)
+        if (const auto ItemList = Item->ItemList.Pin())
         {
             Text = ItemList->GetDescription(Item->ItemKind);
         }
@@ -53,7 +52,7 @@ void UInventoryItem::OnItemCombineFailure_Implementation()
 
 void UInventoryItem::CombineWithInteractableItem(EItemKind ResultingItem, FText BarkText, FText Desc)
 {
-    if (const auto Apc = this->AdventurePlayerController)
+    if (const auto Apc = this->AdventurePlayerController.Pin())
     {
         if (Apc->CurrentItem)
         {
@@ -137,7 +136,7 @@ void UInventoryItem::OnPush_Implementation()
 void UInventoryItem::OnUse_Implementation()
 {
     IVerbInteractions::OnUse_Implementation();
-    if (AAdventurePlayerController *Apc = AdventurePlayerController)
+    if (const auto Apc = AdventurePlayerController.Pin())
     {
         Apc->UseAnItem(ItemKind);
     }
@@ -153,7 +152,7 @@ void UInventoryItem::OnWalkTo_Implementation()
 void UInventoryItem::OnItemUsed_Implementation()
 {
     IVerbInteractions::OnItemUsed_Implementation();
-    if (AAdventurePlayerController *Apc = AdventurePlayerController)
+    if (const auto Apc = AdventurePlayerController.Pin())
     {
         if (AdventurePlayerController->ActiveItem == ItemKind)
         {
@@ -177,7 +176,7 @@ void UInventoryItem::OnItemUsed_Implementation()
 void UInventoryItem::OnItemGiven_Implementation()
 {
     IVerbInteractions::OnItemGiven_Implementation();
-    if (AAdventurePlayerController *Apc = AdventurePlayerController)
+    if (const auto Apc = AdventurePlayerController.Pin())
     {
         AdventurePlayerController->GiveAnItem(ItemKind);
     }
@@ -186,7 +185,7 @@ void UInventoryItem::OnItemGiven_Implementation()
 
 void UInventoryItem::BarkAndEnd(FText BarkText)
 {
-    if (AAdventurePlayerController *Apc = AdventurePlayerController)
+    if (const auto Apc = AdventurePlayerController.Pin())
     {
         Apc->PlayerBark(BarkText);
         Apc->InterruptCurrentAction();

@@ -8,9 +8,10 @@
 
 AAdventurePlayerController* UAdvBlueprintFunctionLibrary::GetAdventureController(const UObject* WorldContextObject)
 {
-    if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+    if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject,
+                                                                 EGetWorldErrorMode::LogAndReturnNull))
     {
-        APlayerController *PlayerController = UGameplayStatics::GetPlayerController(World, 0);
+        APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World, 0);
         return Cast<AAdventurePlayerController>(PlayerController);
     }
     return nullptr;
@@ -18,7 +19,7 @@ AAdventurePlayerController* UAdvBlueprintFunctionLibrary::GetAdventureController
 
 void UAdvBlueprintFunctionLibrary::PlayerBark(const UObject* WorldContextObject, FText BarkText)
 {
-    if (AAdventurePlayerController *AdventurePlayerController = GetAdventureController(WorldContextObject))
+    if (AAdventurePlayerController* AdventurePlayerController = GetAdventureController(WorldContextObject))
     {
         AdventurePlayerController->PlayerBark(BarkText);
     }
@@ -26,7 +27,7 @@ void UAdvBlueprintFunctionLibrary::PlayerBark(const UObject* WorldContextObject,
 
 void UAdvBlueprintFunctionLibrary::ClearVerb(const UObject* WorldContextObject)
 {
-    if (AAdventurePlayerController *AdventurePlayerController = GetAdventureController(WorldContextObject))
+    if (AAdventurePlayerController* AdventurePlayerController = GetAdventureController(WorldContextObject))
     {
         AdventurePlayerController->InterruptCurrentAction();
     }
@@ -49,19 +50,25 @@ int32 UAdvBlueprintFunctionLibrary::PIEInstance(const UObject* WorldContextObjec
     return -1;
 }
 
-void UAdvBlueprintFunctionLibrary::AddToInventory(const UObject* WorldContextObject, EItemKind ItemToAdd)
+UInventoryItem* UAdvBlueprintFunctionLibrary::AddToInventory(const UObject* WorldContextObject,
+                                                             EItemKind ItemToAdd, FText Description,
+                                                             EItemKind InteractableItem)
 {
-    if (AAdventurePlayerController *AdventurePlayerController = GetAdventureController(WorldContextObject))
+    if (AAdventurePlayerController* AdventurePlayerController = GetAdventureController(WorldContextObject))
     {
-        AdventurePlayerController->OnItemAddToInventory(ItemToAdd);
+        UInventoryItem* Item = AdventurePlayerController->ItemAddToInventory(ItemToAdd);
+        Item->Description = Description;
+        Item->InteractableItem = InteractableItem;
+        return Item;
     }
+    return nullptr;
 }
 
 void UAdvBlueprintFunctionLibrary::RemoveFromInventory(const UObject* WorldContextObject, EItemKind ItemToRemove)
 {
-    if (AAdventurePlayerController *AdventurePlayerController = GetAdventureController(WorldContextObject))
+    if (AAdventurePlayerController* AdventurePlayerController = GetAdventureController(WorldContextObject))
     {
-        AdventurePlayerController->OnItemRemoveFromInventory(ItemToRemove);
+        AdventurePlayerController->ItemRemoveFromInventory(ItemToRemove);
     }
 }
 
@@ -70,10 +77,10 @@ FString UAdvBlueprintFunctionLibrary::GetProjectVersion()
     FString ProjectVersion;
 
     GConfig->GetString(
-      TEXT("/Script/EngineSettings.GeneralProjectSettings"),
-      TEXT("ProjectVersion"),
-      ProjectVersion,
-      GGameIni
+        TEXT("/Script/EngineSettings.GeneralProjectSettings"),
+        TEXT("ProjectVersion"),
+        ProjectVersion,
+        GGameIni
     );
 
     return ProjectVersion;

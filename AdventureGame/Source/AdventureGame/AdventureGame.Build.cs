@@ -12,7 +12,7 @@ public class AdventureGame : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "AITestSuite" });
 		
-		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore", "UnrealEd", "PropertyEditor" });
 		
 		// Uncomment if you are using online features
 		// PrivateDependencyModuleNames.Add("OnlineSubsystem");

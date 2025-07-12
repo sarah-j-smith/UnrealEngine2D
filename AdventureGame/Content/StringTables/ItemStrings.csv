@@ -15,3 +15,4 @@ CombineSuccessResultText,"That worked!","Default text for when player uses an it
 GivenSuccessResultText,"Gave it","Default text for when player uses an item on another successfully"
 DefaultCombineDescriptionText,combination thing,"Default text for a thing made from two other things combined"
 DefaultItemDescriptionText,"thing","Default description for any item"
+PlayerInventory,Player Inventory,Title for list of players items in the game editor

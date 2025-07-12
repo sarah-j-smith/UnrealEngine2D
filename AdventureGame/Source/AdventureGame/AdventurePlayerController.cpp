@@ -52,7 +52,7 @@ void AAdventurePlayerController::MouseLeaveHotSpot()
 
 void AAdventurePlayerController::MouseEnterInventoryItem(UItemSlot *ItemSlot)
 {
-	if (HotspotInteraction || IsPerformingTaskInteraction || IsGivingItem || IsUsingItem) return;
+	if (CurrentCommand != EPlayerCommand::None) return;
 	CurrentItem = ItemSlot->InventoryItem;
 	CurrentItemSlot = ItemSlot;
 	TriggerUpdateInventoryText();
@@ -60,7 +60,7 @@ void AAdventurePlayerController::MouseEnterInventoryItem(UItemSlot *ItemSlot)
 
 void AAdventurePlayerController::MouseLeaveInventoryItem()
 {
-	if (HotspotInteraction || IsPerformingTaskInteraction || IsGivingItem || IsUsingItem) return;
+	if (CurrentCommand != EPlayerCommand::None) return;
 	if (!CurrentItem) return;
 	CurrentItem = nullptr;
 	CurrentItemSlot = nullptr;
@@ -93,8 +93,6 @@ void AAdventurePlayerController::BeginPlay()
 	UGameInstance *GameInstance = UGameplayStatics::GetGameInstance(GetWorld());
 	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
 	AdventureGameInstance->OnLoadRoom();
-
-	this->Inventory = AdventureGameInstance->Inventory;
 	
 	TriggerUpdateInteractionText();
 	APawn *Pawn = SetupPuck(PlayerCharacter);
@@ -208,21 +206,24 @@ void AAdventurePlayerController::HandlePointAndClickInput()
 	}
 }
 
-void AAdventurePlayerController::OnItemAddToInventory(const EItemKind &ItemToAdd)
+UInventoryItem *AAdventurePlayerController::ItemAddToInventory(const EItemKind &ItemToAdd, FText Description)
 {
-	UGameInstance *GameInstance = GetGameInstance();
-	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
-	if (!AdventureGameInstance) return;
-	if (AdventureGameInstance->Inventory && AdventureGameInstance->Inventory->Contains(ItemToAdd)) return;
-	AdventureGameInstance->Inventory->AddItemToInventory(ItemToAdd);
+	if (UItemList *Inventory = GetInventoryItemList())
+	{
+		if (!Inventory->Contains(ItemToAdd))
+		{
+			return Inventory->AddItemToInventory(ItemToAdd, Description);
+		}
+	}
+	return nullptr;
 }
 
-void AAdventurePlayerController::OnItemRemoveFromInventory(const EItemKind &ItemToRemove)
+void AAdventurePlayerController::ItemRemoveFromInventory(const EItemKind &ItemToRemove)
 {
-	UGameInstance *GameInstance = GetGameInstance();
-	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
-	if (!AdventureGameInstance) return;
-	AdventureGameInstance->Inventory->RemoveItemKindFromInventory(ItemToRemove);
+	if (UItemList *Inventory = GetInventoryItemList())
+	{
+		Inventory->RemoveItemKindFromInventory(ItemToRemove);
+	}
 }
 
 void AAdventurePlayerController::HandleInventoryItemClicked(UItemSlot* ItemSlot)
@@ -450,6 +451,7 @@ void AAdventurePlayerController::CombineItems(const UInventoryItem* InventoryIte
 	check(InventoryItemToCombineWith);
 	check(InventoryItemToCombineWith != InventoryItemSource);
 	check(InventoryItemToCombineWith->ItemKind != InventoryItemSource->ItemKind);
+	check(InventoryItemSource->InteractableItem == InventoryItemToCombineWith->ItemKind)
 	UGameInstance *GameInstance = GetGameInstance();
 	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
 	AdventureGameInstance->Inventory->RemoveItemKindsFromInventory({
@@ -473,6 +475,14 @@ void AAdventurePlayerController::CombineItems(const UInventoryItem* InventoryIte
 void AAdventurePlayerController::TriggerUpdateInventoryText()
 {
 	UpdateInventoryTextDelegate.Broadcast();
+}
+
+UItemList* AAdventurePlayerController::GetInventoryItemList()
+{
+	UGameInstance *GameInstance = GetGameInstance();
+	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
+	if (!AdventureGameInstance) return nullptr;
+	return AdventureGameInstance->Inventory;
 }
 
 void AAdventurePlayerController::PerformInteraction()

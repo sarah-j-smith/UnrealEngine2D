@@ -48,8 +48,9 @@ public:
     EItemKind InteractableItem = EItemKind::None;
 
     /// Convenience method that combines this item with its interactable
-    /// item, which is assumed to be either the current item on the
-    /// adventure controller.
+    /// item. Call this from the `OnItemCombineSuccess` event where the
+    /// current item on the adventure controller is guaranteed to be
+    /// correctly set to this items interactable item.
     UFUNCTION(BlueprintCallable, Category = "ItemHandling")
     void CombineWithInteractableItem(EItemKind ResultingItem, FText BarkText = FText::GetEmpty(),
                                      FText Desc = FText::GetEmpty());
@@ -140,11 +141,11 @@ public:
 
     /// Inventory item local reference to the Adventure Player Controller object.
     /// Might be null, check before using.
-    UPROPERTY(BlueprintReadOnly, Category = "Player Actions")
-    AAdventurePlayerController *AdventurePlayerController;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ItemHandling")
+    TWeakObjectPtr<AAdventurePlayerController> AdventurePlayerController;
 
     /// Inventory item local reference to the Item List that this item is a member of.
     /// Might be null, check before using.
-    UPROPERTY(BlueprintReadOnly, Category = "Player Actions")
-    UItemList *ItemList;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ItemHandling")
+    TWeakObjectPtr<UItemList> ItemList;
 };

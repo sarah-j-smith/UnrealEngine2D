@@ -12,8 +12,6 @@ class UInventoryItem;
 
 // https://unreal-garden.com/tutorials/delegates-advanced/#choosing-a-delegate-type
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChangedSignature, FName, Identifier);
-
 /**
  * Manage a list of items, for example as in a players inventory.
  */
@@ -57,6 +55,9 @@ private:
     void DumpInventoryToLog() const;
 
 public:
+    // DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChangedSignature, FName, Identifier);
+    DECLARE_MULTICAST_DELEGATE_OneParam(FOnInventoryChangedSignature, FName /* Identifier */);
+    FOnInventoryChangedSignature OnInventoryChanged;
     
     //////////////////////////////////
     ///
@@ -66,10 +67,6 @@ public:
     /// In the case of multiple item lists this identifier distinguishes which one is updated.
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Configuration")
     FName Identifier = "Inventory";
-
-    /// Event for notifications of the inventory changing.
-    UPROPERTY(BlueprintAssignable, Category = "Configuration")
-    FOnInventoryChangedSignature OnInventoryChanged;
 
     /// Table of class references for creating instances of items.
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

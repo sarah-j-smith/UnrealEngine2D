@@ -78,7 +78,21 @@ UInventoryItem *UItemList::AddItemToInventory(EItemKind ItemToAdd, FText Descrip
 		return nullptr;
 	}
 	UInventoryItem* InventoryItem = NewObject<UInventoryItem>(this, ItemData->ItemClass, ItemName);
-	InventoryItem->Description = Description;
+	if (InventoryItem->Description.IsEmpty() && !Description.IsEmpty())
+	{
+		InventoryItem->Description = Description;
+	}
+	if (InventoryItem->ItemKind != ItemToAdd)
+	{
+		UE_LOG(LogAdventureGame, Error, TEXT("Item \"%s\": \"%s\" created from class with kind: %s - forcing to: %s"),
+			*(ItemName.ToString()),
+			*(InventoryItem->Description.ToString()),
+			*(UItemList::GetDescription(InventoryItem->ItemKind).ToString()),
+			*(UItemList::GetDescription(ItemToAdd).ToString())
+		);
+		InventoryItem->ItemKind = ItemToAdd;
+	}
+	InventoryItem->ItemList = this;
 	AddItemToInventory(InventoryItem);
 	OnInventoryChanged.Broadcast(Identifier);
 #if WITH_EDITOR

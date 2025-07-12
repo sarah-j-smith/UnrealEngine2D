@@ -16,6 +16,7 @@
 #include "AdventurePlayerController.generated.h"
 
 class UItemSlot;
+
 DECLARE_DELEGATE(FRunInterruptedActionDelegate);
 
 DECLARE_MULTICAST_DELEGATE(FBeginAction);
@@ -129,9 +130,9 @@ private:
 	///
 
 public:
-	void OnItemAddToInventory(const EItemKind &ItemToAdd);
+	UInventoryItem *ItemAddToInventory(const EItemKind &ItemToAdd, FText Description = FText::GetEmpty());
 
-	void OnItemRemoveFromInventory(const EItemKind &ItemToRemove);
+	void ItemRemoveFromInventory(const EItemKind &ItemToRemove);
 
 	/// Handle a mouse click on an item button.
 	void HandleInventoryItemClicked(UItemSlot *ItemSlot);
@@ -189,17 +190,15 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
 	UItemSlot *CurrentItemSlot;
-	
-	/// Read-only display of player inventory.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
-	UItemList *Inventory;
+
+private:
+	UItemList *GetInventoryItemList();
 
 	//////////////////////////////////
 	///
 	/// VERBS AND INTERACTION
 	///
 	
-private:
 	void PerformInteraction();
 
 	/// Tell the UI to highlight and lock the action text
@@ -320,6 +319,7 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UAdventureGameHUD> AdventureHUDClass;
+
 	void SetupHUD();
 
 	void SetupAnimationDelegates();
@@ -342,4 +342,6 @@ private:
 	bool IsMouseOverUI = false;
 
 	void UpdateMouseOverUI(bool NewMouseIsOverUI);
+
+	friend class FInventoryCustomisation;
 };

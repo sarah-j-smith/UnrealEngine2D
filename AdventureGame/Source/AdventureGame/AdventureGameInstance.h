@@ -170,4 +170,6 @@ private:
 	ADoor *FindDoor(FName DoorLabel);
 
 	void LoadDoor(const ADoor *Door);
+private:
+	FDelegateHandle OnInventoryChangedHandle;
 };
