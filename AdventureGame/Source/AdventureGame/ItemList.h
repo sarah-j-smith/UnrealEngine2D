@@ -55,7 +55,6 @@ private:
     void DumpInventoryToLog() const;
 
 public:
-    // DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChangedSignature, FName, Identifier);
     DECLARE_MULTICAST_DELEGATE_OneParam(FOnInventoryChangedSignature, FName /* Identifier */);
     FOnInventoryChangedSignature OnInventoryChanged;
     

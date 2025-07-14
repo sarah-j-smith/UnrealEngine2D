@@ -1,0 +1,59 @@
+// (c) 2025 Sarah Smith
+
+
+#include "CommandCodes.h"
+
+FString CommandCodesToString(const ECommandCodes Command)
+{
+    switch (Command)
+    {
+    case ECommandCodes::HoverScene:
+        return "HoverScene";
+    case ECommandCodes::HoverInventory:
+        return "HoverInventory";
+    case ECommandCodes::HoverItem:
+        return "HoverItem";
+    case ECommandCodes::HoverHotSpot:
+        return "HoverHotSpot";
+    case ECommandCodes::HoverVerb:
+        return "HoverVerb";
+    case ECommandCodes::WalkToHotSpot:
+        return "WalkToHotSpot";
+    case ECommandCodes::WalkToLocation:
+        return "WalkToLocation";
+    case ECommandCodes::LookAtItem:
+        return "LookAtItem";
+    case ECommandCodes::LookAt:
+        return "LookAt";
+    case ECommandCodes::Give:
+        return "Give";
+    case ECommandCodes::Open:
+        return "Open";
+    case ECommandCodes::Close:
+        return "Close";
+    case ECommandCodes::PickUp:
+        return "PickUp";
+    case ECommandCodes::TalkTo:
+        return "TalkTo";
+    case ECommandCodes::Use:
+        return "Use";
+    case ECommandCodes::Push:
+        return "Push";
+    case ECommandCodes::Pull:
+        return "Pull";
+    case ECommandCodes::GiveTo:
+        return "GiveTo";
+    case ECommandCodes::UseOn:
+        return "UseOn";
+    case ECommandCodes::Free:
+        return "Free";
+    case ECommandCodes::Pending:
+        return "Pending";
+    case ECommandCodes::Targeting:
+        return "Targeting";
+    case ECommandCodes::Active:
+        return "Active";
+    default:
+        return "Unknown";
+    }
+}

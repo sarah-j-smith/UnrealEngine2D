@@ -424,6 +424,8 @@ void AAdventurePlayerController::AssignVerb(EVerbType NewVerb)
 {
 	CurrentCommand = EPlayerCommand::VerbActivated;
 	CurrentVerb = NewVerb;
+	ItemInteraction = false;
+	IsUsingItem = false;
 	TriggerUpdateInteractionText();
 }
 
@@ -540,6 +542,8 @@ void AAdventurePlayerController::InterruptCurrentAction()
 	CurrentVerb = IsMouseOverUI ? EVerbType::LookAt : EVerbType::WalkTo;
 	CurrentCommand = EPlayerCommand::None;
 	CurrentHotSpot = nullptr;
+	CurrentItem = nullptr;
+	CurrentItemSlot = nullptr;
 	HotspotInteraction = false;
 	ActiveItem = EItemKind::None;
 	IsGivingItem = false;

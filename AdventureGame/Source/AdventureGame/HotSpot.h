@@ -8,7 +8,6 @@
 #include "VerbInteractions.h"
 #include "WalkDirection.h"
 #include "Components/SphereComponent.h"
-#include "Kismet/BlueprintAsyncActionBase.h"
 #include "PaperSpriteComponent.h"
 
 #include "HotSpot.generated.h"

@@ -169,26 +169,38 @@ public:
 	/// and if the InventoryItemInteraction is true, highlight the text.
 	void TriggerUpdateInventoryText();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
+	//////////////////////////////////
+	///
+	/// COMMAND STATE
+	///
+	
+	/// Has the player currently issued a command?
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
+	EPlayerCommand CurrentCommand = EPlayerCommand::None;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
+	EVerbType CurrentVerb = EVerbType::WalkTo;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
 	const UInventoryItem *CurrentItem;
 
 	/// True if the player character is currently interacting with an item
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
 	bool ItemInteraction = false;
 
 	/// True if the player character is currently using via the "Use" verb on an item
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
 	bool IsUsingItem = false;
 
 	/// True if the player character is currently giving via the "Give" verb on an item
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
 	bool IsGivingItem = false;
 
 	/// An item current in process of "Use" or "Give"
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
 	EItemKind ActiveItem = EItemKind::None;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
 	UItemSlot *CurrentItemSlot;
 
 private:
@@ -218,13 +230,6 @@ private:
 	/// ....or a HSM - see readme for State Trees.
 
 public:
-	/// Has the player currently issued a command?
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Verb")
-	EPlayerCommand CurrentCommand = EPlayerCommand::None;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	EVerbType CurrentVerb = EVerbType::WalkTo;
-
 	void AssignVerb(EVerbType NewVerb);
 
 	/// Stops any current action, items and hotspots, clearing the status

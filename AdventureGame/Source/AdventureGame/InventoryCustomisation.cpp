@@ -90,7 +90,6 @@ void FInventoryCustomisation::CustomizeDetails(IDetailLayoutBuilder& DetailBuild
             .MaxDesiredWidth(300)
             [
                 SNew(SListView<TSharedPtr<FText>>)
-                .ItemHeight(24)
                 .ListItemsSource(&InventoryDescriptions)
                 .OnGenerateRow(this, &FInventoryCustomisation::GenerateItemRow)
             ];
