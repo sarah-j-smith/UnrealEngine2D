@@ -122,10 +122,23 @@ public:
 	UFUNCTION() void PushTriggered();
 	UFUNCTION() void PullTriggered();
 
+	UFUNCTION() void CloseHovered();
+	UFUNCTION() void OpenHovered();
+	UFUNCTION() void GiveHovered();
+	UFUNCTION() void TalkToHovered();
+	UFUNCTION() void LookAtHovered();
+	UFUNCTION() void PickUpHovered();
+	UFUNCTION() void UseHovered();
+	UFUNCTION() void PushHovered();
+	UFUNCTION() void PullHovered();
+
+	UFUNCTION() void VerbUnhovered();
 	void ClearActiveButton();
 
 private:
 	void SetButtonActive(EVerbType VerbType);
+
+	TOptional<EVerbType> HoveredVerbType = TOptional<EVerbType>();
 
 	/**
 	 * Called during initialization to pick up the normal, unactivated style of
@@ -134,5 +147,7 @@ private:
 	void AssignNormalStyles();
 
 	void SetActiveVerb() const;
+
+	void SetHoveredVerb() const;
 
 };

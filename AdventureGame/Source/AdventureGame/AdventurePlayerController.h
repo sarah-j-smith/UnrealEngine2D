@@ -55,7 +55,39 @@ class ADVENTUREGAME_API AAdventurePlayerController : public APlayerController
 public:
 	AAdventurePlayerController();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//////////////////////////////////
+	///
+	/// COMMAND STATE
+	///
+
+	/// Parent command state in HSM
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Getter="GetSourceInventoryItem", Category="Command State")	
+	UInventoryItem *SourceInventoryItem;
+	
+	/// Parent command state in HSM
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Getter="GetRootCommandCode", Category="Command State")	
+	ECommandCodes RootCommandCode;
+
+	/// Parent command state in HSM
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Getter="GetLeafCommandCode", Category="Command State")	
+	ECommandCodes LeafCommandCode;
+
+	UInventoryItem *GetSourceInventoryItem() const
+	{
+		return Command->SourceItem;
+	}
+	
+	ECommandCodes GetRootCommandCode() const
+	{
+		return Command->TopState;
+	}
+	
+	ECommandCodes GetLeafCommandCode() const
+	{
+		return Command->ChildState;
+	}
+	
+	UPROPERTY()
 	UCurrentCommand *Command;
 
 	//////////////////////////////////
@@ -235,6 +267,8 @@ private:
 
 public:
 	void AssignVerb(EVerbType NewVerb);
+
+	void HoverVerb(TOptional<EVerbType> NewVerb);
 
 	/// Stops any current action, items and hotspots, clearing the status
 	UFUNCTION(BlueprintCallable, Category="Verb", DisplayName="ClearAction")

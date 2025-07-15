@@ -30,8 +30,7 @@ AAdventurePlayerController::AAdventurePlayerController()
 
 void AAdventurePlayerController::MouseEnterHotSpot(AHotSpot* HotSpot)
 {
-	GEngine->AddOnScreenDebugMessage(1, 3.0, FColor::White, HotSpot->GetName(),
-	                                 false, FVector2D(2.0, 2.0));
+	Command->SetHoverHotSpot(HotSpot);
 	if (!HotspotInteraction)
 	{
 		CurrentHotSpot = HotSpot;
@@ -41,8 +40,7 @@ void AAdventurePlayerController::MouseEnterHotSpot(AHotSpot* HotSpot)
 
 void AAdventurePlayerController::MouseLeaveHotSpot()
 {
-	GEngine->AddOnScreenDebugMessage(1, 20.0, FColor::White, TEXT("Left hotspot"),
-	                                 false, FVector2D(2.0, 2.0));
+	Command->SetHoverHotSpot(nullptr);
 	if (!HotspotInteraction)
 	{
 		CurrentHotSpot = nullptr;
@@ -52,6 +50,7 @@ void AAdventurePlayerController::MouseLeaveHotSpot()
 
 void AAdventurePlayerController::MouseEnterInventoryItem(UItemSlot *ItemSlot)
 {
+	Command->SetHoverItem(ItemSlot->InventoryItem);
 	if (CurrentCommand != EPlayerCommand::None) return;
 	CurrentItem = ItemSlot->InventoryItem;
 	CurrentItemSlot = ItemSlot;
@@ -60,6 +59,7 @@ void AAdventurePlayerController::MouseEnterInventoryItem(UItemSlot *ItemSlot)
 
 void AAdventurePlayerController::MouseLeaveInventoryItem()
 {
+	Command->SetHoverItem(nullptr);
 	if (CurrentCommand != EPlayerCommand::None) return;
 	if (!CurrentItem) return;
 	CurrentItem = nullptr;
@@ -82,7 +82,9 @@ void AAdventurePlayerController::BeginPlay()
 	Super::BeginPlay();
 	
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("BeginPlay: AAdventurePlayerController"));
-
+	
+	Command = NewObject<UCurrentCommand>(this);
+	
 	APawn* PlayerPawn = GetPawn();
 	PlayerCharacter = Cast<AAdventureCharacter>(PlayerPawn);
 	check(PlayerCharacter);
@@ -120,6 +122,7 @@ void AAdventurePlayerController::UpdateMouseOverUI(bool NewMouseIsOverUI)
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AAdventurePlayerController set IsMouseOverUI %s"),
 	   *(FString(NewMouseIsOverUI ? "true" : "false")));
 	this->IsMouseOverUI = NewMouseIsOverUI;
+	Command->SetHoverState(IsMouseOverUI ? ECommandCodes::HoverInventory : ECommandCodes::HoverScene);
 	if (NewMouseIsOverUI)
 	{
 		if (CurrentVerb == EVerbType::WalkTo && CurrentCommand == EPlayerCommand::None)
@@ -427,6 +430,14 @@ void AAdventurePlayerController::AssignVerb(EVerbType NewVerb)
 	ItemInteraction = false;
 	IsUsingItem = false;
 	TriggerUpdateInteractionText();
+}
+
+void AAdventurePlayerController::HoverVerb(TOptional<EVerbType> NewVerb)
+{
+	if (EVerbType *Verb = NewVerb.GetPtrOrNull())
+	{
+		Command->SetHoverVerb(NewVerb);
+	}
 }
 
 void AAdventurePlayerController::PerformItemInteraction(const UInventoryItem *InventoryItem)

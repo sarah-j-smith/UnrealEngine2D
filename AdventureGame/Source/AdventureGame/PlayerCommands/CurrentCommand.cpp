@@ -7,8 +7,8 @@
 
 UCurrentCommand::UCurrentCommand(const ECommandCodes& StartingParentState, const ECommandCodes& StartingChildState)
     : State(MakeParentStateMachine(StartingParentState))
-    , StartingParentState(StartingParentState)
-    , StartingChildState(StartingChildState)
+      , StartingParentState(StartingParentState)
+      , StartingChildState(StartingChildState)
 {
     TopState = StartingParentState;
     ChildState = StartingChildState;
@@ -21,7 +21,7 @@ UCurrentCommand::UCurrentCommand()
     UE_LOG(LogAdventureGame, Verbose, TEXT("UCurrentCommand constructed via default constructor"));
 }
 
-UCurrentCommand::UCurrentCommand(FObjectInitializer const&Initializer)
+UCurrentCommand::UCurrentCommand(FObjectInitializer const& Initializer)
     : UCurrentCommand(ECommandCodes::Free, ECommandCodes::HoverScene)
 {
     UE_LOG(LogAdventureGame, Verbose, TEXT("UCurrentCommand constructed via FObjectInitializer"));
@@ -35,11 +35,83 @@ FString UCurrentCommand::GetCommandString() const
 EVerbType UCurrentCommand::GetVerbType() const
 {
     TOptional<EVerbType> Verb = State.Current->GetVerb();
-    if (auto HaveVerb = Verb.GetPtrOrNull())
+    if (const auto HaveVerb = Verb.GetPtrOrNull())
     {
         return *HaveVerb;
     }
     return EVerbType::WalkTo;
+}
+
+void UCurrentCommand::SetHoverState(ECommandCodes HoverState)
+{
+    if (IsHoverCommandCode(HoverState))
+    {
+        switch (HoverState)
+        {
+        case ECommandCodes::HoverScene:
+        case ECommandCodes::HoverInventory:
+            if (State.Current->CanTransition({ECommandCodes::Free, HoverState}))
+            {
+                State.Transition({ECommandCodes::Free, HoverState});
+            }
+            break;
+        default:
+            // Should use HoverItem, HoverHotSpot or HoverVerb for those 
+            UE_LOG(LogAdventureGame, Error, TEXT("Use dedicated hover function to for %s"),
+                   *CommandCodesToString(HoverState));
+        }
+    }
+#if WITH_EDITOR
+    else
+    {
+        UE_LOG(LogAdventureGame, Error, TEXT("SetHoverState called with non-hover state %s"),
+               *CommandCodesToString(HoverState));
+    }
+#endif
+}
+
+void UCurrentCommand::SetHoverItem(UInventoryItem* InventoryItem)
+{
+    if (InventoryItem)
+    {
+        if (State.Current->CanTransition({ECommandCodes::Free, ECommandCodes::HoverItem}))
+        {
+            State.Transition({ECommandCodes::Free, ECommandCodes::HoverItem});
+            SourceItem = InventoryItem;
+        }
+    }
+    else
+    {
+        if (State.Current->CanTransition({ECommandCodes::Free, ECommandCodes::HoverItem}))
+        {
+            State.Transition({ECommandCodes::Free, ECommandCodes::HoverInventory});
+            SourceItem = nullptr;
+        }
+    }
+}
+
+void UCurrentCommand::SetHoverHotSpot(AHotSpot* HotSpot)
+{
+    if (HotSpot)
+    {
+        if (State.Current->CanTransition({ECommandCodes::Free, ECommandCodes::HoverItem}))
+        {
+            State.Transition({ECommandCodes::Free, ECommandCodes::HoverItem});
+            TargetHotSpot = HotSpot;
+        }
+    }
+    else
+    {
+        if (State.Current->CanTransition({ECommandCodes::Free, ECommandCodes::HoverItem}))
+        {
+            State.Transition({ECommandCodes::Free, ECommandCodes::HoverItem});
+            TargetHotSpot = nullptr;
+        }
+    }
+}
+
+void UCurrentCommand::SetHoverVerb(TOptional<EVerbType> VerbType)
+{
 }
 
 void UCurrentCommand::ClickOnItem(TSharedRef<UInventoryItem> InventoryItem)
@@ -47,10 +119,17 @@ void UCurrentCommand::ClickOnItem(TSharedRef<UInventoryItem> InventoryItem)
     if (State.Current->CanTransition(GLook_At_Item))
     {
         State.Transition(GLook_At_Item);
+        return;
     }
-    else if (State.Current->GetCode() == ECommandCodes::Pending)
+    auto Verb = State.Current->GetVerb();
+    if (EVerbType* VerbCode = Verb.GetPtrOrNull())
     {
-        
+        const auto VerbCommand = GetCommandCodeFromVerb(*VerbCode);
+        if (const FStatePath VerbActive = {ECommandCodes::Active, VerbCommand}; State.Current->
+            CanTransition(VerbActive))
+        {
+            State.Transition(VerbActive);
+        }
     }
 #if WITH_EDITOR
     else
@@ -102,9 +181,9 @@ void UCurrentCommand::PerformVerb(EVerbType Verb)
 {
     // clicked on a verb command
     const ECommandCodes Code = GetCommandCodeFromVerb(Verb);
-    if (State.Current->CanTransition({ ECommandCodes::Pending, Code }))
+    if (State.Current->CanTransition({ECommandCodes::Pending, Code}))
     {
-        State.Transition({ ECommandCodes::Pending, Code });
+        State.Transition({ECommandCodes::Pending, Code});
     }
 }
 

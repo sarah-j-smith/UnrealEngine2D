@@ -35,19 +35,19 @@ public:
     /// An initial item for an action, the primary item that is the target of a verb,
     /// eg the <i>Box</i> in "Open Box". This must be selected from the players inventory.
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Command")
-    UInventoryItem *SourceItem;
+    UInventoryItem *SourceItem = nullptr;
     
     /// A secondary item for an action, the "act with" or held item that is the
     /// target of a use or give verb, eg the <i>Screwdriver</i> in "Use Screwdriver on box".
     /// This must be selected from the players inventory.
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Command")
-    UInventoryItem *TargetItem;
+    UInventoryItem *TargetItem = nullptr;
     
     /// A target for an action, the "act on" or scene item that is the
     /// target of a verb, eg the <i>Door</i> in "Use Key on Door".
     /// This must be selected from the game scene.
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Command")
-    AHotSpot *TargetHotSpot;
+    AHotSpot *TargetHotSpot = nullptr;
     
     FString GetCommandString() const;
 
@@ -55,6 +55,21 @@ public:
     FString CurrentState;
 
     EVerbType GetVerbType() const;
+
+    // 
+    void SetHoverState(ECommandCodes HoverState);
+
+    /// Set the currently hovered <code>InventoryItem</code> or if the
+    /// @param InventoryItem is null, clear it.
+    void SetHoverItem(UInventoryItem *InventoryItem);
+
+    /// Set the currently hovered <code>HotSpot</code> or if the
+    /// @param HotSpot is null, clear it.
+    void SetHoverHotSpot(AHotSpot *HotSpot);
+
+    /// Set the currently hovered <code>HotSpot</code> or if the
+    /// @param VerbType optional is unset, clear it.
+    void SetHoverVerb(TOptional<EVerbType> VerbType);
 
     void ClickOnItem(TSharedRef<UInventoryItem> InventoryItem);
 

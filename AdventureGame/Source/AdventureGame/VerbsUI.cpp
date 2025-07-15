@@ -21,6 +21,26 @@ void UVerbsUI::NativeOnInitialized()
 	Push->OnClicked.AddDynamic(this, &UVerbsUI::PushTriggered);
 	Pull->OnClicked.AddDynamic(this, &UVerbsUI::PullTriggered);
 
+	Give->OnHovered.AddDynamic(this, &UVerbsUI::GiveHovered);
+	Open->OnHovered.AddDynamic(this, &UVerbsUI::OpenHovered);
+	Close->OnHovered.AddDynamic(this, &UVerbsUI::CloseHovered);
+	PickUp->OnHovered.AddDynamic(this, &UVerbsUI::PickUpHovered);
+	TalkTo->OnHovered.AddDynamic(this, &UVerbsUI::TalkToHovered);
+	LookAt->OnHovered.AddDynamic(this, &UVerbsUI::LookAtHovered);
+	Use->OnHovered.AddDynamic(this, &UVerbsUI::UseHovered);
+	Push->OnHovered.AddDynamic(this, &UVerbsUI::PushHovered);
+	Pull->OnHovered.AddDynamic(this, &UVerbsUI::PullHovered);
+
+	Give->OnUnhovered.AddDynamic(this, &UVerbsUI::VerbUnhovered);
+	Open->OnUnhovered.AddDynamic(this, &UVerbsUI::VerbUnhovered);
+	Close->OnUnhovered.AddDynamic(this, &UVerbsUI::VerbUnhovered);
+	PickUp->OnUnhovered.AddDynamic(this, &UVerbsUI::VerbUnhovered);
+	TalkTo->OnUnhovered.AddDynamic(this, &UVerbsUI::VerbUnhovered);
+	LookAt->OnUnhovered.AddDynamic(this, &UVerbsUI::VerbUnhovered);
+	Use->OnUnhovered.AddDynamic(this, &UVerbsUI::VerbUnhovered);
+	Push->OnUnhovered.AddDynamic(this, &UVerbsUI::VerbUnhovered);
+	Pull->OnUnhovered.AddDynamic(this, &UVerbsUI::VerbUnhovered);
+	
 	AssignNormalStyles();
 }
 
@@ -78,6 +98,67 @@ void UVerbsUI::PullTriggered()
 	SetButtonActive(EVerbType::Pull);
 }
 
+void UVerbsUI::CloseHovered()
+{
+	HoveredVerbType = TOptional(EVerbType::Close);
+	SetHoveredVerb();
+}
+
+void UVerbsUI::OpenHovered()
+{
+	HoveredVerbType = TOptional(EVerbType::Open);
+	SetHoveredVerb();
+}
+
+void UVerbsUI::GiveHovered()
+{
+	HoveredVerbType = TOptional(EVerbType::Give);
+	SetHoveredVerb();
+
+}
+
+void UVerbsUI::TalkToHovered()
+{
+	HoveredVerbType = TOptional(EVerbType::TalkTo);
+	SetHoveredVerb();
+}
+
+void UVerbsUI::LookAtHovered()
+{
+	HoveredVerbType = TOptional(EVerbType::LookAt);
+	SetHoveredVerb();
+}
+
+void UVerbsUI::PickUpHovered()
+{
+	HoveredVerbType = TOptional(EVerbType::PickUp);
+	SetHoveredVerb();
+}
+
+void UVerbsUI::UseHovered()
+{
+	HoveredVerbType = TOptional(EVerbType::Use);
+	SetHoveredVerb();
+}
+
+void UVerbsUI::PushHovered()
+{
+	HoveredVerbType = TOptional(EVerbType::Push);
+	SetHoveredVerb();
+}
+
+void UVerbsUI::PullHovered()
+{
+	HoveredVerbType = TOptional(EVerbType::Pull);
+	SetHoveredVerb();
+}
+
+void UVerbsUI::VerbUnhovered()
+{
+	HoveredVerbType = TOptional<EVerbType>();
+	SetHoveredVerb();
+}
+
 void UVerbsUI::ClearActiveButton()
 {
 	switch (CurrentVerb)
@@ -110,6 +191,8 @@ void UVerbsUI::ClearActiveButton()
 		Pull->SetStyle(PullNormalStyle);
 		break;
 	case EVerbType::WalkTo:
+		break;
+	default:
 		break;
 	}
 	CurrentVerb = EVerbType::WalkTo;
@@ -148,6 +231,8 @@ void UVerbsUI::SetButtonActive(EVerbType VerbType)
 		break;
 	case EVerbType::WalkTo:
 		break;
+	default:
+		break;
 	}
 	CurrentVerb = VerbType;
 
@@ -173,6 +258,15 @@ void UVerbsUI::SetActiveVerb() const
 	if (AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController))
 	{
 		AdventurePlayerController->AssignVerb(CurrentVerb);
+	}
+}
+
+void UVerbsUI::SetHoveredVerb() const
+{
+	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController))
+	{
+		AdventurePlayerController->HoverVerb(HoveredVerbType);
 	}
 }
 

@@ -15,6 +15,12 @@ bool IsActiveCommandCode(const ECommandCodes &CommandCode)
         static_cast<uint8>(CommandCode) <= static_cast<uint8>(ECommandCodes::LookAtItem);
 }
 
+bool IsHoverCommandCode(const ECommandCodes &CommandCode)
+{
+    return static_cast<uint8>(CommandCode) >= static_cast<uint8>(ECommandCodes::HoverScene) &&
+        static_cast<uint8>(CommandCode) <= static_cast<uint8>(ECommandCodes::HoverVerb);
+}
+
 FString CommandCodesToString(const ECommandCodes &CommandCode)
 {
     switch (CommandCode)

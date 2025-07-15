@@ -63,3 +63,5 @@ bool IsActiveCommandCode(const ECommandCodes &CommandCode);
 EVerbType GetVerbFromCommandCode(const ECommandCodes &CommandCode);
 
 ECommandCodes GetCommandCodeFromVerb(const EVerbType &Verb);
+
+bool IsHoverCommandCode(const ECommandCodes &CommandCode);
