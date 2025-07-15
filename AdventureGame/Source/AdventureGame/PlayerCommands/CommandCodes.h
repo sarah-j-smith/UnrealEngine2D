@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AdventureGame/VerbType.h"
 #include "UObject/Object.h"
 #include "CommandCodes.generated.h"
 
@@ -20,11 +21,12 @@ enum class ECommandCodes : uint8
     HoverHotSpot = 3     UMETA(DisplayName = "Hover HotSpot"),
     HoverVerb = 4        UMETA(DisplayName = "Hover Verb"),
 
-    // ACTIVE AND PENDING
+    // ACTIVE
     WalkToHotSpot = 10   UMETA(DisplayName = "Walk to HotSpot"),
     WalkToLocation = 11  UMETA(DisplayName = "Walk to Location"),
     LookAtItem = 12      UMETA(DisplayName = "Look at Item"),
     
+    // ACTIVE AND PENDING
     LookAt = 20          UMETA(DisplayName = "Look at It"),
     Give = 21            UMETA(DisplayName = "Give to Someone"),
     Open = 22            UMETA(DisplayName = "Open It"),
@@ -47,4 +49,17 @@ enum class ECommandCodes : uint8
 };
 
 /// Create a string description of the code. Not translated, mostly for debugging.
-FString CommandCodesToString(const ECommandCodes Command);
+FString CommandCodesToString(const ECommandCodes &Command);
+
+/// Is the @param CommandCode one of the verb codes eg, <i>Push</i> or
+/// <i>Open</i> which can only be in the Active or Pending parent states?
+bool IsVerbCommandCode(const ECommandCodes &CommandCode);
+
+/// Is the @param CommandCode one of the instantly activated verb codes eg,
+/// <i>WalkToLocation</i> or <i>LookAtItem</i> which can only be in the
+/// Active parent states?
+bool IsActiveCommandCode(const ECommandCodes &CommandCode);
+
+EVerbType GetVerbFromCommandCode(const ECommandCodes &CommandCode);
+
+ECommandCodes GetCommandCodeFromVerb(const EVerbType &Verb);

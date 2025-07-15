@@ -3,108 +3,102 @@
 
 #include "CommandState.h"
 
-#include "AdventureGame/AdventureGame.h"
-
-////////////// FCommandState - Base Template Class /////////////////
-
-bool ICommandState::CanTransition(ECommandCodes Code) const
-{
-    UE_LOG(LogAdventureGame, Fatal, TEXT("CanTransition must be implemented by derived classes"));
-    return false; // never reached.
-}
-
-void ICommandState::Transition(ECommandCodes Code)
-{
-    if (!CanTransition(Code))
-    {
-        UE_LOG(LogAdventureGame, Error, TEXT("Illegal transition: %s tried to transition to %s"),
-            *Description(), *CommandCodesToString(Code))
-        return;
-    }
-    Transition(Code);
-}
-
-bool ICommandState::IsInputLocked() const
-{
-    return false;
-}
-
-bool ICommandState::IsUsingItem() const
-{
-    return false;
-}
-
-bool ICommandState::IsInteractionHighlighted() const
-{
-    return true;
-}
-
-TOptional<EVerbType> ICommandState::GetVerb() const
-{
-    return TOptional<EVerbType>();
-}
-
-FString ICommandState::Description() const
-{
-    UE_LOG(LogAdventureGame, Error, TEXT("CanTransition must be implemented by derived classes"));
-    return FString();
-}
+#include "ActiveTopState.h"
+#include "FreeTopState.h"
+#include "PendingTopState.h"
+#include "TargetingTopState.h"
 
 //////////////////////////////////
 ///
-///  PARENT STATE
+///  COMMAND STATE MACHINE
 ///
 
-template <ECommandCodes E>
-TFParentState<E>::TFParentState() = default;
-
-template <ECommandCodes E>
-TFParentState<E>::~TFParentState() = default;
-
-//////////////////////////////////
-///
-///  FFreeTopState
-///
-
-TSet<ECommandCodes> FFreeTopState::ValidChildStates() const
+void FCommandStateMachine::Transition(const ECommandCodes &Code)
 {
-    return TSet({
-        ECommandCodes::HoverScene,
-        ECommandCodes::HoverItem,
-        ECommandCodes::HoverInventory,
-        ECommandCodes::HoverHotSpot,
-        ECommandCodes::HoverVerb
-    });
+    CurrentCommandCode = Code;
+    Current = MakeCommandStateClass(Code);
 }
 
-bool FFreeTopState::CanTransition(ECommandCodes Code) const
+TSharedRef<ICommandState> MakeCommandStateClass(const ECommandCodes &Code)
 {
-    switch (Code)
-    {
+    switch (Code) {
+
+        /// Free
+    case ECommandCodes::HoverScene:
+        return MAKE_STATE(FHoverSceneState);
+    case ECommandCodes::HoverInventory:
+        return MAKE_STATE(FHoverInventoryState);
+    case ECommandCodes::HoverItem:
+        return MAKE_STATE(FHoverItemState);
+    case ECommandCodes::HoverHotSpot:
+        return MAKE_STATE(FHoverHotSpotState);
+    case ECommandCodes::HoverVerb:
+        return MAKE_STATE(FHoverVerbState);
+
+        /// Active 
+    case ECommandCodes::WalkToHotSpot:
+        return MAKE_STATE(FWalkToHotSpotState);
+    case ECommandCodes::WalkToLocation:
+        return MAKE_STATE(FWalkToLocationState);
+    case ECommandCodes::LookAtItem:
+        return MAKE_STATE(FLookAtItemState);
+
+        /// Active and Pending
+    case ECommandCodes::LookAt:
+        return MAKE_STATE(FHoverInventoryState);
+    case ECommandCodes::Give:
+        return MAKE_STATE(FHoverInventoryState);
+    case ECommandCodes::Open:
+        return MAKE_STATE(FHoverInventoryState);
+    case ECommandCodes::Close:
+        return MAKE_STATE(FHoverInventoryState);
+    case ECommandCodes::PickUp:
+        return MAKE_STATE(FHoverInventoryState);
+    case ECommandCodes::TalkTo:
+        return MAKE_STATE(FHoverInventoryState);
+    case ECommandCodes::Use:
+        return MAKE_STATE(FHoverInventoryState);
+    case ECommandCodes::Push:
+        return MAKE_STATE(FHoverInventoryState);
+    case ECommandCodes::Pull:
+        return MAKE_STATE(FHoverInventoryState);
+
+        /*
+
+        /// Targeting
+    case ECommandCodes::GiveTo:
+        return MAKE_STATE(FHoverInventoryState);
+    case ECommandCodes::UseOn:
+        return MAKE_STATE(FHoverInventoryState);
+
+        /// Top Level
+    case ECommandCodes::Free:
+        return MAKE_STATE(FFreeTopState);
     case ECommandCodes::Pending:
+        return MAKE_STATE(FPendingTopState);
+    case ECommandCodes::Targeting:
+        return MAKE_STATE(FActiveTopState);
     case ECommandCodes::Active:
-        return true;
+        return MAKE_STATE(FTargetingTopState);
+
+        */
     default:
-        return false;
+        UE_LOG(LogAdventureGame, Error, TEXT( "Unexpected state class creation request! %s"),
+            *CommandCodesToString(Code));
     }
+    return TSharedRef<ICommandState>();
 }
 
-TOptional<EVerbType> FFreeTopState::GetVerb() const
+void FCommandStateMachine::Transition(const FStatePath &Path)
 {
-    /// FIX ME
-    return TOptional<EVerbType>();
+    Transition(Path.Parent);
+    Current->Transition(Path.Child);
 }
 
-//////////////////////////////////
-///
-///  TOP LEVEL STATE MACHINE
-///
-
-FTopLevelStateMachine MakeTopLevelStateMachine(const ECommandCodes StartingCommandCode)
+FCommandStateMachine MakeParentStateMachine(const ECommandCodes &StartingCode)
 {
     return {
-        ECommandCodes::Free,
-        MakeShareable(dynamic_cast<ICommandState*>(new FFreeTopState()))
+        StartingCode, 
+        MAKE_STATE( FHoverSceneState ),
     };
 }
-

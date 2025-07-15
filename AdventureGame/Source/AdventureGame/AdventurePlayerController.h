@@ -13,6 +13,7 @@
 #include "InventoryItem.h"
 
 #include "GameFramework/PlayerController.h"
+#include "PlayerCommands/CurrentCommand.h"
 #include "AdventurePlayerController.generated.h"
 
 class UItemSlot;
@@ -53,6 +54,9 @@ class ADVENTUREGAME_API AAdventurePlayerController : public APlayerController
 	GENERATED_BODY()
 public:
 	AAdventurePlayerController();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCurrentCommand *Command;
 
 	//////////////////////////////////
 	///

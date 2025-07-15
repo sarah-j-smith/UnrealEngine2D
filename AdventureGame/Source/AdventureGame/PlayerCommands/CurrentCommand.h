@@ -31,26 +31,56 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Command")
     ECommandCodes TopState;
+
+    /// An initial item for an action, the primary item that is the target of a verb,
+    /// eg the <i>Box</i> in "Open Box". This must be selected from the players inventory.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Command")
+    UInventoryItem *SourceItem;
+    
+    /// A secondary item for an action, the "act with" or held item that is the
+    /// target of a use or give verb, eg the <i>Screwdriver</i> in "Use Screwdriver on box".
+    /// This must be selected from the players inventory.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Command")
+    UInventoryItem *TargetItem;
+    
+    /// A target for an action, the "act on" or scene item that is the
+    /// target of a verb, eg the <i>Door</i> in "Use Key on Door".
+    /// This must be selected from the game scene.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Command")
+    AHotSpot *TargetHotSpot;
     
     FString GetCommandString() const;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Getter="GetCommandString", Category = "Command")
     FString CurrentState;
+
+    EVerbType GetVerbType() const;
+
+    void ClickOnItem(TSharedRef<UInventoryItem> InventoryItem);
+
+    void ClickOnHotSpot(TSharedRef<AHotSpot> HotSpot);
+
+    void ClickOnSceneLocation();
     
-    void UseItem(UInventoryItem *Item);
+    void UseItem(TSharedRef<UInventoryItem> InventoryItem);
 
-    void GiveItem(UInventoryItem *Item);
+    void GiveItem(TSharedRef<UInventoryItem> InventoryItem);
 
-    void WalkTo(AHotSpot* HotSpot);
+    /// The player clicked on an item that can have another already
+    /// selected item combined with it to give an effect.
+    void UseItemOn(TSharedRef<UInventoryItem> InventoryItem);
 
-    void WalkToLocation();
+    /// The player clicked on an item representing an entity who
+    /// can be given an item that is already selected.
+    void GiveItemTo(TSharedRef<UInventoryItem> InventoryItem);
 
+    /// The player clicked on and selected a verb. Now it has to be targeted onto something.
     void PerformVerb(EVerbType Verb);
 
     /// Jump back to the beginning state. No transition rules are checked.
     void Reset();
 private:
-    FTopLevelStateMachine State;
+    FCommandStateMachine State;
     ECommandCodes StartingParentState;
     ECommandCodes StartingChildState;
 };

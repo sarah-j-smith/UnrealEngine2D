@@ -431,18 +431,25 @@ void AAdventurePlayerController::AssignVerb(EVerbType NewVerb)
 
 void AAdventurePlayerController::PerformItemInteraction(const UInventoryItem *InventoryItem)
 {
-	check(InventoryItem);
-	switch (CurrentVerb)
+	if (InventoryItem)
 	{
-	case EVerbType::Give:
-		UInventoryItem::Execute_OnItemGiven(const_cast<UInventoryItem *>(InventoryItem));
-		break;
-	case EVerbType::UseItem:
-		UInventoryItem::Execute_OnItemUsed(const_cast<UInventoryItem *>(InventoryItem));
-		break;
-	default:
-		UE_LOG(LogAdventureGame, Warning, TEXT("Unexpected interaction verb %s for perform item interaction with %s"),
-			*VerbGetDescriptiveString(CurrentVerb), *(InventoryItem->GetDescription().ToString()));
+		switch (CurrentVerb)
+		{
+		case EVerbType::Give:
+			UInventoryItem::Execute_OnItemGiven(const_cast<UInventoryItem *>(InventoryItem));
+			break;
+		case EVerbType::UseItem:
+			UInventoryItem::Execute_OnItemUsed(const_cast<UInventoryItem *>(InventoryItem));
+			break;
+		default:
+			UE_LOG(LogAdventureGame, Warning, TEXT("Unexpected interaction verb %s for perform item interaction with %s"),
+				*VerbGetDescriptiveString(CurrentVerb), *(InventoryItem->GetDescription().ToString()));
+		}
+	}
+	else
+	{
+		// Player clicked on a blank inventory item slot while they already had an item selected.
+		InterruptCurrentAction();
 	}
 }
 
