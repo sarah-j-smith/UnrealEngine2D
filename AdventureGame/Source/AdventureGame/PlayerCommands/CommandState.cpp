@@ -7,17 +7,12 @@
 #include "FreeTopState.h"
 #include "PendingTopState.h"
 #include "TargetingTopState.h"
+#include "AdventureGame/AdventureGame.h"
 
 //////////////////////////////////
 ///
 ///  COMMAND STATE MACHINE
 ///
-
-void FCommandStateMachine::Transition(const ECommandCodes &Code)
-{
-    CurrentCommandCode = Code;
-    Current = MakeCommandStateClass(Code);
-}
 
 TSharedRef<ICommandState> MakeCommandStateClass(const ECommandCodes &Code)
 {
@@ -87,6 +82,12 @@ TSharedRef<ICommandState> MakeCommandStateClass(const ECommandCodes &Code)
             *CommandCodesToString(Code));
     }
     return TSharedRef<ICommandState>();
+}
+
+void FCommandStateMachine::Transition(const ECommandCodes &Code)
+{
+    CurrentCommandCode = Code;
+    Current = MakeCommandStateClass(Code);
 }
 
 void FCommandStateMachine::Transition(const FStatePath &Path)

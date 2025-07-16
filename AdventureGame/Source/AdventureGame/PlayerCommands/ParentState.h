@@ -2,7 +2,6 @@
 #include "CommandCodes.h"
 
 #include "CommandState.h"
-#include "AdventureGame/AdventureGame.h"
 
 template <ECommandCodes E>
 class TFParentState : public TFCommandState<E>, public ICommandState
@@ -43,11 +42,6 @@ protected:
 ///  PARENT STATE - TEMPLATE IMPLEMENTATIONS
 ///
 
-// Note to self - these template implementation have to go in the ParentState.h file, or
-// possibly in a ParentState.inl file so that the compiler can see them to generate the
-// template code. They cannot go into the ParentState.cpp file translation unit as they
-// won't get compiled into the templates for the concrete template instantiations.
-
 template <ECommandCodes E>
 void TFParentState<E>::ClickOnItem(UInventoryItem* Item)
 {
@@ -79,3 +73,8 @@ FString TFParentState<E>::Description() const
     const FString ChildString = CommandCodesToString(CurrentChildState());
     return FString::Printf(TEXT("%s :: %s"), *ParentString, *ChildString);
 }
+
+DECLARE_STATE_CLASS(Initial, Initial)
+
+DECLARE_STATE_CLASS(Terminal, Terminal)
+

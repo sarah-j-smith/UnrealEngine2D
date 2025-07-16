@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "CommandCodes.h"
 #include "CommandState.h"
+#include "AdventureGame/Constants.h"
 #include "AdventureGame/VerbType.h"
 #include "UObject/Object.h"
 
@@ -17,7 +18,7 @@ class UCommandState;
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class ADVENTUREGAME_API UCurrentCommand : public UObject
 {
     GENERATED_UCLASS_BODY()
@@ -56,21 +57,24 @@ public:
 
     EVerbType GetVerbType() const;
 
-    // 
+    /// Set what hover state the players mouse is in. If its hovering either a verb,
+    /// an the UI inventory area or over the game scene. Note that if a an item
+    /// in the inventory is hovered, or a hotspot in the scene is hovered that is
+    /// handled seperately by <code>SetHoverItem</code> and <code>SetHoverHotSpot</code>.
+    /// Only legal in the <code>Free</code> parent state: an error is logged otherwise.
+    /// @param HoverState ECommandCodes of which current hover state the players mouse is in
     void SetHoverState(ECommandCodes HoverState);
 
     /// Set the currently hovered <code>InventoryItem</code> or if the
     /// @param InventoryItem is null, clear it.
+    /// Only legal in the <code>Free</code> parent state: an error is logged otherwise.
     void SetHoverItem(UInventoryItem *InventoryItem);
 
     /// Set the currently hovered <code>HotSpot</code> or if the
     /// @param HotSpot is null, clear it.
+    /// Only legal in the <code>Free</code> parent state: an error is logged otherwise.
     void SetHoverHotSpot(AHotSpot *HotSpot);
-
-    /// Set the currently hovered <code>HotSpot</code> or if the
-    /// @param VerbType optional is unset, clear it.
-    void SetHoverVerb(TOptional<EVerbType> VerbType);
-
+    
     void ClickOnItem(TSharedRef<UInventoryItem> InventoryItem);
 
     void ClickOnHotSpot(TSharedRef<AHotSpot> HotSpot);
@@ -95,6 +99,9 @@ public:
     /// Jump back to the beginning state. No transition rules are checked.
     void Reset();
 private:
+    void Transition(FStatePath DestinationPath);
+    void Transition(ECommandCodes DestinationState);
+    
     FCommandStateMachine State;
     ECommandCodes StartingParentState;
     ECommandCodes StartingChildState;

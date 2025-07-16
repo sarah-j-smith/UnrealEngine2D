@@ -38,8 +38,6 @@ bool FPickUpState::CanTransition(const FStatePath& Destination) const { return f
 
 bool FTalkToState::CanTransition(const FStatePath& Destination) const { return false; }
 
-bool FUseState::CanTransition(const FStatePath& Destination) const { return false; }
-
 bool FPushState::CanTransition(const FStatePath& Destination) const { return false; }
 
 bool FPullState::CanTransition(const FStatePath& Destination) const { return false; }

@@ -12,3 +12,8 @@
 
 #define ITEMS_NAMESPACE_KEY "ItemsNamespace"
 
+enum class EVerbHoverState: uint8
+{
+    Hovered = 0,
+    Unhovered = 1,
+};

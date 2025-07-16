@@ -78,17 +78,38 @@ private: \
 /// <code>TSharedRef<ICommandState></code> member variable in FCommandStateMachine.
 #define MAKE_STATE(StateClass) MakeShareable(dynamic_cast<ICommandState*>(new StateClass()))
 
+/// Lowest-level bare-bones FSM 
 struct ADVENTUREGAME_API FCommandStateMachine
 {
+    /// Enum representing the parent of the <code>Current</code> state.
     ECommandCodes CurrentCommandCode;
     
-    /// Transition to the given state, creating a new instance of the destination.
+    /// Transition the <code>Current</code> command to the given state, creating
+    /// a new instance of the destination state class.
+    ///
     /// No checking is done. Caller should check that the transition is valid
-    /// in terms of the HSM rules via calls to <code>CanTransition</code>.
+    /// in terms of the HSM rules via calls to <code>CanTransition</code>. No
+    /// child states are changed.
+    /// 
+    /// @param Code command state to transition the <code>Current</code> command to.
     void Transition(const ECommandCodes &Code);
 
+    /// Transition the <code>Current</code> command to the <code>Parent</code> in
+    /// the state path, creating a new instance of the destination state class,
+    /// then call <code>ICommandState::Transition</code> on that new instance.
+    ///
+    /// If the new <code>Parent</code> instance is a leaf state, and has no child
+    /// then calling <code>ICommandState::Transition</code> on it will have
+    /// <b>no effect</b>.
+    /// 
+    /// No checking is done. Caller should check that the transition is valid
+    /// in terms of the HSM rules via calls to <code>CanTransition</code>.
+    ///
+    /// @param Path command state path to transition to.
     void Transition(const FStatePath &Path);
-    
+
+    /// <b>Do not modify directly</b>.
+    /// The <code>Current</code> command state mananged by this FSM.
     TSharedRef<ICommandState> Current;
 };
 

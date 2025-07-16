@@ -432,12 +432,10 @@ void AAdventurePlayerController::AssignVerb(EVerbType NewVerb)
 	TriggerUpdateInteractionText();
 }
 
-void AAdventurePlayerController::HoverVerb(TOptional<EVerbType> NewVerb)
+void AAdventurePlayerController::HoverVerb(EVerbHoverState IsHovered)
 {
-	if (EVerbType *Verb = NewVerb.GetPtrOrNull())
-	{
-		Command->SetHoverVerb(NewVerb);
-	}
+	Command->SetHoverState(IsHovered == EVerbHoverState::Hovered ?
+		ECommandCodes::HoverVerb : ECommandCodes::HoverInventory);
 }
 
 void AAdventurePlayerController::PerformItemInteraction(const UInventoryItem *InventoryItem)

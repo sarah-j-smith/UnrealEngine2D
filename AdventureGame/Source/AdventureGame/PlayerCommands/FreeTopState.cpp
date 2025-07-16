@@ -6,7 +6,6 @@ bool FFreeTopState::CanTransition(const FStatePath& Destination) const
     {
         // Can transition to any other hover state just by moving the mouse
     case ECommandCodes::Free:
-        return true;
     case ECommandCodes::Active:
     case ECommandCodes::Pending:
         return State.Current->CanTransition(Destination);

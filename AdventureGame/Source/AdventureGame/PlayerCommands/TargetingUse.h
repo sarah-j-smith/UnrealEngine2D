@@ -1,11 +1,19 @@
 #pragma once
 
-#include "PlayerCommands/ParentState.h"
+#include "ParentState.h"
 
-class ADVENTUREGAME_API TargetingUse final : public TFParentState<ECommandCodes::Free>
-    {
-    public:
-        FFreeTopState() : TFParentState(ECommandCodes::HoverScene) {}
-        virtual ~FFreeTopState() override = default;
-        virtual bool CanTransition(const FStatePath &DestinationState) const override;
-    };
+/// Class for special case of a Use verb targeting a HotSpot.
+class ADVENTUREGAME_API FTargetingUse final : public TFParentState<ECommandCodes::TargetingUse>
+{
+public:
+    FTargetingUse() : TFParentState(ECommandCodes::HoverScene) {}
+    virtual ~FTargetingUse() override = default;
+    virtual bool CanTransition(const FStatePath &DestinationState) const override;
+};
+
+//////////////////////////////////
+///
+/// CHILD STATES
+///
+
+DECLARE_STATE_CLASS(UseOnHotSpot, UseOn)

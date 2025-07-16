@@ -71,6 +71,10 @@ FString CommandCodesToString(const ECommandCodes &CommandCode)
         return "Targeting";
     case ECommandCodes::Active:
         return "Active";
+    case ECommandCodes::InstantActive:
+        return "InstantActive";
+    case ECommandCodes::TargetingUse:
+        return "TargetingUse";
     default:
         return "Unknown";
     }

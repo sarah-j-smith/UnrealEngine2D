@@ -87,7 +87,7 @@ public:
 		return Command->ChildState;
 	}
 	
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Command State")
 	UCurrentCommand *Command;
 
 	//////////////////////////////////
@@ -268,7 +268,7 @@ private:
 public:
 	void AssignVerb(EVerbType NewVerb);
 
-	void HoverVerb(TOptional<EVerbType> NewVerb);
+	void HoverVerb(EVerbHoverState IsHovered);
 
 	/// Stops any current action, items and hotspots, clearing the status
 	UFUNCTION(BlueprintCallable, Category="Verb", DisplayName="ClearAction")

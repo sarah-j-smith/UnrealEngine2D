@@ -50,13 +50,14 @@ void UCurrentCommand::SetHoverState(ECommandCodes HoverState)
         {
         case ECommandCodes::HoverScene:
         case ECommandCodes::HoverInventory:
+        case ECommandCodes::HoverVerb:
             if (State.Current->CanTransition({ECommandCodes::Free, HoverState}))
             {
                 State.Transition({ECommandCodes::Free, HoverState});
             }
             break;
         default:
-            // Should use HoverItem, HoverHotSpot or HoverVerb for those 
+            // Should use HoverItem or HoverHotSpot o those - we need to capture a pointer to the item/hotspot
             UE_LOG(LogAdventureGame, Error, TEXT("Use dedicated hover function to for %s"),
                    *CommandCodesToString(HoverState));
         }
@@ -108,10 +109,6 @@ void UCurrentCommand::SetHoverHotSpot(AHotSpot* HotSpot)
             TargetHotSpot = nullptr;
         }
     }
-}
-
-void UCurrentCommand::SetHoverVerb(TOptional<EVerbType> VerbType)
-{
 }
 
 void UCurrentCommand::ClickOnItem(TSharedRef<UInventoryItem> InventoryItem)
@@ -193,4 +190,17 @@ void UCurrentCommand::Reset()
     ChildState = StartingChildState;
     State = MakeParentStateMachine(TopState);
     State.Current->Transition(StartingChildState);
+}
+
+void UCurrentCommand::Transition(FStatePath DestinationPath)
+{
+    TopState = DestinationPath.Parent;
+    ChildState = DestinationPath.Child;
+    State.Transition(DestinationPath);
+}
+
+void UCurrentCommand::Transition(ECommandCodes DestinationState)
+{
+    State.Current->Transition(DestinationState);
+    TopState = DestinationState;
 }
