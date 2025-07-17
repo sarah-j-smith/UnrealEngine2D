@@ -5,7 +5,6 @@
 class ADVENTUREGAME_API FPendingTopState final : public TFParentState<ECommandCodes::Pending>
 {
 public:
-    FPendingTopState() : TFParentState(ECommandCodes::LookAt) {};
     virtual ~FPendingTopState() override = default;
     virtual bool CanTransition(const FStatePath &Destination) const override;
     virtual TOptional<EVerbType> GetVerb() const override;
@@ -16,18 +15,18 @@ public:
 /// CHILD STATES
 ///
 
-DECLARE_STATE_CLASS(LookAt, LookAt)
+// The PLOCTOPP verbs are all the ones with a single target, a HotSpot or Item.
 
-DECLARE_STATE_CLASS(Give, Give)
+DECLARE_STATE_CLASS_DEFAULT(PickUp, PickUp)
 
-DECLARE_STATE_CLASS(Open, Open)
+DECLARE_STATE_CLASS_DEFAULT(LookAt, LookAt)
 
-DECLARE_STATE_CLASS(Close, Close)
+DECLARE_STATE_CLASS_DEFAULT(Open, Open)
 
-DECLARE_STATE_CLASS(PickUp, PickUp)
+DECLARE_STATE_CLASS_DEFAULT(Close, Close)
 
-DECLARE_STATE_CLASS(TalkTo, TalkTo)
+DECLARE_STATE_CLASS_DEFAULT(TalkTo, TalkTo)
 
-DECLARE_STATE_CLASS(Push, Push)
+DECLARE_STATE_CLASS_DEFAULT(Push, Push)
 
-DECLARE_STATE_CLASS(Pull, Pull)
+DECLARE_STATE_CLASS_DEFAULT(Pull, Pull)

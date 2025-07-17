@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "CommandCodes.h"
 #include "CommandState.h"
-#include "AdventureGame/Constants.h"
+#include "CommandStateMachine.h"
 #include "AdventureGame/VerbType.h"
 #include "UObject/Object.h"
 
@@ -23,15 +23,17 @@ class ADVENTUREGAME_API UCurrentCommand : public UObject
 {
     GENERATED_UCLASS_BODY()
 public:
-    UCurrentCommand(const ECommandCodes &StartingParentState, const ECommandCodes &StartingChildState);
-
     UCurrentCommand();
     
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Command")
-    ECommandCodes ChildState;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Getter="GetChildStateCode", Category = "Command")
+    ECommandCodes ChildState = ECommandCodes::Initial;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Command")
-    ECommandCodes TopState;
+    ECommandCodes GetChildStateCode() const;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Getter="GetTopStateCode", Category = "Command")
+    ECommandCodes TopState = ECommandCodes::Initial;
+
+    ECommandCodes GetTopStateCode() const;
 
     /// An initial item for an action, the primary item that is the target of a verb,
     /// eg the <i>Box</i> in "Open Box". This must be selected from the players inventory.
@@ -99,10 +101,26 @@ public:
     /// Jump back to the beginning state. No transition rules are checked.
     void Reset();
 private:
+    /// Helper method that transitions the FSM to the new path, that
+    /// is both child and parent states.
+    /// @param DestinationPath path containing the parent and child states to transition to.
     void Transition(FStatePath DestinationPath);
+
+    /// Helper method that just transitions the FSM parent state to the
+    /// @param DestinationState leaving the parent in the <code>Initial</code> state.
     void Transition(ECommandCodes DestinationState);
+
+    /// If the current state is not the <code>Initial</code> state; or it is
+    /// the <code>Initial</code state but the
+    /// @param InitialState is allowed in that state, then return true.
+    /// Otherwise return false.
+    /// @return if the given state is valid after checking the initial state 
+    bool ValidateInitial(ECommandCodes InitialState);
+
+    /// 
+    bool ValidateHoverState(ECommandCodes HoverState);
+
+    bool ValidateClickTransition(ECommandCodes UseTransition);
     
-    FCommandStateMachine State;
-    ECommandCodes StartingParentState;
-    ECommandCodes StartingChildState;
+    TSharedPtr<FCommandStateMachine> State;
 };

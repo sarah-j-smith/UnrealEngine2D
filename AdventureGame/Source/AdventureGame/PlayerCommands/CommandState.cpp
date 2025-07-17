@@ -5,8 +5,12 @@
 
 #include "ActiveTopState.h"
 #include "FreeTopState.h"
+#include "InstantActiveTopState.h"
 #include "PendingTopState.h"
+#include "PendingUseTopState.h"
 #include "TargetingTopState.h"
+#include "PendingGiveTopState.h"
+#include "CommandStateMachine.h"
 #include "AdventureGame/AdventureGame.h"
 
 //////////////////////////////////
@@ -40,31 +44,29 @@ TSharedRef<ICommandState> MakeCommandStateClass(const ECommandCodes &Code)
 
         /// Active and Pending
     case ECommandCodes::LookAt:
-        return MAKE_STATE(FHoverInventoryState);
+        return MAKE_STATE(FLookAtState);
     case ECommandCodes::Give:
-        return MAKE_STATE(FHoverInventoryState);
+        return MAKE_STATE(FGiveState);
     case ECommandCodes::Open:
-        return MAKE_STATE(FHoverInventoryState);
+        return MAKE_STATE(FOpenState);
     case ECommandCodes::Close:
-        return MAKE_STATE(FHoverInventoryState);
+        return MAKE_STATE(FCloseState);
     case ECommandCodes::PickUp:
-        return MAKE_STATE(FHoverInventoryState);
+        return MAKE_STATE(FPickUpState);
     case ECommandCodes::TalkTo:
-        return MAKE_STATE(FHoverInventoryState);
+        return MAKE_STATE(FTalkToState);
     case ECommandCodes::Use:
-        return MAKE_STATE(FHoverInventoryState);
+        return MAKE_STATE(FUseState);
     case ECommandCodes::Push:
-        return MAKE_STATE(FHoverInventoryState);
+        return MAKE_STATE(FPushState);
     case ECommandCodes::Pull:
-        return MAKE_STATE(FHoverInventoryState);
-
-        /*
+        return MAKE_STATE(FPullState);
 
         /// Targeting
     case ECommandCodes::GiveTo:
-        return MAKE_STATE(FHoverInventoryState);
+        return MAKE_STATE(FGiveToState);
     case ECommandCodes::UseOn:
-        return MAKE_STATE(FHoverInventoryState);
+        return MAKE_STATE(FUseOnState);
 
         /// Top Level
     case ECommandCodes::Free:
@@ -75,31 +77,17 @@ TSharedRef<ICommandState> MakeCommandStateClass(const ECommandCodes &Code)
         return MAKE_STATE(FActiveTopState);
     case ECommandCodes::Active:
         return MAKE_STATE(FTargetingTopState);
+    case ECommandCodes::InstantActive:
+        return MAKE_STATE(FInstantActiveTopState);
+    case ECommandCodes::PendingUse:
+        return MAKE_STATE(FPendingUseTopState);
+    case ECommandCodes::PendingGive:
+        return MAKE_STATE(FPendingGiveTopState);
 
-        */
     default:
+        // It's an error to try to create an `Initial` state class.
         UE_LOG(LogAdventureGame, Error, TEXT( "Unexpected state class creation request! %s"),
             *CommandCodesToString(Code));
     }
     return TSharedRef<ICommandState>();
-}
-
-void FCommandStateMachine::Transition(const ECommandCodes &Code)
-{
-    CurrentCommandCode = Code;
-    Current = MakeCommandStateClass(Code);
-}
-
-void FCommandStateMachine::Transition(const FStatePath &Path)
-{
-    Transition(Path.Parent);
-    Current->Transition(Path.Child);
-}
-
-FCommandStateMachine MakeParentStateMachine(const ECommandCodes &StartingCode)
-{
-    return {
-        StartingCode, 
-        MAKE_STATE( FHoverSceneState ),
-    };
 }

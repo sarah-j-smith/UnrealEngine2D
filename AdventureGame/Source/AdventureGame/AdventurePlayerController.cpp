@@ -84,6 +84,7 @@ void AAdventurePlayerController::BeginPlay()
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("BeginPlay: AAdventurePlayerController"));
 	
 	Command = NewObject<UCurrentCommand>(this);
+	Command->SetHoverState(ECommandCodes::HoverScene);
 	
 	APawn* PlayerPawn = GetPawn();
 	PlayerCharacter = Cast<AAdventureCharacter>(PlayerPawn);

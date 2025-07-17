@@ -3,11 +3,10 @@
 #include "ParentState.h"
 
 /// Class for special case of a Use verb targeting a HotSpot.
-class ADVENTUREGAME_API FTargetingUse final : public TFParentState<ECommandCodes::TargetingUse>
+class ADVENTUREGAME_API FPendingGiveTopState final : public TFParentState<ECommandCodes::PendingGive>
 {
 public:
-    FTargetingUse() : TFParentState(ECommandCodes::HoverScene) {}
-    virtual ~FTargetingUse() override = default;
+    virtual ~FPendingGiveTopState() override = default;
     virtual bool CanTransition(const FStatePath &DestinationState) const override;
 };
 
@@ -16,4 +15,4 @@ public:
 /// CHILD STATES
 ///
 
-DECLARE_STATE_CLASS(UseOnHotSpot, UseOn)
+DECLARE_STATE_CLASS(Give, Give)

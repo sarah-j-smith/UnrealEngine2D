@@ -1,17 +1,16 @@
 #pragma once
-#include "CommandCodes.h"
 
+#include "CommandCodes.h"
 #include "CommandState.h"
+#include "ICommandState.h"
+#include "CommandStateMachine.h"
 
 template <ECommandCodes E>
 class TFParentState : public TFCommandState<E>, public ICommandState
 {
 public:
-    TFParentState() = default;
-
-    explicit TFParentState(const ECommandCodes &StartingCode)
-        : State(MakeParentStateMachine(StartingCode))
-    {}
+    /// Default constructor which sets the starting state to Initial
+    TFParentState();
 
     virtual ~TFParentState() override = default;
 
@@ -26,21 +25,26 @@ public:
     
     virtual void Transition(ECommandCodes Code) override;
     
-    virtual ECommandCodes CurrentChildState() const
-    {
-        return State.Current->GetCode();
-    }
+    virtual ECommandCodes CurrentChildState() const;
 
     virtual FString Description() const override;
     
 protected:
-    FCommandStateMachine State;
+    // Pointer to my current child state, or null if in an initial or terminal state.
+    TSharedPtr<FCommandStateMachine> State;
 };
 
 //////////////////////////////////
 ///
 ///  PARENT STATE - TEMPLATE IMPLEMENTATIONS
 ///
+
+template <ECommandCodes E>
+TFParentState<E>::TFParentState()
+    : State(new FCommandStateMachine())
+{
+    State->SetName(FName(CommandCodesToString(E) + TEXT("State Machine")));
+}
 
 template <ECommandCodes E>
 void TFParentState<E>::ClickOnItem(UInventoryItem* Item)
@@ -60,10 +64,15 @@ template <ECommandCodes E>
 void TFParentState<E>::Transition(ECommandCodes Code)
 {
     const FName OldCode(CommandCodesToString(CurrentChildState()));
-    State.Transition(Code);
-    State.Current->SetParent(MakeShareable(this));
+    State->Transition(Code);
     const FName NewCode(CommandCodesToString(CurrentChildState()));
     OnCommandChanged.Broadcast(OldCode, NewCode);
+}
+
+template <ECommandCodes E>
+ECommandCodes TFParentState<E>::CurrentChildState() const
+{
+    return State->IsInitial() ? ECommandCodes::Initial : State->GetCurrentState()->GetCode();
 }
 
 template <ECommandCodes E>
@@ -73,8 +82,3 @@ FString TFParentState<E>::Description() const
     const FString ChildString = CommandCodesToString(CurrentChildState());
     return FString::Printf(TEXT("%s :: %s"), *ParentString, *ChildString);
 }
-
-DECLARE_STATE_CLASS(Initial, Initial)
-
-DECLARE_STATE_CLASS(Terminal, Terminal)
-

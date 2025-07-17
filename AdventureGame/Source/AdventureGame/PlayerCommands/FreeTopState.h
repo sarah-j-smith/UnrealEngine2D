@@ -5,8 +5,6 @@
 class ADVENTUREGAME_API FFreeTopState final : public TFParentState<ECommandCodes::Free>
 {
 public:
-    FFreeTopState() : TFParentState(ECommandCodes::HoverScene) {}
-    virtual ~FFreeTopState() override = default;
     virtual bool CanTransition(const FStatePath &DestinationState) const override;
 };
 

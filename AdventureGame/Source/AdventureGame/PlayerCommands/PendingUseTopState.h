@@ -2,11 +2,11 @@
 
 #include "ParentState.h"
 
-class ADVENTUREGAME_API FFPendingUse final : public TFParentState<ECommandCodes::PendingUse>
+class ADVENTUREGAME_API FPendingUseTopState final : public TFParentState<ECommandCodes::PendingUse>
 {
 public:
-    FFPendingUse() : TFParentState(ECommandCodes::HoverScene) {}
-    virtual ~FFPendingUse() override = default;
+    FPendingUseTopState() : TFParentState() {}
+    virtual ~FPendingUseTopState() override = default;
     virtual bool CanTransition(const FStatePath &DestinationState) const override;
 };
 
@@ -16,4 +16,5 @@ public:
 ///
 
 DECLARE_STATE_CLASS(Use, Use)
+
 

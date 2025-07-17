@@ -11,27 +11,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e7d87409-0359-4ca5-b933-df4b7b2a98d8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/FPendingUse.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/FPendingUse.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/TargetingUse.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/TargetingUse.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/CommandStateMachine.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/CommandStateMachine.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/ICommandState.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/InstantActiveTopState.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/InstantActiveTopState.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/PendingGiveTopState.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Docs/CommandState.md" beforeDir="false" afterPath="$PROJECT_DIR$/Docs/CommandState.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Docs/images/FSM-Screenshot.png" beforeDir="false" afterPath="$PROJECT_DIR$/Docs/images/FSM-Screenshot.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventurePlayerController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventurePlayerController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventurePlayerController.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventurePlayerController.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Constants.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Constants.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/ActiveTopState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/ActiveTopState.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/ActiveTopState.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/ActiveTopState.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/CommandCodes.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/CommandCodes.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/CommandCodes.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/CommandCodes.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/CommandState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/CommandState.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/CommandState.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/CommandState.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/CurrentCommand.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/CurrentCommand.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/CurrentCommand.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/CurrentCommand.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/FPendingUse.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/PendingUseTopState.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/FPendingUse.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/PendingUseTopState.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/FreeTopState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/FreeTopState.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/ParentState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/ParentState.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/FreeTopState.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/FreeTopState.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/ParentState.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/ParentState.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/PendingTopState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/PendingTopState.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/PendingTopState.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/PendingTopState.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/VerbsUI.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/VerbsUI.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/VerbsUI.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/VerbsUI.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/TargetingTopState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/TargetingTopState.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/TargetingTopState.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/TargetingTopState.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/TargetingUse.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/TargetingUse.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/PlayerCommands/PendingGiveTopState.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -182,6 +190,7 @@
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/AIModule/Private/Blueprint/AIBlueprintHelperLibrary.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/AnimGraphRuntime/Private/PlayMontageCallbackProxy.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/ApplicationCore/Public/GenericPlatform/ICursor.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/ApplicationCore/Public/IOS/Accessibility/IOSAccessibilityElement.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/AudioCaptureImplementations/AudioCaptureRtAudio/Private/RtAudio.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/AudioDeviceEnumeration/Windows/WindowsMMDeviceEnumeration/WindowsMMDeviceEnumeration.Build.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/BuildSettings/BuildSettings.Build.cs" root0="FORCE_HIGHLIGHTING" />
@@ -387,7 +396,31 @@
     <setting file="file://$PROJECT_DIR$/Source/AdventureGame/SplitScreenManager.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AdventureGame/VerbsUI.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AdventureGame/VerbsUI.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="cidr-memory-view://0" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="cidr-memory-view://5" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -565,7 +598,7 @@
       <workItem from="1752302962970" duration="14843000" />
       <workItem from="1752373285985" duration="74926000" />
       <workItem from="1752572352577" duration="9383000" />
-      <workItem from="1752625002682" duration="7057000" />
+      <workItem from="1752625002682" duration="47556000" />
     </task>
     <servers />
   </component>

@@ -5,11 +5,11 @@ bool FPendingTopState::CanTransition(const FStatePath& Destination) const
     switch (Destination.Parent)
     {
     case ECommandCodes::Active:
-        // By selecting a current item/hotspot for the verb do a transition from pending to active
-        return true;
-    case ECommandCodes::Targeting:
-        // A few pending states can transition to targeting once the source item/hotspot is chosen
-        return State.Current->CanTransition(Destination);
+        // Pending state can transition to the active state for the same
+        // verb/child. So if we are in Pending::Open (player clicked the
+        // open verb) and asked CanTransition to Active::Open return true
+        // which is what happens if the player clicks a target for "Open".
+        return Destination.Child == State->GetCommandCode();
     default:
         return false;
     }
@@ -17,28 +17,21 @@ bool FPendingTopState::CanTransition(const FStatePath& Destination) const
 
 TOptional<EVerbType> FPendingTopState::GetVerb() const
 {
-    return GetVerbFromCommandCode(State.Current->GetCode());
+    return State->GetCurrentVerb();
 }
-
 
 //////////////////////////////////
 ///
 /// CHILD STATES
 ///
 
-bool FLookAtState::CanTransition(const FStatePath& Destination) const { return false; }
+// No need to add code for these for CanTransition - all taken care of by
+// parent CanTransition
 
-bool FGiveState::CanTransition(const FStatePath& Destination) const { return false; }
-
-bool FOpenState::CanTransition(const FStatePath& Destination) const { return false; }
-
-bool FCloseState::CanTransition(const FStatePath& Destination) const { return false; }
-
-bool FPickUpState::CanTransition(const FStatePath& Destination) const { return false; }
-
-bool FTalkToState::CanTransition(const FStatePath& Destination) const { return false; }
-
-bool FPushState::CanTransition(const FStatePath& Destination) const { return false; }
-
-bool FPullState::CanTransition(const FStatePath& Destination) const { return false; }
-
+TOptional<EVerbType> FPickUpState::GetVerb() const { return EVerbType::PickUp; }
+TOptional<EVerbType> FLookAtState::GetVerb() const { return EVerbType::LookAt; }
+TOptional<EVerbType> FOpenState::GetVerb() const { return EVerbType::Open; }
+TOptional<EVerbType> FCloseState::GetVerb() const { return EVerbType::Close; }
+TOptional<EVerbType> FTalkToState::GetVerb() const { return EVerbType::TalkTo; }
+TOptional<EVerbType> FPushState::GetVerb() const { return EVerbType::Push; }
+TOptional<EVerbType> FPullState::GetVerb() const { return EVerbType::PickUp; }

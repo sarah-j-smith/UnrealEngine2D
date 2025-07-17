@@ -48,11 +48,10 @@ enum class ECommandCodes : uint8
     Active = 43          UMETA(DisplayName = "Active"),
     InstantActive = 44   UMETA(DisplayName = "InstantActive"),
     PendingUse = 45      UMETA(DisplayName = "PendingUse"),
-    TargetingUse = 46    UMETA(DisplayName = "TargetingUse"),
+    PendingGive = 46     UMETA(DisplayName = "PendingGive"),
 
     // INTERNAL IMPLEMENTATION STATES
     Initial = 100        UMETA(DisplayName = "Initial"),
-    Terminal = 101       UMETA(DisplayName = "Terminal"),
 };
 
 /// Create a string description of the code. Not translated, mostly for debugging.
@@ -72,3 +71,19 @@ EVerbType GetVerbFromCommandCode(const ECommandCodes &CommandCode);
 ECommandCodes GetCommandCodeFromVerb(const EVerbType &Verb);
 
 bool IsHoverCommandCode(const ECommandCodes &CommandCode);
+
+struct FStatePath
+{
+    /// Parent state of hierarchical state graph
+    ECommandCodes Parent;
+    /// Child state of hierarchical state graph
+    ECommandCodes Child;
+};
+
+constexpr FStatePath GWalk_To_Location { ECommandCodes::Active, ECommandCodes::WalkToLocation };
+constexpr FStatePath GWalk_To_Hotspot { ECommandCodes::Active, ECommandCodes::WalkToHotSpot };
+constexpr FStatePath GLook_At_Item { ECommandCodes::Active, ECommandCodes::LookAtItem };
+constexpr FStatePath GHover_Scene { ECommandCodes::Free, ECommandCodes::HoverScene };
+constexpr FStatePath GHover_Inventory { ECommandCodes::Free, ECommandCodes::HoverInventory };
+constexpr FStatePath GHover_HotSpot { ECommandCodes::Free, ECommandCodes::HoverHotSpot };
+constexpr FStatePath GHover_Item { ECommandCodes::Free, ECommandCodes::HoverItem };
