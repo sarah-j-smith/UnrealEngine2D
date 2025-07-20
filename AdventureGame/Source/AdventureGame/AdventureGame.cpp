@@ -13,10 +13,10 @@ void FAdventureGame::StartupModule()
 {
     FDefaultGameModuleImpl::StartupModule();
 
-    // Load a custom view for the Player Controller that shows the inventory
-    FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
-    PropertyModule.RegisterCustomClassLayout("AdventurePlayerController", 
-        FOnGetDetailCustomizationInstance::CreateStatic(&FInventoryCustomisation::MakeInstance));
+    // // Load a custom view for the Player Controller that shows the inventory
+    // FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+    // PropertyModule.RegisterCustomClassLayout("AdventurePlayerController", 
+    //     FOnGetDetailCustomizationInstance::CreateStatic(&FInventoryCustomisation::MakeInstance));
     
     // https://unreal-garden.com/tutorials/stringtable-cpp/
     LOCTABLE_FROMFILE_GAME(ITEM_STRINGS_KEY, ITEMS_NAMESPACE_KEY, "StringTables/ItemStrings.csv");

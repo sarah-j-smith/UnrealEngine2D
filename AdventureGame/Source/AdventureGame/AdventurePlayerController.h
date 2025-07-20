@@ -13,7 +13,6 @@
 #include "InventoryItem.h"
 
 #include "GameFramework/PlayerController.h"
-#include "PlayerCommands/CurrentCommand.h"
 #include "AdventurePlayerController.generated.h"
 
 class UItemSlot;
@@ -34,15 +33,37 @@ DECLARE_MULTICAST_DELEGATE_ThreeParams(FEndAction, EInteractionType /* Interacti
 UENUM(BlueprintType)
 enum class EPlayerCommand : uint8
 {
-	/// The player has not clicked to activate any command
+	/// The player has not clicked or hovered to activate any command
 	None = 0           UMETA(DisplayName = "NONE"),
 
-	/// The player has activated by clicking on the CurrentVerb
-	VerbActivated = 1  UMETA(DisplayName = "VERB_ACTIVATED"),
+	/// The player is hovering the UI
+	Hover = 1          UMETA(DisplayName = "Hover"),
 
-	/// A verb was activated (implicitly or explicitly) and now is being actioned
-	/// because the player clicked on a target for the verb
-	VerbInProgress = 2 UMETA(DisplayName = "VERB_INPROGRESS"),
+	/// The player has chosen a command on a verb - other than Use or Give
+	/// and now must select a hotspot or item target for that verb.
+	VerbPending = 2    UMETA(DisplayName = "Verb Pending"),
+
+	/// The player has chosen a command by clicking on Use. If they click a
+	/// HotSpot it will be Active "used" - eg "Use lever". If they click an item,
+	/// we go to <code>Targeting</code> to select the HotSpot or other Item
+	/// which will be the target of the "Use On".
+	UsePending = 3     UMETA(DisplayName = "Use Pending"),
+
+	/// The player has chosen a command by clicking on Give. If they click an item,
+	/// we go to <code>Targeting</code> to select the HotSpot or other Item
+	/// which will be the target of the "Give to".
+	GivePending = 4    UMETA(DisplayName = "Give Pending"),
+
+	/// The player has clicked on an Item as a <code>Source</code> for Use or Give.
+	/// Now we are waiting for the player to pick a another item or hotspot
+	/// for the Use or Give which will become the <code>Target</code>.
+	Targeting = 5      UMETA(DisplayName = "Targeting"),
+
+	/// A verb is being actioned
+	Active = 6         UMETA(DisplayName = "Active"),
+	
+	/// A Walk to or Look at was activated via a single click
+	InstantActive = 7  UMETA(DisplayName = "Instant Active"),
 };
 
 /**
@@ -57,41 +78,6 @@ public:
 
 	//////////////////////////////////
 	///
-	/// COMMAND STATE
-	///
-
-	/// Parent command state in HSM
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Getter="GetSourceInventoryItem", Category="Command State")	
-	UInventoryItem *SourceInventoryItem;
-	
-	/// Parent command state in HSM
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Getter="GetRootCommandCode", Category="Command State")	
-	ECommandCodes RootCommandCode;
-
-	/// Parent command state in HSM
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Getter="GetLeafCommandCode", Category="Command State")	
-	ECommandCodes LeafCommandCode;
-
-	UInventoryItem *GetSourceInventoryItem() const
-	{
-		return Command->SourceItem;
-	}
-	
-	ECommandCodes GetRootCommandCode() const
-	{
-		return Command->TopState;
-	}
-	
-	ECommandCodes GetLeafCommandCode() const
-	{
-		return Command->ChildState;
-	}
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Command State")
-	UCurrentCommand *Command;
-
-	//////////////////////////////////
-	///
 	/// EVENT HANDLERS
 	///
 	
@@ -100,6 +86,10 @@ public:
 	virtual void BeginPlay() override;
 	
 	void HandlePointAndClickInput();
+
+	void HandleHotSpotClicked(AHotSpot* HotSpot);
+
+	void HandleLocationClicked(const FVector& Location);
 
 	void MouseEnterHotSpot(AHotSpot *HotSpot);
 
@@ -177,24 +167,12 @@ public:
 
 	void MouseLeaveInventoryItem();
 
-	/// Perform an interaction on an item.
-	void PerformItemInteraction(const UInventoryItem *InventoryItem);
+	/// Perform an interaction on the target item, ie via use or give.
+	void PerformItemInteraction();
 
-	void UseAnItem(const EItemKind ItemToUse)
-	{
-		ActiveItem = ItemToUse;
-		IsUsingItem = true;
-		CurrentVerb = EVerbType::UseItem;
-		TriggerUpdateInventoryText();
-	}
+	void PerformItemAction();
 
-	void GiveAnItem(const EItemKind ItemToGive)
-	{
-		ActiveItem = ItemToGive;
-		IsUsingItem = true;
-		CurrentVerb = EVerbType::GiveItem;
-		TriggerUpdateInventoryText();
-	}
+	void PerformInstantAction();
 
 	UFUNCTION(BlueprintCallable, Category="Items")
 	void CombineItems(const UInventoryItem *InventoryItemSource,
@@ -210,36 +188,71 @@ public:
 	/// COMMAND STATE
 	///
 	
+	/// Which item will be the <b>subject</b> of the current verb eg "Open Box"
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Commands")	
+	UInventoryItem *SourceItem;
+
+	/// Which item will the <b>object</b> of the current verb for
+	/// example the door in "Use key on door"
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
+	const UInventoryItem *TargetItem;
+	
 	/// Has the player currently issued a command?
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
 	EPlayerCommand CurrentCommand = EPlayerCommand::None;
-	
+
+	/// Current verb action selected by the player
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
 	EVerbType CurrentVerb = EVerbType::WalkTo;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
-	const UInventoryItem *CurrentItem;
-
-	/// True if the player character is currently interacting with an item
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
-	bool ItemInteraction = false;
-
-	/// True if the player character is currently using via the "Use" verb on an item
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
-	bool IsUsingItem = false;
-
-	/// True if the player character is currently giving via the "Give" verb on an item
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
-	bool IsGivingItem = false;
-
-	/// An item current in process of "Use" or "Give"
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
-	EItemKind ActiveItem = EItemKind::None;
-
+	/// Item slot in the inventory either hovered or clicked.
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
 	UItemSlot *CurrentItemSlot;
 
+	/// Current hovered or clicked Hotspot
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
+	TObjectPtr<AHotSpot> CurrentHotSpot;
+
+	/// Location that the player is being sent to by a click
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
+	FVector CurrentTargetLocation = FVector::ZeroVector;
+
+	/// When the character is performing a sequence of chained actions do not allow any input
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
+	bool IsPerformingTaskInteraction = false;
+
+	bool ShouldHighlightInteractionText() const
+	{
+		return CurrentCommand == EPlayerCommand::Active || CurrentCommand == EPlayerCommand::InstantActive;
+	}
+
 private:
+	bool CanBrowseHotspot()
+	{
+		return CurrentCommand != EPlayerCommand::GivePending;
+	}
+
+	bool CanBrowseTarget()
+	{
+		return CurrentCommand != EPlayerCommand::GivePending;
+	}
+
+	bool CanBrowseSource()
+	{
+		switch (CurrentCommand)
+		{
+		case EPlayerCommand::None:
+		case EPlayerCommand::Hover:
+		case EPlayerCommand::VerbPending:
+		case EPlayerCommand::UsePending:
+		case EPlayerCommand::GivePending:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	
 	UItemList *GetInventoryItemList();
 
 	//////////////////////////////////
@@ -247,7 +260,7 @@ private:
 	/// VERBS AND INTERACTION
 	///
 	
-	void PerformInteraction();
+	void PerformHotSpotInteraction();
 
 	/// Tell the UI to highlight and lock the action text
 	/// Locked text won't change if the player hovers the mouse over other hotspots
@@ -331,15 +344,6 @@ private:
 	void WalkToHotSpot(AHotSpot *HotSpot);
 
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gameplay")
-	TObjectPtr<AHotSpot> CurrentHotSpot;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gameplay")
-	bool HotspotInteraction = false;
-
-	/// When the character is performing a sequence of chained actions do not allow any input
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Gameplay")
-	bool IsPerformingTaskInteraction = false;
 	
 	//////////////////////////////////
 	///

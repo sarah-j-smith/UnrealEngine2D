@@ -66,6 +66,12 @@ public:
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "ItemHandling")
     void OnItemCombineFailure();
 
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "ItemHandling")
+    void OnItemGiveSuccess();
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "ItemHandling")
+    void OnItemGiveFailure();
+
     //////////////////////////////////
     ///
     /// VERB INTERACTION

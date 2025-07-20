@@ -11,6 +11,8 @@ class FInventoryCustomisation :  public IDetailCustomization
 {
 public:
 
+	///  TO DO - probably remove this - can be turned on in AdventureGame.cpp
+
 	//////////////////////////////////
 	///
 	/// DETAILS CUSTOMIZATION TO SHOW INVENTORY

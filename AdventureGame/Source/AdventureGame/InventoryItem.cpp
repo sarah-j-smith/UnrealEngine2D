@@ -54,10 +54,10 @@ void UInventoryItem::CombineWithInteractableItem(EItemKind ResultingItem, FText 
 {
     if (const auto Apc = this->AdventurePlayerController.Pin())
     {
-        if (Apc->CurrentItem)
+        if (Apc->SourceItem)
         {
             Apc->CombineItems(
-                Apc->CurrentItem,
+                Apc->SourceItem,
                 this, ResultingItem,
                 BarkText.IsEmpty() ? LOCTABLE(ITEM_STRINGS_KEY, "CombineSuccessResultText") : BarkText,
                 Desc.IsEmpty() ? LOCTABLE(ITEM_STRINGS_KEY, "DefaultCombineDescriptionText") : Desc
@@ -68,6 +68,16 @@ void UInventoryItem::CombineWithInteractableItem(EItemKind ResultingItem, FText 
     UE_LOG(LogAdventureGame, Warning,
         TEXT("Could not make %s - AdventurePlayerController->CurrentItem null."),
         *(Desc.IsEmpty() ? UItemList::GetDescription(ResultingItem).ToString() : Desc.ToString()));
+}
+
+void UInventoryItem::OnItemGiveSuccess_Implementation()
+{
+    UE_LOG(LogAdventureGame, Log, TEXT("OnItemGiveSuccess Success - default."));
+}
+
+void UInventoryItem::OnItemGiveFailure_Implementation()
+{
+    BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "ItemGivenDefaultText"));
 }
 
 void UInventoryItem::OnClose_Implementation()
@@ -136,10 +146,7 @@ void UInventoryItem::OnPush_Implementation()
 void UInventoryItem::OnUse_Implementation()
 {
     IVerbInteractions::OnUse_Implementation();
-    if (const auto Apc = AdventurePlayerController.Pin())
-    {
-        Apc->UseAnItem(ItemKind);
-    }
+    BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "UseDefaultText"));
     UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On use"));
 }
 
@@ -154,13 +161,15 @@ void UInventoryItem::OnItemUsed_Implementation()
     IVerbInteractions::OnItemUsed_Implementation();
     if (const auto Apc = AdventurePlayerController.Pin())
     {
-        if (AdventurePlayerController->ActiveItem == ItemKind)
+        auto SourceKind = AdventurePlayerController->SourceItem->ItemKind;
+        auto InteractableKind = AdventurePlayerController->SourceItem->InteractableItem;
+        if (SourceKind == ItemKind)
         {
             // Item is used on itself
             AdventurePlayerController->InterruptCurrentAction();
             OnItemCombineFailure();
         }
-        else if (AdventurePlayerController->ActiveItem == InteractableItem)
+        else if (SourceKind == InteractableItem || InteractableKind == ItemKind)
         {
             OnItemCombineSuccess();
         }
@@ -178,7 +187,7 @@ void UInventoryItem::OnItemGiven_Implementation()
     IVerbInteractions::OnItemGiven_Implementation();
     if (const auto Apc = AdventurePlayerController.Pin())
     {
-        AdventurePlayerController->GiveAnItem(ItemKind);
+        // AdventurePlayerController->GiveAnItem(ItemKind);
     }
     BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "ItemGivenDefaultText"));
 }
