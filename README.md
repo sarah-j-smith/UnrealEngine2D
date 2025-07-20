@@ -1,5 +1,18 @@
 # Unreal Engine Notes
 
+These are code and notes from my learning process for C++ dev with Unreal Engine.
+
+There's two main sets of projects here: courses I did on GameDev.tv and also
+a C++ version of Lesser Dog's Unreal Engine Lucas Arts style Adventure Game tut.
+
+## Lucas Arts 2D Adventure Game
+
+* Justin of Lesser Dog Tut's [Lucas Arts Adventure Game tuto](https://www.youtube.com/watch?v=sEy3c5JcLys&t=7s)
+
+* Learning by porting to C++ from his Blueprint version with very little C++.
+
+Go [to my notes and C++ source code](./AdventureGame/README.md) for more.
+
 ## Unreal Engine 2D: Make Your Own Epic 2D Games Using C++
 
 * Kaan Alpar, [GameDev.tv](https://www.gamedev.tv/dashboard/courses/115)
