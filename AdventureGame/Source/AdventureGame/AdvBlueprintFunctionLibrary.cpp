@@ -51,14 +51,11 @@ int32 UAdvBlueprintFunctionLibrary::PIEInstance(const UObject* WorldContextObjec
 }
 
 UInventoryItem* UAdvBlueprintFunctionLibrary::AddToInventory(const UObject* WorldContextObject,
-                                                             EItemKind ItemToAdd, FText Description,
-                                                             EItemKind InteractableItem)
+                                                             EItemKind ItemToAdd)
 {
     if (AAdventurePlayerController* AdventurePlayerController = GetAdventureController(WorldContextObject))
     {
         UInventoryItem* Item = AdventurePlayerController->ItemAddToInventory(ItemToAdd);
-        Item->Description = Description;
-        Item->InteractableItem = InteractableItem;
         return Item;
     }
     return nullptr;

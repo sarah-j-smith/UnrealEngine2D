@@ -41,12 +41,9 @@ void UAdventureGameHUD::SetInteractionText()
 {
 	if (!AdventurePlayerController.IsValid()) return;
 	auto CurrentVerb = AdventurePlayerController->CurrentVerb;
-	auto CurrentHotspot = AdventurePlayerController->CurrentHotSpot;
-	FString VerbStr = VerbGetDescriptiveString(CurrentVerb);
-	if (CurrentHotspot)
+	if (auto CurrentHotspot = AdventurePlayerController->CurrentHotSpot)
 	{
-		FString HotspotStr = CurrentHotspot->HotSpotDescription;
-		FString hpStr = FString::Printf(TEXT("%s %s"), *VerbStr, *HotspotStr);
+		FText hpStr = AdvGameUtils::GetVerbWithHotSpotText(CurrentHotspot, CurrentVerb);
 		InteractionUI->SetText(hpStr);
 		if (AdventurePlayerController->ShouldHighlightInteractionText())
 		{
@@ -55,6 +52,7 @@ void UAdventureGameHUD::SetInteractionText()
 	}
 	else
 	{
+		FText VerbStr = VerbGetDescriptiveString(CurrentVerb);
 		InteractionUI->SetText(VerbStr);
 	}
 }
@@ -75,23 +73,23 @@ void UAdventureGameHUD::SetInventoryText()
 	const UInventoryItem* CurrentItem = AdventurePlayerController->SourceItem; // Item a char has
 	AHotSpot* HotSpot = AdventurePlayerController->CurrentHotSpot;
 	const EVerbType Verb = AdventurePlayerController->CurrentVerb;
-	FString InventoryText;
+	FText InventoryText;
 	bool ShouldHighlightText = false;
 	if (Verb == EVerbType::UseItem)
 	{
-		InventoryText = AdvGameUtils::GetUsingItemString(CurrentItem, Item, HotSpot);
+		InventoryText = AdvGameUtils::GetUsingItemText(CurrentItem, Item, HotSpot);
 		ShouldHighlightText = true;
 	}
 	else if (Verb == EVerbType::GiveItem)
 	{
-		InventoryText = AdvGameUtils::GetGivingItemString(CurrentItem, Item, HotSpot);
+		InventoryText = AdvGameUtils::GetGivingItemText(CurrentItem, Item, HotSpot);
 		ShouldHighlightText = true;
 	}
 	else if (Item)
 	{
 		InventoryText = (Verb == EVerbType::WalkTo)
-			                ? AdvGameUtils::GetVerbWithItemString(Item, EVerbType::LookAt)
-			                : AdvGameUtils::GetVerbWithItemString(Item, Verb);
+			                ? AdvGameUtils::GetVerbWithItemText(Item, EVerbType::LookAt)
+			                : AdvGameUtils::GetVerbWithItemText(Item, Verb);
 		ShouldHighlightText = AdventurePlayerController->ShouldHighlightInteractionText();
 	}
 	InteractionUI->SetText(InventoryText);

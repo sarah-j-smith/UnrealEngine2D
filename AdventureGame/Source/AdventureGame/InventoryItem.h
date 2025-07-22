@@ -25,11 +25,17 @@ public:
     /// ITEM HANDLING
     ///
 
+    /// Longer description used in "Look at" to make the item more real.
+    /// eg "Blunt red knife with blood on it" - "Old tattered book covered with runes".
+    /// By default uses the `DefaultItemDescriptionText` value in the `ItemStrings` string table.
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemHandling")
+    FText Description = LOCTABLE("ItemStrings", "DefaultItemDescriptionText");
+
     /// Very short description to distinguish this thing from others of the same kind
     /// eg "Blunt red knife" - "Old tattered book". By default uses the
     /// `DefaultItemDescriptionText` value in the `ItemStrings` string table.
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemHandling")
-    FText Description = LOCTABLE("ItemStrings", "DefaultItemDescriptionText");
+    FText ShortDescription = LOCTABLE("ItemStrings", "DefaultItemDescriptionText");
 
     /// Enum ItemKind for this thing. Defaults to `None`. Add new
     /// item kinds in the `EItemKind` enum.
@@ -48,12 +54,19 @@ public:
     EItemKind InteractableItem = EItemKind::None;
 
     /// Convenience method that combines this item with its interactable
-    /// item. Call this from the `OnItemCombineSuccess` event where the
+    /// item to create a new item.
+    ///
+    /// Call this from the `OnItemCombineSuccess` event where the
     /// current item on the adventure controller is guaranteed to be
     /// correctly set to this items interactable item.
+    ///
+    /// To set the ShortDescription and Description for the item, create
+    /// a blueprint and enum.
+    /// 
+    /// @param ResultingItem Kind of item to create.
+    /// @param BarkText Text for player to say on creation.
     UFUNCTION(BlueprintCallable, Category = "ItemHandling")
-    void CombineWithInteractableItem(EItemKind ResultingItem, FText BarkText = FText::GetEmpty(),
-                                     FText Desc = FText::GetEmpty());
+    void CombineWithInteractableItem(EItemKind ResultingItem, FText BarkText = FText::GetEmpty());
 
     //////////////////////////////////
     ///
@@ -117,15 +130,6 @@ public:
     ///
     /// ITEM TEXT
     ///
-
-    static FText GetDescription(const UInventoryItem *Item);
-    
-    /// Get a string that describes this item. If there's a `Description`
-    /// then simply return that. Otherwise get a descriptive string from
-    /// the `UItemList` if available. All else fails use the
-    /// DefaultItemDescriptionText as a default string.
-    UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
-    FText GetDescription() const;
 
     /// Player barks a message and then immediately ends any action sequence
     /// they were doing. Use when the blueprint event logic should end with a bark.

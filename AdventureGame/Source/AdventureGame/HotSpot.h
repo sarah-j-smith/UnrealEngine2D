@@ -36,7 +36,10 @@ public:
 	USphereComponent* WalkToPoint;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HotSpot")
-	FString HotSpotDescription;
+	FText Description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HotSpot")
+	FText ShortDescription;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HotSpot")
 	FVector WalkToPosition;
@@ -127,8 +130,15 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Player Actions")
 	void ShowSpriteComponent();
+
+	void SetEnableMeshComponent(bool Enabled);
 private:
+	FString HotSpotType = "HotSpot";
+	FString HotSpotName = "HotSpot";
+
 	/// Internal convenience function. Do not expose to blueprints, they should use
 	/// AdvBlueprintFunctionLibrary::Bark() instead.
 	void Bark(const FText &Text) const;
+
+	void BarkAndEnd(const FText &Text) const;
 };

@@ -21,4 +21,4 @@ enum class EVerbType: uint8
 	GiveItem = 11 UMETA(DisplayName = "GIVE_ITEM"),
 };
 
-FString VerbGetDescriptiveString(EVerbType Verb);
+FText VerbGetDescriptiveString(EVerbType Verb);

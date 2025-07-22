@@ -16,3 +16,6 @@ GivenSuccessResultText,"Gave it","Default text for when player uses an item on a
 DefaultCombineDescriptionText,combination thing,"Default text for a thing made from two other things combined"
 DefaultItemDescriptionText,"thing","Default description for any item"
 PlayerInventory,Player Inventory,Title for list of players items in the game editor
+DefaultLongDescriptionText,unknown thing,Default text for a thing with no longer description
+HotSpotWalkAlreadyAt,I'm already at {Subject} what should I do?,Default text for walk to hotspot when already there
+HotSpotWalkArrived,Arrived here. What now?,Default text for arriving at hotspot

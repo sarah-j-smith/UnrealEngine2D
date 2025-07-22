@@ -1,34 +1,53 @@
 #include "VerbType.h"
 
-FString VerbGetDescriptiveString(EVerbType Verb)
+#include "Constants.h"
+#include "Internationalization/StringTableRegistry.h"
+
+/**
+ * Get a text to use to describe the verb. Note that these cannot
+ * generally just be concatenated with nouns due to i18n requirements,
+ * for example:
+ * 
+ * English:
+ *     give the gift to the woman
+ *     open the door
+ *     
+ * German:
+ *     gib der Frau das Geschenk
+ *     öffne die Tür
+ * 
+ * @param Verb Verb to 
+ * @return 
+ */
+FText VerbGetDescriptiveString(EVerbType Verb)
 {
 	switch (Verb)
 	{
 	case EVerbType::Close:
-		return FString("Close");
+		return LOCTABLE(ITEM_DESCRIPTIONS_KEY, "Close");
 	case EVerbType::Open:
-		return FString("Open");
+		return LOCTABLE(ITEM_DESCRIPTIONS_KEY, "Open");
 	case EVerbType::Give:
-		return FString("Give");
+		return LOCTABLE(ITEM_DESCRIPTIONS_KEY, "Give");
 	case EVerbType::PickUp:
-		return FString("Pick up");
+		return LOCTABLE(ITEM_DESCRIPTIONS_KEY, "Pick_up");
 	case EVerbType::TalkTo:
-		return FString("Talk to");
+		return LOCTABLE(ITEM_DESCRIPTIONS_KEY, "Talk_to");
 	case EVerbType::LookAt:
-		return FString("Look at");
+		return LOCTABLE(ITEM_DESCRIPTIONS_KEY, "Look_at");
 	case EVerbType::Use:
-		return FString("Use");
+		return LOCTABLE(ITEM_DESCRIPTIONS_KEY, "Use");
 	case EVerbType::Push:
-		return FString("Push");
+		return LOCTABLE(ITEM_DESCRIPTIONS_KEY, "Push");
 	case EVerbType::Pull:
-		return FString("Pull");
+		return LOCTABLE(ITEM_DESCRIPTIONS_KEY, "Pull");
 	case EVerbType::WalkTo:
-		return FString("Walk to");
+		return LOCTABLE(ITEM_DESCRIPTIONS_KEY, "Walk_to");
 	case EVerbType::UseItem:
-		return FString("Use item");
+		return LOCTABLE(ITEM_DESCRIPTIONS_KEY, "Close");
 	case EVerbType::GiveItem:
-		return FString("Give item");
+		return LOCTABLE(ITEM_DESCRIPTIONS_KEY, "Close");
 	default:
-		return FString("None");
+		return LOCTABLE(ITEM_DESCRIPTIONS_KEY, "Walk_to");
 	}
 }

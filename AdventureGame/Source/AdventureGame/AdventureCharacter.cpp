@@ -250,7 +250,9 @@ void AAdventureCharacter::PlayerBark(const FText &NewBarkText)
 	BarkText->SetText(NewBarkText);
 	BarkTextComponent->SetVisibility(true);
 	bBarkTextConfinesNeedsUpdate = true;
-	GetWorldTimerManager().SetTimer(BarkTimerHandle, this, &AAdventureCharacter::BarkTimerTimeout, 1.0, false, BarkDelay);
+	GetWorldTimerManager().SetTimer(BarkTimerHandle,
+		this, &AAdventureCharacter::BarkTimerTimeout, 1.0,
+		false, BarkDelay);
 	bBarkTimerActive = true;
 }
 

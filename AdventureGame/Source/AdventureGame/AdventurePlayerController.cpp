@@ -208,9 +208,12 @@ void AAdventurePlayerController::HandleHotSpotClicked(AHotSpot* HotSpot)
 		break;
 	case EPlayerCommand::VerbPending:
 	case EPlayerCommand::UsePending:
+		CurrentCommand = EPlayerCommand::Targeting;
 	case EPlayerCommand::Targeting:
 		CurrentHotSpot = HotSpot;
-		PerformHotSpotInteraction();
+		CurrentCommand = EPlayerCommand::Active;
+		TriggerBeginAction();
+		WalkToHotSpot(HotSpot);
 		break;
 	default:
 		break;
@@ -220,16 +223,29 @@ void AAdventurePlayerController::HandleHotSpotClicked(AHotSpot* HotSpot)
 void AAdventurePlayerController::HandleLocationClicked(const FVector& Location)
 {
 	CurrentTargetLocation = Location;
-	PerformInstantAction();
+	switch (CurrentCommand)
+	{
+	case EPlayerCommand::None:
+	case EPlayerCommand::Hover:
+		SourceItem = nullptr;
+		TargetItem = nullptr;
+		PerformInstantAction();
+		break;
+	default:
+		break;
+	}
 }
 
-UInventoryItem *AAdventurePlayerController::ItemAddToInventory(const EItemKind &ItemToAdd, FText Description)
+UInventoryItem *AAdventurePlayerController::ItemAddToInventory(const EItemKind &ItemToAdd)
 {
 	if (UItemList *Inventory = GetInventoryItemList())
 	{
 		if (!Inventory->Contains(ItemToAdd))
 		{
-			return Inventory->AddItemToInventory(ItemToAdd, Description);
+			if (UInventoryItem *Item = Inventory->AddItemToInventory(ItemToAdd))
+			{
+				Item->AdventurePlayerController = this;
+			}
 		}
 	}
 	return nullptr;
@@ -243,13 +259,21 @@ void AAdventurePlayerController::ItemRemoveFromInventory(const EItemKind &ItemTo
 	}
 }
 
+void AAdventurePlayerController::ItemsRemoveFromInventory(const TSet<EItemKind>& ItemsToRemove)
+{
+	if (UItemList *Inventory = GetInventoryItemList())
+	{
+		Inventory->RemoveItemKindsFromInventory(ItemsToRemove);
+	}
+}
+
 void AAdventurePlayerController::HandleInventoryItemClicked(UItemSlot* ItemSlot)
 {
 	if (!ItemSlot->HasItem) return;
 	CurrentItemSlot = ItemSlot;
 
 #if WITH_EDITOR
-	FString DebugString = ItemSlot->InventoryItem->GetDescription().ToString();
+	FString DebugString = ItemSlot->InventoryItem->Description.ToString();
 	UE_LOG(LogAdventureGame, Warning, TEXT("HandleInventoryItemClicked - %s"), *DebugString);
 #endif
 	
@@ -267,13 +291,25 @@ void AAdventurePlayerController::HandleInventoryItemClicked(UItemSlot* ItemSlot)
 		PerformItemAction();
 		break;
 	case EPlayerCommand::UsePending:
+		CurrentVerb = EVerbType::UseItem;
+		TriggerUpdateInventoryText();
+		break;
 	case EPlayerCommand::GivePending:
+		CurrentVerb = EVerbType::GiveItem;
 		CurrentCommand = EPlayerCommand::Targeting;
+		TriggerUpdateInventoryText();
 		break;
 	case EPlayerCommand::Targeting:
-		CurrentCommand = EPlayerCommand::Active;
-		TargetItem = ItemSlot->InventoryItem;
-		PerformItemInteraction();
+		if (SourceItem->ItemKind != ItemSlot->InventoryItem->ItemKind)
+		{
+			CurrentCommand = EPlayerCommand::Active;
+			TargetItem = ItemSlot->InventoryItem;
+			PerformItemInteraction();
+		}
+		else
+		{
+			UE_LOG(LogAdventureGame, Warning, TEXT("Cannot target same kind of item"));
+		}
 		default:
 	UE_LOG(LogAdventureGame, Warning, TEXT("Ignoring inventory click"));
 	}
@@ -414,6 +450,7 @@ void AAdventurePlayerController::HandleMovementComplete()
 		PlayerCharacter->SetFacingDirection(CurrentHotSpot->FacingDirection);
 		PlayerCharacter->TeleportToLocation(CurrentHotSpot->WalkToPosition);
 		PerformHotSpotInteraction();
+		return;
 	}
 	AIStatus = EAIStatus::Idle;
 	InterruptCurrentAction();
@@ -443,9 +480,9 @@ void AAdventurePlayerController::HoverVerb(EVerbHoverState IsHovered)
 void AAdventurePlayerController::PerformItemAction()
 {
 #if WITH_EDITOR
-	const FString DebugString = SourceItem->GetDescription().ToString();
+	const FString DebugString = SourceItem->ShortDescription.ToString();
 	UE_LOG(LogAdventureGame, Warning, TEXT("PerformItemAction %s - %s"),
-		*VerbGetDescriptiveString(CurrentVerb), *DebugString);
+		*VerbGetDescriptiveString(CurrentVerb).ToString(), *DebugString);
 #endif
 
 	if (!SourceItem) return;
@@ -490,6 +527,7 @@ void AAdventurePlayerController::PerformItemAction()
 		UInventoryItem::Execute_OnItemGiven(SourceItem);
 		break;
 	}
+	TriggerBeginAction();
 }
 
 void AAdventurePlayerController::PerformInstantAction()
@@ -513,11 +551,14 @@ void AAdventurePlayerController::PerformInstantAction()
 
 void AAdventurePlayerController::PerformItemInteraction()
 {
-	CurrentCommand = EPlayerCommand::Active;
 	if (!TargetItem) return;
+	
+	CurrentCommand = EPlayerCommand::Active;
+	TriggerBeginAction();
+
 	switch (CurrentVerb)
 	{
-	case EVerbType::Give:
+	case EVerbType::GiveItem:
 		UInventoryItem::Execute_OnItemGiven(const_cast<UInventoryItem *>(TargetItem));
 		break;
 	case EVerbType::UseItem:
@@ -525,30 +566,25 @@ void AAdventurePlayerController::PerformItemInteraction()
 		break;
 	default:
 		UE_LOG(LogAdventureGame, Warning, TEXT("Unexpected interaction verb %s for perform item interaction with %s"),
-			*VerbGetDescriptiveString(CurrentVerb), *(TargetItem->GetDescription().ToString()));
+			*VerbGetDescriptiveString(CurrentVerb).ToString(), *TargetItem->ShortDescription.ToString());
 	}
 }
 
 void AAdventurePlayerController::CombineItems(const UInventoryItem* InventoryItemSource,
-                                              const UInventoryItem* InventoryItemToCombineWith, EItemKind ResultingItem, FText TextToBark, FText ResultDescription)
+                                              const UInventoryItem* InventoryItemToCombineWith,
+                                              EItemKind ResultingItem, FText TextToBark)
 {
 	check(InventoryItemSource);
 	check(InventoryItemToCombineWith);
 	check(InventoryItemToCombineWith != InventoryItemSource);
 	check(InventoryItemToCombineWith->ItemKind != InventoryItemSource->ItemKind);
 	check(InventoryItemSource->InteractableItem == InventoryItemToCombineWith->ItemKind)
-	UGameInstance *GameInstance = GetGameInstance();
-	UAdventureGameInstance *AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
-	AdventureGameInstance->Inventory->RemoveItemKindsFromInventory({
-		InventoryItemSource->ItemKind,
-		InventoryItemToCombineWith->ItemKind
-	});
-	UInventoryItem *NewItem = AdventureGameInstance->Inventory->AddItemToInventory(ResultingItem, ResultDescription);
+	ItemsRemoveFromInventory({
+			InventoryItemSource->ItemKind,
+			InventoryItemToCombineWith->ItemKind
+		});
+	UInventoryItem *NewItem = ItemAddToInventory(ResultingItem);
 	NewItem->AdventurePlayerController = this;
-	if (CurrentItemSlot && CurrentItemSlot->InventoryItem == InventoryItemToCombineWith)
-	{
-		CurrentItemSlot = nullptr;
-	}
 	PlayerBark(TextToBark);
 	InterruptCurrentAction();
 }
@@ -569,7 +605,7 @@ UItemList* AAdventurePlayerController::GetInventoryItemList()
 void AAdventurePlayerController::PerformHotSpotInteraction()
 {
 	// This `Execute_Verb` pattern will call C++ and Blueprint overrides.
-	// The use of CurrentHotSpot->OnClose() does not work as BP's don't do
+	// The use of eg CurrentHotSpot->OnClose() does not work as BP's don't do
 	// polymorphism and have to be dispatched in code.
 	check(CurrentHotSpot);
 	switch (CurrentVerb)
@@ -622,6 +658,8 @@ void AAdventurePlayerController::InterruptCurrentAction()
 	CurrentCommand = EPlayerCommand::None;
 	CurrentHotSpot = nullptr;
 	CurrentItemSlot = nullptr;
+	SourceItem = nullptr;
+	TargetItem = nullptr;
 	TriggerInterruptAction();
 	RunInterruptedActionDelegate.ExecuteIfBound();
 }

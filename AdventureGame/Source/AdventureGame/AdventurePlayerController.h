@@ -156,9 +156,11 @@ private:
 	///
 
 public:
-	UInventoryItem *ItemAddToInventory(const EItemKind &ItemToAdd, FText Description = FText::GetEmpty());
+	UInventoryItem *ItemAddToInventory(const EItemKind &ItemToAdd);
 
 	void ItemRemoveFromInventory(const EItemKind &ItemToRemove);
+
+	void ItemsRemoveFromInventory(const TSet<EItemKind> &ItemsToRemove);
 
 	/// Handle a mouse click on an item button.
 	void HandleInventoryItemClicked(UItemSlot *ItemSlot);
@@ -177,7 +179,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Items")
 	void CombineItems(const UInventoryItem *InventoryItemSource,
 		const UInventoryItem *InventoryItemToCombineWith,
-		EItemKind ResultingItem, FText TextToBark, FText ResultDescription = FText::GetEmpty());
+		EItemKind ResultingItem, FText TextToBark);
 	
 	/// Tell the UI to put the current verb and any current inventory item into the text display
 	/// and if the InventoryItemInteraction is true, highlight the text.
@@ -229,12 +231,22 @@ public:
 private:
 	bool CanBrowseHotspot()
 	{
-		return CurrentCommand != EPlayerCommand::GivePending;
+		switch (CurrentCommand)
+		{
+		case EPlayerCommand::None:
+		case EPlayerCommand::Hover:
+		case EPlayerCommand::Targeting:
+		case EPlayerCommand::UsePending:
+		case EPlayerCommand::VerbPending:
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	bool CanBrowseTarget()
 	{
-		return CurrentCommand != EPlayerCommand::GivePending;
+		return CurrentCommand == EPlayerCommand::Targeting;
 	}
 
 	bool CanBrowseSource()

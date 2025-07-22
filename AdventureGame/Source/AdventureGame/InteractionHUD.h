@@ -21,7 +21,7 @@ public:
 	UTextBlock *InteractionDescription;
 
 	UFUNCTION(BlueprintCallable)
-	void SetText(FString NewText);
+	void SetText(FText NewText) const;
 
 	UFUNCTION(BlueprintCallable)
 	void HighlightText();

@@ -2,7 +2,6 @@
 
 #include "AdventureGame.h"
 #include "Constants.h"
-#include "InventoryCustomisation.h"
 #include "Internationalization/StringTableRegistry.h"
 #include "PropertyEditorModule.h"
 #include "Modules/ModuleManager.h"
@@ -13,14 +12,16 @@ void FAdventureGame::StartupModule()
 {
     FDefaultGameModuleImpl::StartupModule();
 
-    // // Load a custom view for the Player Controller that shows the inventory
-    // FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
-    // PropertyModule.RegisterCustomClassLayout("AdventurePlayerController", 
-    //     FOnGetDetailCustomizationInstance::CreateStatic(&FInventoryCustomisation::MakeInstance));
-    
     // https://unreal-garden.com/tutorials/stringtable-cpp/
-    LOCTABLE_FROMFILE_GAME(ITEM_STRINGS_KEY, ITEMS_NAMESPACE_KEY, "StringTables/ItemStrings.csv");
+    FStringTableRegistry::Get()
+    .Internal_LocTableFromFile(ITEM_STRINGS_KEY,
+        FTextKey(ITEMS_NAMESPACE_KEY),
+        "StringTables/ItemStrings.csv",
+        FPaths::ProjectContentDir());
+    
+    // LOCTABLE_FROMFILE_GAME(ITEM_STRINGS_KEY, ITEMS_NAMESPACE_KEY, "StringTables/ItemStrings.csv");
     LOCTABLE_FROMFILE_GAME(ITEM_DESCRIPTIONS_KEY, ITEMS_NAMESPACE_KEY, "StringTables/ItemDescriptions.csv");
+    LOCTABLE_FROMFILE_GAME(ITEM_LONG_DESCRIPTIONS_KEY, ITEMS_NAMESPACE_KEY, "StringTables/ItemLongDescriptions.csv");
 }
 
 void FAdventureGame::ShutdownModule()

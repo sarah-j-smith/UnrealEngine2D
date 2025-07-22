@@ -8,6 +8,7 @@
 
 FString UItemList::GetListDescription(const TArray<EItemKind>& List)
 {
+	/// Mostly for debug purposes, don't translate any of this
 	FString Accum = "";
 	FString Concat = "";
 	for (int i = 0; i < List.Num(); i++)
@@ -28,13 +29,14 @@ FText UItemList::GetDescription(const EItemKind &ItemKind)
 
 FName UItemList::GetUniqueName(const EItemKind &ItemKind)
 {
-	// These values must match the data table row names, see DT_ItemTable for example
+	// These values must match the data table row names
+	// See Content/StringTables/ItemDescriptions.csv
 	switch (ItemKind)
 	{
 	case EItemKind::Pickle:
 		return FName("Pickle");
 	case EItemKind::PickleKey:
-		return FName("PickleKey");
+		return FName("Pickle_Key");
 	case EItemKind::Knife:
 		return FName("Knife");
 	case EItemKind::None:
@@ -57,7 +59,7 @@ bool UItemList::IsEmpty() const
 	return Inventory == nullptr;
 }
 
-UInventoryItem *UItemList::AddItemToInventory(EItemKind ItemToAdd, FText Description)
+UInventoryItem *UItemList::AddItemToInventory(EItemKind ItemToAdd)
 {
 	if (ItemToAdd == EItemKind::None)
 	{
@@ -78,12 +80,23 @@ UInventoryItem *UItemList::AddItemToInventory(EItemKind ItemToAdd, FText Descrip
 		return nullptr;
 	}
 	UInventoryItem* InventoryItem = NewObject<UInventoryItem>(this, ItemData->ItemClass, ItemName);
-	if (InventoryItem->Description.IsEmpty() && !Description.IsEmpty())
+	FText NameText = FText::FromName(ItemName);
+	FTextKey NameKey = ItemName.ToString();
+	if (InventoryItem->Description.IsEmpty())
 	{
-		InventoryItem->Description = Description;
+		// The class blue print may specify a long description, don't over-write that
+		const FText Description = FText::FromStringTable(ITEM_LONG_DESCRIPTIONS_KEY, NameKey);
+		InventoryItem->Description = Description.IsEmpty() ? NameText : Description;
+	}
+	if (InventoryItem->ShortDescription.IsEmpty())
+	{
+		// The class blue print may specify a short description, don't over-write that
+		const FText ShortDescription = FText::FromStringTable(ITEM_LONG_DESCRIPTIONS_KEY, NameKey);
+		InventoryItem->ShortDescription = ShortDescription.IsEmpty() ? NameText : ShortDescription;
 	}
 	if (InventoryItem->ItemKind != ItemToAdd)
 	{
+		/// The class blueprint had the kind set to the wrong enum - this is an error.
 		UE_LOG(LogAdventureGame, Error, TEXT("Item \"%s\": \"%s\" created from class with kind: %s - forcing to: %s"),
 			*(ItemName.ToString()),
 			*(InventoryItem->Description.ToString()),
@@ -150,7 +163,7 @@ void UItemList::DumpInventoryToLog() const
 	uint Index = 0;
 	for (const FInventoryList *Iterator = Inventory; Iterator; Iterator = Iterator->Next)
 	{
-		FString Description = Iterator->Element->GetDescription().ToString();
+		FString Description = Iterator->Element->Description.ToString();
 		UE_LOG(LogAdventureGame, Verbose, TEXT("   %d - %s"), Index++, *Description);
 	}
 }

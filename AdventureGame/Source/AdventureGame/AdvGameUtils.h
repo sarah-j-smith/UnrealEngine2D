@@ -11,29 +11,37 @@ struct AdvGameUtils
     static int32 GetUUID();
 
     /**
-     * Return the text as an FString for direct use in the UI, for giving
-     * an item to another hotspot or item. At least one of CurrentItem or
-     * TargetItem must be non-null.
+     * For giving an item to a hotspot or item, return the text as an FText
+     * translatable / i18n ready - for direct use in the UI. At least one
+     * of CurrentItem or TargetItem must be non-null.
+     * 
+     * Uses the <code>ShortDescription</code> of the items and hotspots
+     * so ensure these are correct: the default is "thing".
+     * 
      * @param CurrentItem Item held by the player character
      * @param TargetItem Item  - if the target of the giving is an item
      * @param HotSpot HotSpot - if the target of the giving is a hotspot
      * @return FString text to display*/
-    static FString GetGivingItemString(
+    static FText GetGivingItemText(
         const UInventoryItem* CurrentItem,
         const UInventoryItem* TargetItem,
         AHotSpot* HotSpot
     );
 
     /**
-     * Return the text as an FString for direct use in the UI, for using
-     * an item on another hotspot or item.  At least one of CurrentItem or
-     * TargetItem must be non-null.
-     * Example: "Use pen on notebook", "Use pen on wall"
+     * For using an item on a hotspot or item, return the text as an FText
+     * translatable / i18n ready - for direct use in the UI. At least one
+     * of CurrentItem or TargetItem must be non-null.
+     * 
+     * Uses the <code>ShortDescription</code> of the items and hotspots
+     * so ensure these are correct: the default is "thing".
+     * 
+     * Example: "Use pen on old notebook", "Use pen on brick wall"
      * @param CurrentItem Item held by the player character, eg pen
      * @param TargetItem Item  - if the target of the using is an item
      * @param HotSpot HotSpot - if the target of the giving is a hotspot
      * @return FString text to display */
-    static FString GetUsingItemString(
+    static FText GetUsingItemText(
         const UInventoryItem* CurrentItem,
         const UInventoryItem* TargetItem,
         AHotSpot* HotSpot
@@ -41,15 +49,38 @@ struct AdvGameUtils
 
 
     /**
-    * Return the text as an FString for direct use in the UI, for doing
-    * a verb to an item.
-    * Example: "Open notebook"
+     * For doing a verb to an item, return the text as an FText
+     * translatable / i18n ready - for direct use in the UI. CurrentItem
+     * must be non-null.
+     * 
+     * Uses the <code>ShortDescription</code> of the item
+     * so ensure this is correct: the default is "thing".
+     * 
+    * Example: "Open tattered notebook"
     * @param CurrentItem Item held by the player character, eg notebook
     * @param Verb EVerbType  - what action is being performed
     * @return FString text to display
     */
-    static FString GetVerbWithItemString(
+    static FText GetVerbWithItemText(
         const UInventoryItem* CurrentItem,
+        const EVerbType Verb
+    );
+
+    /**
+     * For doing a verb to an hotspot, return the text as an FText
+     * translatable / i18n ready - for direct use in the UI. Hotspot
+     * must be non-null.
+     * 
+     * Uses the <code>ShortDescription</code> of the hotspot
+     * so ensure this is correct: the default is "thing".
+     * 
+    * Example: "Open door"
+    * @param HotSpot HotSpot targeted by the player character, eg door
+    * @param Verb EVerbType  - what action is being performed
+    * @return FText text to display
+    */
+    static FText GetVerbWithHotSpotText(
+        const AHotSpot* HotSpot,
         const EVerbType Verb
     );
 };

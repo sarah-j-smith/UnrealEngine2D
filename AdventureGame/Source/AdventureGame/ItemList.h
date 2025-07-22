@@ -8,6 +8,7 @@
 
 #include "ItemList.generated.h"
 
+enum class EItemKind : uint8;
 class UInventoryItem;
 
 // https://unreal-garden.com/tutorials/delegates-advanced/#choosing-a-delegate-type
@@ -83,8 +84,8 @@ public:
     /// players, i18n via strings file. Generally overridden in a blueprint.
     static FText GetDescription(const EItemKind& ItemKind);
 
-    /// Name that is unique among all items, not shown to player, used to locate
-    /// the item in the data tables.
+    /// Name that is unique among all items, not translated/shown to player,
+    /// used to locate the item in the data tables.
     static FName GetUniqueName(const EItemKind& ItemKind);
 
     UFUNCTION()
@@ -117,7 +118,7 @@ public:
     * @return InventoryItem Created and added.
     */
     UFUNCTION(BlueprintCallable)
-    UInventoryItem* AddItemToInventory(EItemKind ItemToAdd, FText Description = FText::GetEmpty());
+    UInventoryItem* AddItemToInventory(EItemKind ItemToAdd);
 
     /// Removes the given item from the current players inventory of held
     /// items. Destroys the `UInventoryItem` instance of the class

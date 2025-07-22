@@ -13,33 +13,6 @@
 /// STATIC IMPLEMENTATIONS
 ///
 
-FText UInventoryItem::GetDescription(const UInventoryItem *Item)
-{
-    if (Item->Description.IsEmpty())
-    {
-        FText Text;
-        if (const auto ItemList = Item->ItemList.Pin())
-        {
-            Text = ItemList->GetDescription(Item->ItemKind);
-        }
-        else
-        {
-            Text = FText::FromStringTable(ITEM_STRINGS_KEY, TEXT("DefaultItemDescriptionText"));
-        }
-        UE_LOG(LogAdventureGame, Warning, TEXT("Description for %s was not set"), *Text.ToString());
-        return Text;
-    }
-    else
-    {
-        return Item->Description;
-    }
-}
-
-FText UInventoryItem::GetDescription() const
-{
-    return UInventoryItem::GetDescription(this);
-}
-
 void UInventoryItem::OnItemCombineSuccess_Implementation()
 {
     UE_LOG(LogAdventureGame, Log, TEXT("OnItemCombineSuccess Success - default."));
@@ -50,7 +23,7 @@ void UInventoryItem::OnItemCombineFailure_Implementation()
     BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "ItemUsedDefaultText"));
 }
 
-void UInventoryItem::CombineWithInteractableItem(EItemKind ResultingItem, FText BarkText, FText Desc)
+void UInventoryItem::CombineWithInteractableItem(EItemKind ResultingItem, FText BarkText)
 {
     if (const auto Apc = this->AdventurePlayerController.Pin())
     {
@@ -59,15 +32,12 @@ void UInventoryItem::CombineWithInteractableItem(EItemKind ResultingItem, FText 
             Apc->CombineItems(
                 Apc->SourceItem,
                 this, ResultingItem,
-                BarkText.IsEmpty() ? LOCTABLE(ITEM_STRINGS_KEY, "CombineSuccessResultText") : BarkText,
-                Desc.IsEmpty() ? LOCTABLE(ITEM_STRINGS_KEY, "DefaultCombineDescriptionText") : Desc
-            );
+                BarkText.IsEmpty() ? LOCTABLE(ITEM_STRINGS_KEY, "CombineSuccessResultText") : BarkText);
             return;
         }
     }
     UE_LOG(LogAdventureGame, Warning,
-        TEXT("Could not make %s - AdventurePlayerController->CurrentItem null."),
-        *(Desc.IsEmpty() ? UItemList::GetDescription(ResultingItem).ToString() : Desc.ToString()));
+        TEXT("Could not CombineWithInteractableItem: AdventurePlayerController->CurrentItem null."));
 }
 
 void UInventoryItem::OnItemGiveSuccess_Implementation()
@@ -125,7 +95,7 @@ void UInventoryItem::OnLookAt_Implementation()
     }
     else
     {
-        BarkAndEnd(GetDescription());
+        BarkAndEnd(Description);
     }
 }
 

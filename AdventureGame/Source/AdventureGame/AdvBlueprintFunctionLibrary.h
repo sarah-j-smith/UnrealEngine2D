@@ -7,6 +7,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AdvBlueprintFunctionLibrary.generated.h"
 
+class UInventoryItem;
 class AAdventurePlayerController;
 
 /**
@@ -28,10 +29,10 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Player Actions", meta = (WorldContext = "WorldContextObject"))
     static void ClearVerb(const UObject* WorldContextObject);
 
+    /// Add a new item to the inventory and return a reference to it if successful.
+    /// @param ItemToAdd The kind of item to add. The text descriptions for each kind can be added in the text resource.
     UFUNCTION(BlueprintCallable, Category = "Player Actions", meta = (WorldContext = "WorldContextObject"))
-    static UInventoryItem* AddToInventory(const UObject* WorldContextObject, EItemKind ItemToAdd,
-                                          FText Description = FText::GetEmpty(),
-                                          EItemKind InteractableItem = EItemKind::None);
+    static UInventoryItem* AddToInventory(const UObject* WorldContextObject, EItemKind ItemToAdd);
 
     UFUNCTION(BlueprintCallable, Category = "Player Actions", meta = (WorldContext = "WorldContextObject"))
     static void RemoveFromInventory(const UObject* WorldContextObject, EItemKind ItemToRemove);

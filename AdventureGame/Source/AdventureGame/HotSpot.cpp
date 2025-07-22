@@ -7,6 +7,7 @@
 #include "AdventureCharacter.h"
 #include "AdventureGame.h"
 #include "AdventurePlayerController.h"
+#include "AdvGameUtils.h"
 #include "Kismet/GameplayStatics.h"
 
 AHotSpot::AHotSpot()
@@ -27,18 +28,12 @@ AHotSpot::AHotSpot()
 
 void AHotSpot::BeginPlay()
 {
-	FString HotSpotType = IsPickup() ? "PickUp" : "HotSpot";
-	FString HotSpotName = HotSpotDescription.IsEmpty() ? GetClass()->GetName() : HotSpotDescription;
+	HotSpotType = IsPickup() ? "PickUp" : "HotSpot";
+	HotSpotName = ShortDescription.IsEmpty() ? GetClass()->GetName() : ShortDescription.ToString();
 	UStaticMeshComponent* StaticMeshComponent = GetStaticMeshComponent();
 	if (StaticMeshComponent && StaticMeshComponent->GetStaticMesh())
 	{
-		UE_LOG(LogAdventureGame, Verbose, TEXT("%s %s - BeginPlay()- static mesh is valid."),
-			*HotSpotType, *HotSpotName);
-		// StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
-		StaticMeshComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
-		StaticMeshComponent->SetGenerateOverlapEvents(true);
-
+		SetEnableMeshComponent(true);
 		Super::OnBeginCursorOver.AddDynamic(this, &AHotSpot::OnBeginCursorOver);
 		Super::OnEndCursorOver.AddDynamic(this, &AHotSpot::OnEndCursorOver);
 	}
@@ -48,7 +43,7 @@ void AHotSpot::BeginPlay()
 	}
 	Super::BeginPlay();
 
-	APawn *PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	const APawn *PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	WalkToPosition = WalkToPoint->GetComponentLocation();
 	WalkToPosition.Z = PlayerPawn->GetActorLocation().Z;
 }
@@ -80,63 +75,63 @@ void AHotSpot::OnClose_Implementation()
 {
 	IVerbInteractions::OnClose_Implementation();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On close"));
-	Bark(FText::FromString("I can't close that."));
+	BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "CloseDefaultText"));
 }
 
 void AHotSpot::OnOpen_Implementation()
 {
 	IVerbInteractions::OnOpen_Implementation();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On open"));
-	Bark(FText::FromString("I can't open that."));
+	BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "OpenDefaultText"));
 }
 
 void AHotSpot::OnGive_Implementation()
 {
 	IVerbInteractions::OnGive_Implementation();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On give"));
-	Bark(FText::FromString("No-one to give to."));
+	BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "GiveDefaultText"));
 }
 
 void AHotSpot::OnPickUp_Implementation()
 {
 	IVerbInteractions::OnPickUp_Implementation();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On Pickup"));
-	Bark(FText::FromString("It's not possible to pick it up."));
+	BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "PickUpDefaultText"));
 }
 
 void AHotSpot::OnTalkTo_Implementation()
 {
 	IVerbInteractions::OnTalkTo_Implementation();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On talk to"));
-	Bark(FText::FromString("Not very talkative."));
+	BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "TalkToDefaultText"));
 }
 
 void AHotSpot::OnLookAt_Implementation()
 {
 	IVerbInteractions::OnLookAt_Implementation();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On look at"));
-	Bark(FText::FromString("Doesn't look like much at all."));
+	BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "LookAtDefaultText"));
 }
 
 void AHotSpot::OnPull_Implementation()
 {
 	IVerbInteractions::OnPull_Implementation();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On pull"));
-	Bark(FText::FromString("Nope, can't pull that."));
+	BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "PullDefaultText"));
 }
 
 void AHotSpot::OnPush_Implementation()
 {
 	IVerbInteractions::OnPush_Implementation();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On push"));
-	Bark(FText::FromString("Pushing that won't work."));
+	BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "PushDefaultText"));
 }
 
 void AHotSpot::OnUse_Implementation()
 {
 	IVerbInteractions::OnUse_Implementation();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On use from AHotSpot default implement."));
-	Bark(FText::FromString("Can't use that."));
+	BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "UseDefaultText"));
 }
 
 void AHotSpot::OnWalkTo_Implementation()
@@ -146,15 +141,18 @@ void AHotSpot::OnWalkTo_Implementation()
 	APlayerController *PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (AAdventurePlayerController *APC = Cast<AAdventurePlayerController>(PC); IsValid(APC))
 	{
+		auto Z = u"Blah";
 		if (APC->IsAlreadyAtHotspotClicked())
 		{
-			FString AlreadyHere = FString::Printf(TEXT("I'm already at %s, what should I do?"), *HotSpotDescription);
-			APC->PlayerBark(FText::FromString(AlreadyHere));
+			FFormatNamedArguments Args;
+			Args.Add(TEXT("Subject"), ShortDescription);
+			APC->PlayerBark(FText::Format(LOCTABLE(ITEM_STRINGS_KEY, "HotSpotWalkAlreadyAt"), Args));
 		}
 		else
 		{
-			APC->PlayerBark(FText::FromString("Arrived here. What now?"));;
+			APC->PlayerBark(LOCTABLE(ITEM_STRINGS_KEY, "HotSpotWalkArrived"));;
 		}
+		APC->InterruptCurrentAction();
 	}
 }
 
@@ -185,11 +183,47 @@ void AHotSpot::ShowSpriteComponent()
 	SpriteComponent->SetVisibility(true);
 }
 
+void AHotSpot::SetEnableMeshComponent(bool Enabled)
+{
+	if (Enabled)
+	{
+		UStaticMeshComponent* StaticMeshComponent = GetStaticMeshComponent();
+		if (StaticMeshComponent && StaticMeshComponent->GetStaticMesh())
+		{
+			UE_LOG(LogAdventureGame, Verbose, TEXT("%s %s static mesh is valid & enabled."), *HotSpotType, *HotSpotName);
+			// StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
+			StaticMeshComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+			StaticMeshComponent->SetGenerateOverlapEvents(true);
+		}
+	}
+	else
+	{
+		UStaticMeshComponent* StaticMeshComponent = GetStaticMeshComponent();
+		if (StaticMeshComponent && StaticMeshComponent->GetStaticMesh())
+		{
+			StaticMeshComponent->SetCollisionProfileName("NoCollision");
+			StaticMeshComponent->SetVisibility(false);
+			UE_LOG(LogAdventureGame, Verbose, TEXT("%s %s - static mesh is valid but disabled"), *HotSpotType, *HotSpotName);
+		}
+	}
+}
+
 void AHotSpot::Bark(const FText &Text) const
 {
 	APlayerController *PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (AAdventurePlayerController *APC = Cast<AAdventurePlayerController>(PC); IsValid(APC))
 	{
 		APC->PlayerBark(Text);
+	}
+}
+
+void AHotSpot::BarkAndEnd(const FText& Text) const
+{
+	APlayerController *PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (AAdventurePlayerController *APC = Cast<AAdventurePlayerController>(PC); IsValid(APC))
+	{
+		APC->PlayerBark(Text);
+		APC->InterruptCurrentAction();
 	}
 }

@@ -3,11 +3,14 @@
 
 #include "InteractionHUD.h"
 
-void UInteractionHUD::SetText(FString NewText)
+#include "Constants.h"
+#include "Internationalization/StringTableRegistry.h"
+
+void UInteractionHUD::SetText(const FText NewText) const
 {
 	if (!TextLocked)
 	{
-		InteractionDescription->SetText(FText::FromString(NewText));
+		InteractionDescription->SetText(NewText);
 	}
 }
 
@@ -26,5 +29,5 @@ void UInteractionHUD::UnhighlightText()
 void UInteractionHUD::ResetText()
 {
 	UnhighlightText();
-	SetText("Walk to");
+	SetText(LOCTABLE(ITEM_DESCRIPTIONS_KEY, G_WALK_TO_KEY));
 }

@@ -166,8 +166,10 @@ ADoor* UAdventureGameInstance::FindDoor(FName DoorLabel)
 		return Cast<ADoor>(Element)->DoorLabel == DoorLabel;
 	}))
 	{
+#if WITH_EDITOR
 		UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::FindDoor - got: %s"),
-		       *(Cast<ADoor>(*FoundDoor)->HotSpotDescription));
+		       *(Cast<ADoor>(*FoundDoor)->ShortDescription.ToString()));
+#endif
 		return Cast<ADoor>(*FoundDoor);
 	}
 	UE_LOG(LogAdventureGame, Error, TEXT("UAdventureGameInstance::FindDoor failed to find %s"),
@@ -182,7 +184,7 @@ void UAdventureGameInstance::LoadDoor(const ADoor* Door)
 		return;
 	}
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::LoadDoor: %s"),
-	       *(Cast<ADoor>(Door)->HotSpotDescription));
+	       *(Cast<ADoor>(Door)->ShortDescription.ToString()));
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	AAdventurePlayerController* AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
 	AAdventureCharacter* AdventureCharacter = AdventurePlayerController->PlayerCharacter;
