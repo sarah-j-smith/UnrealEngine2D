@@ -464,7 +464,6 @@ void AAdventurePlayerController::WalkToLocation(const FVector& Location)
         AIStatus = EAIStatus::Moving;
         break;
     case EPathFollowingRequestResult::Type::AlreadyAtGoal:
-        AIStatus = EAIStatus::AlreadyThere;
         UE_LOG(LogAdventureGame, Verbose, TEXT("Path following request -> already there: %f %f"), Location.X,
                Location.Y);
         break;
@@ -497,7 +496,6 @@ void AAdventurePlayerController::HandleMovementComplete()
         PlayerCharacter->SetFacingDirection(CurrentHotSpot->FacingDirection);
         PlayerCharacter->TeleportToLocation(CurrentHotSpot->WalkToPosition);
         PerformHotSpotInteraction();
-        return;
     }
     AIStatus = EAIStatus::Idle;
     InterruptCurrentAction();
@@ -689,6 +687,9 @@ void AAdventurePlayerController::PerformHotSpotInteraction()
     case EVerbType::Give:
         AHotSpot::Execute_OnGive(CurrentHotSpot);
         break;
+    case EVerbType::GiveItem:
+        AHotSpot::Execute_OnItemGiven(CurrentHotSpot);
+        break;
     case EVerbType::LookAt:
         AHotSpot::Execute_OnLookAt(CurrentHotSpot);
         break;
@@ -706,6 +707,9 @@ void AAdventurePlayerController::PerformHotSpotInteraction()
         break;
     case EVerbType::Use:
         AHotSpot::Execute_OnUse(CurrentHotSpot);
+        break;
+    case EVerbType::UseItem:
+        AHotSpot::Execute_OnItemUsed(CurrentHotSpot);
         break;
     case EVerbType::WalkTo:
         AHotSpot::Execute_OnWalkTo(CurrentHotSpot);
