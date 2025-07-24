@@ -8,12 +8,10 @@ My Dev Environment:
 * Rider
 * Unreal 5.5
 
-~~Out of Date Screenshot~~
 
-![Screenshot from Ch 1](Docs/images/Ep1-screenshot.png)
+![Screenshot from Ch 1](Docs/images/adventure-clip.gif)
 
-* Screenshot of state at end of Episode 1.
-* The black area at the bottom will have Lucas Arts style text
+* Screenshot of state at end of Episode 5.
 
 ### Update
 
@@ -110,6 +108,9 @@ https://dev.epicgames.com/community/learning/tutorials/Dd0L/unreal-engine-enviro
 
 ## Fonts Update
 
-* The FontStruction “LucasArts SCUMM - Outline” (https://fontstruct.com/fontstructions/show/334686) by “Goatmeal” is licensed under a Creative Commons Attribution Non-commercial Share Alike license (http://creativecommons.org/licenses/by-nc-sa/3.0/).
-  [ancestry]
-* [License text](./lucas-arts-font-license.txt)
+* I'm using [Press Start 2 Play](https://www.zone38.net/font/) now
+* [License text](./3rdParty/LICENSE.txt)
+
+
+It's a full-unicode retro gaming font. As far as I can tell Cody is the original
+author of this font, and its been resold many times on the internet by unethical persons.
