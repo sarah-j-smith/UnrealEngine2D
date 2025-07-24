@@ -3,17 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "InteractionType.h"
+#include "Enums/InteractionType.h"
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "InteractTask.generated.h"
 
 class AAdventurePlayerController;
 
 /// https://unrealcommunity.wiki/creating-asynchronous-blueprint-nodes-ctnmtj0q
-/// 
-// DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBarkCompletedDelegate);
-// DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSitCompletedDelegate);
-// DECLARE_DYNAMIC_MULTICAST_DELEGATE(FClimbCompletedDelegate);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInteractOutputPin);
 
 /**

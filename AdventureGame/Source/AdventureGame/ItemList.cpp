@@ -6,45 +6,6 @@
 #include "Constants.h"
 #include "ItemData.h"
 
-FString UItemList::GetListDescription(const TArray<EItemKind>& List)
-{
-	/// Mostly for debug purposes, don't translate any of this
-	FString Accum = "";
-	FString Concat = "";
-	for (int i = 0; i < List.Num(); i++)
-	{
-		Accum += Concat + GetDescription(List[i]).ToString();
-		Concat = ", ";
-		if (i == List.Num() - 1) Concat = " and ";
-	}
-	return Accum;
-}
-
-FText UItemList::GetDescription(const EItemKind &ItemKind)
-{
-	if (ItemKind == EItemKind::None) return FText::GetEmpty();
-	const FName ItemName = GetUniqueName(ItemKind);
-	return FText::FromStringTable(ITEM_DESCRIPTIONS_KEY, ItemName.ToString());
-}
-
-FName UItemList::GetUniqueName(const EItemKind &ItemKind)
-{
-	// These values must match the data table row names
-	// See Content/StringTables/ItemDescriptions.csv
-	switch (ItemKind)
-	{
-	case EItemKind::Pickle:
-		return FName("Pickle");
-	case EItemKind::PickleKey:
-		return FName("Pickle_Key");
-	case EItemKind::Knife:
-		return FName("Knife");
-	case EItemKind::None:
-	default:
-		return FName("None");
-	}
-}
-
 bool UItemList::Contains(EItemKind Item) const
 {
 	for (const FInventoryList *Iterator = Inventory; Iterator; Iterator = Iterator->Next)
@@ -67,7 +28,7 @@ UInventoryItem *UItemList::AddItemToInventory(EItemKind ItemToAdd)
 		return nullptr;
 	}
 	const FItemData* ItemData = nullptr;
-	const FName ItemName = GetUniqueName(ItemToAdd);
+	const FName ItemName = FItemKind::GetUniqueName(ItemToAdd);
 	if (const UDataTable *Dt = InventoryDataTable)
 	{
 		ItemData = Dt->FindRow<FItemData>(ItemName, "AddItemToInventory");
@@ -100,8 +61,8 @@ UInventoryItem *UItemList::AddItemToInventory(EItemKind ItemToAdd)
 		UE_LOG(LogAdventureGame, Error, TEXT("Item \"%s\": \"%s\" created from class with kind: %s - forcing to: %s"),
 			*(ItemName.ToString()),
 			*(InventoryItem->Description.ToString()),
-			*(UItemList::GetDescription(InventoryItem->ItemKind).ToString()),
-			*(UItemList::GetDescription(ItemToAdd).ToString())
+			*(FItemKind::GetDescription(InventoryItem->ItemKind).ToString()),
+			*(FItemKind::GetDescription(ItemToAdd).ToString())
 		);
 		InventoryItem->ItemKind = ItemToAdd;
 	}
@@ -140,7 +101,7 @@ void UItemList::RemoveItemKindsFromInventory(const TSet<EItemKind>& ItemsToRemov
 	if (RemovingItems.Num() > 0)
 	{
 		UE_LOG(LogAdventureGame, Warning, TEXT("Failed to remove some items from Inventory - %s"),
-			*GetListDescription(ItemsToRemove.Array()));
+			*FItemKind::GetListDescription(ItemsToRemove.Array()));
 	}
 	if (UNLIKELY(GetWorld()->IsEditorWorld()))
 	{

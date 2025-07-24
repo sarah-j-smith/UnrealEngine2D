@@ -1,5 +1,6 @@
 #pragma once
-#include "VerbType.h"
+
+#include "Enums/VerbType.h"
 
 class AHotSpot;
 class UInventoryItem;
@@ -25,7 +26,7 @@ struct AdvGameUtils
     static FText GetGivingItemText(
         const UInventoryItem* CurrentItem,
         const UInventoryItem* TargetItem,
-        AHotSpot* HotSpot
+        const AHotSpot* HotSpot
     );
 
     /**
@@ -44,7 +45,7 @@ struct AdvGameUtils
     static FText GetUsingItemText(
         const UInventoryItem* CurrentItem,
         const UInventoryItem* TargetItem,
-        AHotSpot* HotSpot
+        const AHotSpot* HotSpot
     );
 
 

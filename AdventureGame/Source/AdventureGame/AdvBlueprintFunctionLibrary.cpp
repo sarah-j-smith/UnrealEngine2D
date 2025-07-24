@@ -3,7 +3,7 @@
 
 #include "AdvBlueprintFunctionLibrary.h"
 #include "AdventurePlayerController.h"
-#include "ItemKind.h"
+#include "Enums/ItemKind.h"
 #include "Kismet/GameplayStatics.h"
 
 AAdventurePlayerController* UAdvBlueprintFunctionLibrary::GetAdventureController(const UObject* WorldContextObject)

@@ -1,10 +1,8 @@
 #include "AdvGameUtils.h"
 
-#include "AdventureGame.h"
 #include "Constants.h"
 #include "HotSpot.h"
 #include "InventoryItem.h"
-#include "ItemList.h"
 
 /**
  * Test to see if Current has changed more than DBL_EPSILON compared to Previous in either `X` or `Y`.
@@ -14,55 +12,58 @@
  */
 bool AdvGameUtils::HasChangedMuch(const FVector2D& Current, const FVector2D& Previous)
 {
-	return (fabs(Previous.X - Current.X) >= std::numeric_limits<double>::epsilon() || fabs(Previous.Y - Current.Y) >= std::numeric_limits<double>::epsilon());
+    return (fabs(Previous.X - Current.X) >= std::numeric_limits<double>::epsilon() || fabs(Previous.Y - Current.Y) >=
+        std::numeric_limits<double>::epsilon());
 }
 
 int32 AdvGameUtils::GetUUID()
 {
-	uuid_t UUIDLatent;
-	uuid_generate(UUIDLatent);
-	return UUIDLatent[0] | UUIDLatent[1] << 8 | UUIDLatent[2] << 16 | UUIDLatent[3] << 24;
+    uuid_t UUIDLatent;
+    uuid_generate(UUIDLatent);
+    return UUIDLatent[0] | UUIDLatent[1] << 8 | UUIDLatent[2] << 16 | UUIDLatent[3] << 24;
 }
 
-FText AdvGameUtils::GetGivingItemText(const UInventoryItem *CurrentItem,const UInventoryItem *TargetItem,AHotSpot *HotSpot)
+FText AdvGameUtils::GetGivingItemText(const UInventoryItem* CurrentItem, const UInventoryItem* TargetItem,
+                                      const AHotSpot* HotSpot)
 {
-	verifyf(CurrentItem, TEXT("GetGivingItemString expects CurrentItem to be non-null"));
-	verifyf(TargetItem || HotSpot, TEXT("GetGivingItemString expects either TargetItem or HotSpot to be non-null"));
-	FText SubjectText = CurrentItem->ShortDescription;
-	FText TargetText = HotSpot ? HotSpot->ShortDescription : TargetItem->ShortDescription;
-	FFormatNamedArguments VerbArgs;
-	VerbArgs.Add("Subject", SubjectText);
-	VerbArgs.Add("Object", TargetText);
-	return FText::Format(LOCTABLE(ITEM_DESCRIPTIONS_KEY, G_USE_SUBJECT_ON_OBJECT_KEY), VerbArgs);
+    verifyf(CurrentItem, TEXT("GetGivingItemString expects CurrentItem to be non-null"));
+    verifyf(TargetItem || HotSpot, TEXT("GetGivingItemString expects either TargetItem or HotSpot to be non-null"));
+    FText SubjectText = CurrentItem->ShortDescription;
+    FText TargetText = HotSpot ? HotSpot->ShortDescription : TargetItem->ShortDescription;
+    FFormatNamedArguments VerbArgs;
+    VerbArgs.Add("Subject", SubjectText);
+    VerbArgs.Add("Object", TargetText);
+    return FText::Format(LOCTABLE(ITEM_DESCRIPTIONS_KEY, G_USE_SUBJECT_ON_OBJECT_KEY), VerbArgs);
 }
 
-FText AdvGameUtils::GetUsingItemText(const UInventoryItem* CurrentItem, const UInventoryItem* TargetItem, AHotSpot* HotSpot)
+FText AdvGameUtils::GetUsingItemText(const UInventoryItem* CurrentItem, const UInventoryItem* TargetItem,
+                                     const AHotSpot* HotSpot)
 {
-	verifyf(CurrentItem, TEXT("GetGivingItemString expects CurrentItem to be non-null"));
-	verifyf(TargetItem || HotSpot, TEXT("GetGivingItemString expects either TargetItem or HotSpot to be non-null"));
-	FText SubjectText = CurrentItem->ShortDescription;
-	FText TargetText = HotSpot ? HotSpot->ShortDescription : TargetItem->ShortDescription;
-	FFormatNamedArguments VerbArgs;
-	VerbArgs.Add("Subject", SubjectText);
-	VerbArgs.Add("Object", TargetText);
-	return FText::Format(LOCTABLE(ITEM_DESCRIPTIONS_KEY, G_USE_SUBJECT_ON_OBJECT_KEY), VerbArgs);
+    verifyf(CurrentItem, TEXT("GetGivingItemString expects CurrentItem to be non-null"));
+    verifyf(TargetItem || HotSpot, TEXT("GetGivingItemString expects either TargetItem or HotSpot to be non-null"));
+    FText SubjectText = CurrentItem->ShortDescription;
+    FText TargetText = HotSpot ? HotSpot->ShortDescription : TargetItem->ShortDescription;
+    FFormatNamedArguments VerbArgs;
+    VerbArgs.Add("Subject", SubjectText);
+    VerbArgs.Add("Object", TargetText);
+    return FText::Format(LOCTABLE(ITEM_DESCRIPTIONS_KEY, G_USE_SUBJECT_ON_OBJECT_KEY), VerbArgs);
 }
 
 FText AdvGameUtils::GetVerbWithItemText(const UInventoryItem* CurrentItem, const EVerbType Verb)
 {
-	verifyf(CurrentItem, TEXT("GetVerbWithItemString expects CurrentItem to be non-null"));
-	const FText ItemText = UItemList::GetDescription(CurrentItem->ItemKind);
-	FFormatNamedArguments VerbArgs;
-	VerbArgs.Add("Verb", VerbGetDescriptiveString(Verb));
-	VerbArgs.Add("Subject", ItemText);
-	return FText::Format(LOCTABLE(ITEM_DESCRIPTIONS_KEY, G_VERB_SUBJECT_KEY), VerbArgs);
+    verifyf(CurrentItem, TEXT("GetVerbWithItemString expects CurrentItem to be non-null"));
+    const FText ItemText = FItemKind::GetDescription(CurrentItem->ItemKind);
+    FFormatNamedArguments VerbArgs;
+    VerbArgs.Add("Verb", VerbGetDescriptiveString(Verb));
+    VerbArgs.Add("Subject", ItemText);
+    return FText::Format(LOCTABLE(ITEM_DESCRIPTIONS_KEY, G_VERB_SUBJECT_KEY), VerbArgs);
 }
 
 FText AdvGameUtils::GetVerbWithHotSpotText(const AHotSpot* HotSpot, const EVerbType Verb)
 {
-	verifyf(HotSpot, TEXT("GetVerbWithHotSpotString expects HotSpot to be non-null"));
-	FFormatNamedArguments VerbArgs;
-	VerbArgs.Add("Verb", VerbGetDescriptiveString(Verb));
-	VerbArgs.Add("Subject", HotSpot->ShortDescription);
-	return FText::Format(LOCTABLE(ITEM_DESCRIPTIONS_KEY, G_VERB_SUBJECT_KEY), VerbArgs);
+    verifyf(HotSpot, TEXT("GetVerbWithHotSpotString expects HotSpot to be non-null"));
+    FFormatNamedArguments VerbArgs;
+    VerbArgs.Add("Verb", VerbGetDescriptiveString(Verb));
+    VerbArgs.Add("Subject", HotSpot->ShortDescription);
+    return FText::Format(LOCTABLE(ITEM_DESCRIPTIONS_KEY, G_VERB_SUBJECT_KEY), VerbArgs);
 }

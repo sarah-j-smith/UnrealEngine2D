@@ -83,6 +83,7 @@ private:
 	const FName OnLoadRoomName = "OnLoadRoom";
 	const FName OnRoomLoadedName = "OnRoomLoaded";
 	const FName OnRoomUnloadedName = "OnRoomUnloaded";
+	
 	enum class ERoomTransitionPhase
 	{
 		GameNotStarted,

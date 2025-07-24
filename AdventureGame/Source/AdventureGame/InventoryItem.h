@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ItemKind.h"
+#include "Enums/ItemKind.h"
 #include "VerbInteractions.h"
 #include "Internationalization/StringTableRegistry.h"
 #include "Paper2D/Classes/PaperSprite.h"

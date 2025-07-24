@@ -6,7 +6,7 @@
 
 #include "Engine/StaticMeshActor.h"
 #include "VerbInteractions.h"
-#include "WalkDirection.h"
+#include "Enums/WalkDirection.h"
 #include "Components/SphereComponent.h"
 #include "PaperSpriteComponent.h"
 
@@ -34,19 +34,28 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HotSpot")
 	USphereComponent* WalkToPoint;
-	
+
+	/// A long description of this hotspot. When the player does a "LookAt" by default
+	/// unless overridden in a blueprint, this description will be shown. Should usually
+	/// be full sentence case as in "This knife looks sharp."
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HotSpot")
 	FText Description;
 
+	/// A short description of this hotspot, suitable for insertion into text templates
+	/// with other text around it. Should not be sentence case. Example: "sharp knife".
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HotSpot")
 	FText ShortDescription;
 
+	/// Position that the player will walk to when going to this hotspot.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HotSpot")
 	FVector WalkToPosition;
 
+	/// Direction the player will face on arrival at the hotspot.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HotSpot")
 	EWalkDirection FacingDirection;
 
+	/// A sprite component that <b>may</b> be displayed on this hotspot. Can be null if
+	/// the hotspot is just representing a spot on the background.
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HotSpot")
 	UPaperSpriteComponent *SpriteComponent;
 

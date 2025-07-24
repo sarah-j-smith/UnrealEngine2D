@@ -5,7 +5,6 @@
 #include "Constants.h"
 #include "AdventureGame.h"
 #include "AdventurePlayerController.h"
-#include "AdventureGame/ItemList.h"
 #include "Internationalization/StringTableRegistry.h"
 
 //////////////////////////////////

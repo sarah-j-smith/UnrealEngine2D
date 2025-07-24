@@ -9,20 +9,12 @@
 void UBarkText::NativeOnInitialized()
 {
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("BarkText Initialized"));
-	if (!IsValid(BaseText)|| !IsValid(OutlineText) ) return;
-	BaseText->SetAutoWrapText(true);
-	OutlineText->SetAutoWrapText(true);
+	if (!IsValid(Text)) return;
+	Text->SetAutoWrapText(true);
 }
 
 void UBarkText::SetText(FText NewText)
 {
-	if (!IsValid(BaseText) || !IsValid(OutlineText) ) return;
-	BaseText->SetText(NewText);
-	OutlineText->SetText(NewText);
+	if (!IsValid(Text)) return;
+	Text->SetText(NewText);
 }
-
-FVector2D UBarkText::GetSize()
-{
-	return FVector2D();
-}
-

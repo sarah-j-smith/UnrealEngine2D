@@ -77,17 +77,6 @@ public:
     /// ITEM REPORTING
     ///
 
-    /// A string describing a list of items. Mostly for debug purposes.
-    static FString GetListDescription(const TArray<EItemKind>& List);
-
-    /// Text for a generic item of that kind, used as a fallback to show to
-    /// players, i18n via strings file. Generally overridden in a blueprint.
-    static FText GetDescription(const EItemKind& ItemKind);
-
-    /// Name that is unique among all items, not translated/shown to player,
-    /// used to locate the item in the data tables.
-    static FName GetUniqueName(const EItemKind& ItemKind);
-
     UFUNCTION()
     bool Contains(EItemKind Item) const;
 

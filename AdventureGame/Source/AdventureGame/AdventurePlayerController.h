@@ -4,11 +4,14 @@
 
 #include "CoreMinimal.h"
 
+#include "Enums/PlayerCommand.h"
+#include "Enums/ChoiceState.h"
+
 #include "AdventureAIController.h"
 #include "AdventureGameHUD.h"
 #include "HotSpot.h"
-#include "InteractionType.h"
-#include "VerbType.h"
+#include "Enums/InteractionType.h"
+#include "Enums/VerbType.h"
 #include "Puck.h"
 #include "InventoryItem.h"
 
@@ -25,47 +28,6 @@ DECLARE_MULTICAST_DELEGATE(FUpdateInteractionText);
 
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FEndAction, EInteractionType /* Interaction */, int32 /* UID */, bool /* Completed */);
 
-/// What commands has the player current issued in the UX.
-/// Note that sometimes the game will default the CurrentAction if the player
-/// has not specifically clicked on a command verb, eg WalkTo if over the game
-/// window, and LookAt if over the inventory. These states are for when the player
-/// has specifically given a command.
-UENUM(BlueprintType)
-enum class EPlayerCommand : uint8
-{
-	/// The player has not clicked or hovered to activate any command
-	None = 0           UMETA(DisplayName = "NONE"),
-
-	/// The player is hovering the UI
-	Hover = 1          UMETA(DisplayName = "Hover"),
-
-	/// The player has chosen a command on a verb - other than Use or Give
-	/// and now must select a hotspot or item target for that verb.
-	VerbPending = 2    UMETA(DisplayName = "Verb Pending"),
-
-	/// The player has chosen a command by clicking on Use. If they click a
-	/// HotSpot it will be Active "used" - eg "Use lever". If they click an item,
-	/// we go to <code>Targeting</code> to select the HotSpot or other Item
-	/// which will be the target of the "Use On".
-	UsePending = 3     UMETA(DisplayName = "Use Pending"),
-
-	/// The player has chosen a command by clicking on Give. If they click an item,
-	/// we go to <code>Targeting</code> to select the HotSpot or other Item
-	/// which will be the target of the "Give to".
-	GivePending = 4    UMETA(DisplayName = "Give Pending"),
-
-	/// The player has clicked on an Item as a <code>Source</code> for Use or Give.
-	/// Now we are waiting for the player to pick a another item or hotspot
-	/// for the Use or Give which will become the <code>Target</code>.
-	Targeting = 5      UMETA(DisplayName = "Targeting"),
-
-	/// A verb is being actioned
-	Active = 6         UMETA(DisplayName = "Active"),
-	
-	/// A Walk to or Look at was activated via a single click
-	InstantActive = 7  UMETA(DisplayName = "Instant Active"),
-};
-
 /**
  * 
  */
@@ -74,6 +36,7 @@ class ADVENTUREGAME_API AAdventurePlayerController : public APlayerController
 {
 	GENERATED_BODY()
 public:
+
 	AAdventurePlayerController();
 
 	//////////////////////////////////
@@ -156,6 +119,47 @@ private:
 	///
 
 public:
+	/// Which item will be the <b>subject</b> of the current verb eg "Open Box"
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Commands")	
+	UInventoryItem *SourceItem;
+
+	/// Clears the <code>SourceItem</code> to null and sets it unlocked.
+	UFUNCTION(Blueprintable)
+	void ClearSourceItem()
+	{
+		SourceLocked = EChoiceState::Unlocked;
+		SourceItem = nullptr;
+	}
+
+	/// Which item will the <b>object</b> of the current verb for
+	/// example the door in "Use key on door"
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Items")
+	const UInventoryItem *TargetItem;
+	
+	/// Clears the <code>SourceItem</code> to null and sets it unlocked.
+	UFUNCTION(Blueprintable)
+	void ClearTargetItem()
+	{
+		TargetLocked = EChoiceState::Unlocked;
+		TargetItem = nullptr;
+	}
+
+	/// Whether the subject of the verb is locked. Locked item choices won't change
+	/// on mouse over of inventory. Default is <code>Unlocked</code>.
+	///
+	/// Set to locked when an item is clicked as part of a command. Set to unlocked
+	/// when Source is set to null.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Items")	
+	EChoiceState SourceLocked = EChoiceState::Unlocked;
+
+	/// Whether the target of the verb is locked. Locked item choices won't change
+	/// on mouse over of inventory. Default is <code>Unlocked</code>.
+	///
+	/// Set to locked when a target item is clicked as part of a Use or Give
+	/// command. Set to unlocked when Target is set to null.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Items")
+	EChoiceState TargetLocked = EChoiceState::Unlocked;
+	
 	UInventoryItem *ItemAddToInventory(const EItemKind &ItemToAdd);
 
 	void ItemRemoveFromInventory(const EItemKind &ItemToRemove);
@@ -189,15 +193,6 @@ public:
 	///
 	/// COMMAND STATE
 	///
-	
-	/// Which item will be the <b>subject</b> of the current verb eg "Open Box"
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Commands")	
-	UInventoryItem *SourceItem;
-
-	/// Which item will the <b>object</b> of the current verb for
-	/// example the door in "Use key on door"
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
-	const UInventoryItem *TargetItem;
 	
 	/// Has the player currently issued a command?
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
@@ -291,9 +286,8 @@ private:
 	/// ....or a HSM - see readme for State Trees.
 
 public:
+	UFUNCTION()
 	void AssignVerb(EVerbType NewVerb);
-
-	void HoverVerb(EVerbHoverState IsHovered);
 
 	/// Stops any current action, items and hotspots, clearing the status
 	UFUNCTION(BlueprintCallable, Category="Verb", DisplayName="ClearAction")

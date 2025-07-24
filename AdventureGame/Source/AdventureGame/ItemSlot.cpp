@@ -61,9 +61,6 @@ void UItemSlot::HandleOnClicked()
 
 void UItemSlot::HandleOnHover()
 {
-	GEngine->AddOnScreenDebugMessage(1, 3.0, FColor::White,
-		TEXT("UItemSlot::HandleOnHover"),
-								 false, FVector2D(2.0, 2.0));
 	if (HasItem)
 	{
 		APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);

@@ -14,12 +14,6 @@
 
 #define ITEMS_NAMESPACE_KEY "ItemsNamespace"
 
-enum class EVerbHoverState: uint8
-{
-    Hovered = 0,
-    Unhovered = 1,
-};
-
 /// See ItemDescriptions.csv - use these in LOCTABLE
 #define G_WALK_TO_KEY "Walk_to"
 #define G_VERB_SUBJECT_KEY "Verb_subject"

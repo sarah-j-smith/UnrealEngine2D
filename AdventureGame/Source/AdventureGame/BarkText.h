@@ -19,14 +19,8 @@ public:
 	virtual void NativeOnInitialized() override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	UTextBlock *BaseText;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	UTextBlock *OutlineText;
+	UTextBlock *Text;
 
 	UFUNCTION(BlueprintCallable)
 	void SetText(FText NewText);
-
-	UFUNCTION(BlueprintCallable)
-	FVector2D GetSize();
 };

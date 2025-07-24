@@ -3,11 +3,11 @@
 
 #include "HotSpot.h"
 
-#include "AdvBlueprintFunctionLibrary.h"
+#include "Constants.h"
 #include "AdventureCharacter.h"
 #include "AdventureGame.h"
 #include "AdventurePlayerController.h"
-#include "AdvGameUtils.h"
+
 #include "Kismet/GameplayStatics.h"
 
 AHotSpot::AHotSpot()
@@ -110,7 +110,7 @@ void AHotSpot::OnLookAt_Implementation()
 {
 	IVerbInteractions::OnLookAt_Implementation();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On look at"));
-	BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "LookAtDefaultText"));
+	BarkAndEnd(Description.IsEmpty() ? LOCTABLE(ITEM_STRINGS_KEY, "LookAtDefaultText") : Description);
 }
 
 void AHotSpot::OnPull_Implementation()

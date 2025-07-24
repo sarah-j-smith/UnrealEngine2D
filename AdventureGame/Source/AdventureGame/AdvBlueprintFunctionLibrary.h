@@ -3,10 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ItemKind.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AdvBlueprintFunctionLibrary.generated.h"
 
+enum class EItemKind: uint8;
 class UInventoryItem;
 class AAdventurePlayerController;
 

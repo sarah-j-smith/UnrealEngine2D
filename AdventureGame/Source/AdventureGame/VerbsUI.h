@@ -3,14 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Constants.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
-#include "VerbType.h"
+#include "Enums/VerbType.h"
 #include "Styling/SlateTypes.h"
 
 #include "VerbsUI.generated.h"
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnVerbChanged, EVerbType, CurrentVerb);
 
 /**
  * 
@@ -22,6 +23,10 @@ class ADVENTUREGAME_API UVerbsUI : public UUserWidget
 public:
 
 	virtual void NativeOnInitialized() override;
+
+	/// Handle this event to be notified when the verb changes. The argument passed is
+	/// the new current verb.
+	FOnVerbChanged OnVerbChanged;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UButton *Give;
@@ -122,9 +127,6 @@ public:
 	UFUNCTION() void UseTriggered();
 	UFUNCTION() void PushTriggered();
 	UFUNCTION() void PullTriggered();
-
-	UFUNCTION() void VerbHovered();
-	UFUNCTION() void VerbUnhovered();
 	
 	void ClearActiveButton();
 	
@@ -138,6 +140,4 @@ private:
 	void AssignNormalStyles();
 
 	void SetActiveVerb() const;
-
-	void SetHoveredVerb(EVerbHoverState IsHovered) const;
 };

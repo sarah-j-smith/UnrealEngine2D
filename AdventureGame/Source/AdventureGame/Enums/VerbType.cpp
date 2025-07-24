@@ -1,6 +1,6 @@
 #include "VerbType.h"
 
-#include "Constants.h"
+#include "../Constants.h"
 #include "Internationalization/StringTableRegistry.h"
 
 /**
@@ -44,9 +44,9 @@ FText VerbGetDescriptiveString(EVerbType Verb)
 	case EVerbType::WalkTo:
 		return LOCTABLE(ITEM_DESCRIPTIONS_KEY, "Walk_to");
 	case EVerbType::UseItem:
-		return LOCTABLE(ITEM_DESCRIPTIONS_KEY, "Close");
+		return LOCTABLE(ITEM_DESCRIPTIONS_KEY, "Use");
 	case EVerbType::GiveItem:
-		return LOCTABLE(ITEM_DESCRIPTIONS_KEY, "Close");
+		return LOCTABLE(ITEM_DESCRIPTIONS_KEY, "Give");
 	default:
 		return LOCTABLE(ITEM_DESCRIPTIONS_KEY, "Walk_to");
 	}
