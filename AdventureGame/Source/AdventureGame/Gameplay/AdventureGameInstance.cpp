@@ -144,10 +144,20 @@ void UAdventureGameInstance::LoadGame()
 	StartingDoorLabel = CurrentSaveGame->StartingDoorLabel;
 	StartingLevelName = CurrentSaveGame->StartingLevel;
 
+	// Inventory Items persist from level to level, where the player pawn is recreated
+	// so is there a problem keeping a persistent reference to the Adventure Controller
+	// on the inventory item?
+	//
+	// According to this page the Player Controller persists throughout the game:
+	// https://dev.epicgames.com/documentation/en-us/unreal-engine/player-controllers-in-unreal-engine
+	//
+	// Also the Inventory Items just have a weak reference. So if its
+	// destroyed it won't be retained as bad pointer.
+	AAdventurePlayerController* AdventurePlayerController = GetAdventureController();
 	for (const EItemKind Item : CurrentSaveGame->Inventory)
 	{
 		UInventoryItem *NewItem = Inventory->AddItemToInventory(Item);
-		NewItem->AdventurePlayerController = GetAdventureController();
+		NewItem->SetAdventurePlayerController(AdventurePlayerController);
 	}
 
 	CurrentSaveGame->OnAdventureLoad(this);

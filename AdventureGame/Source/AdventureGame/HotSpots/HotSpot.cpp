@@ -40,6 +40,15 @@ void AHotSpot::BeginPlay()
 	const APawn *PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	WalkToPosition = WalkToPoint->GetComponentLocation();
 	WalkToPosition.Z = PlayerPawn->GetActorLocation().Z;
+
+	UItemDataAsset *UseAsset = OnUseSuccessItem.LoadSynchronous();
+	if (UItemDataAsset *GiveAsset = OnUseSuccessItem.LoadSynchronous(); UseAsset || GiveAsset)
+	{
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		AAdventurePlayerController *Apc = Cast<AAdventurePlayerController>(PlayerController);
+		UseAsset->SetAdventurePlayerController(Apc);
+		GiveAsset->SetAdventurePlayerController(Apc);
+	}
 }
 
 void AHotSpot::OnBeginCursorOver(AActor *TouchedActor)
@@ -123,6 +132,10 @@ void AHotSpot::OnPush_Implementation()
 
 void AHotSpot::OnUse_Implementation()
 {
+	// HotSpot Use is mostly relevant for doors.  eg "Use Door"
+	// and that is covered in the ADoor::OnUse_Implementation override.
+	// If we have an object in the scene we want to use somehow, like a computer
+	// terminal or a water-fountain then a custom script would need to be done.
 	IVerbInteractions::OnUse_Implementation();
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On use from AHotSpot default implement."));
 	BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "UseDefaultText"));
@@ -135,7 +148,6 @@ void AHotSpot::OnWalkTo_Implementation()
 	APlayerController *PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (AAdventurePlayerController *APC = Cast<AAdventurePlayerController>(PC); IsValid(APC))
 	{
-		auto Z = u"Blah";
 		if (APC->IsAlreadyAtHotspotClicked())
 		{
 			FFormatNamedArguments Args;
@@ -153,12 +165,38 @@ void AHotSpot::OnWalkTo_Implementation()
 void AHotSpot::OnItemUsed_Implementation()
 {
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On Item Used"));
+	if (UItemDataAsset *ItemDataAsset = OnUseSuccessItem.LoadSynchronous())
+	{
+		APlayerController *PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		if (const AAdventurePlayerController *Apc = Cast<AAdventurePlayerController>(PC))
+		{
+			// Item was used on this hotspot, and the kind of that item matches the
+			// recipe in the ItemDataAsset. 
+			if (Apc->SourceItem->ItemKind == ItemDataAsset->SourceItem)
+			{
+				ItemDataAsset->OnItemUseSuccess();
+				return;
+			}
+		}
+	}
 	BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "ItemUsedDefaultText"));
 }
 
 void AHotSpot::OnItemGiven_Implementation()
 {
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On Item Given"));
+	if (UItemDataAsset *ItemDataAsset = OnGiveSuccessItem.LoadSynchronous())
+	{
+		APlayerController *PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		if (const AAdventurePlayerController *Apc = Cast<AAdventurePlayerController>(PC))
+		{
+			if (Apc->SourceItem->ItemKind == ItemDataAsset->SourceItem)
+			{
+				ItemDataAsset->OnItemGiveSuccess();
+				return;
+			}
+		}
+	}
 	BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "ItemGivenDefaultText"));
 }
 

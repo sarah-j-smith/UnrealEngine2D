@@ -19,3 +19,9 @@ PlayerInventory,Player Inventory,Title for list of players items in the game edi
 DefaultLongDescriptionText,unknown thing,Default text for a thing with no longer description
 HotSpotWalkAlreadyAt,I'm already at {Subject} what should I do?,Default text for walk to hotspot when already there
 HotSpotWalkArrived,Arrived here. What now?,Default text for arriving at hotspot
+AlreadyUnlocked,It's already unlocked.,Text for when player tries to unlock something that is already unlocked
+AlreadyClosed,It's already closed.,Text for when player tries to close something that is already closed.
+AlreadyOpened,It's already opened.,Text for when player tries to open something that is already opened
+Locked,It's locked.,Text for when player tries to open something that is locked
+UseClosedAndLocked,"It's closed, and locked.",Text for when player tries to use something that's locked
+NotOpenable,Doesn't look like it can open.,"Text for when player tries to open something that makes no sense to open, like a puddle of water."

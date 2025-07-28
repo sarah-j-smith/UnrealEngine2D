@@ -61,7 +61,9 @@ public:
 	void SetInteractionText();
 
 	void SetInventoryText();
+	
 private:
+	
 	TWeakObjectPtr<AAdventureCharacter> PlayerCharacter;
 
 	TWeakObjectPtr<AAdventurePlayerController> AdventurePlayerController;

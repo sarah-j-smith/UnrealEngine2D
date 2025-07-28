@@ -9,6 +9,7 @@
 #include "../Enums/WalkDirection.h"
 #include "Components/SphereComponent.h"
 #include "PaperSpriteComponent.h"
+#include "AdventureGame/Items/ItemDataAsset.h"
 
 #include "HotSpot.generated.h"
 
@@ -53,6 +54,20 @@ public:
 	/// Direction the player will face on arrival at the hotspot.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HotSpot")
 	EWalkDirection FacingDirection;
+
+	/// Data Asset for determining results of the player interacting via the Use verb with this hotspot.
+	/// This should be an <b>instance</b> of the <code>ItemDataAsset</code> sub-class, not the
+	/// class itself. Right-click in the content drawer, and choose <i>Miscellaneous > Data Asset</i>
+	/// then choose one of the <code>ItemDataAsset</code> sub-classes to create an instance.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemHandling")
+	TSoftObjectPtr<UItemDataAsset> OnUseSuccessItem;
+
+	/// Data Asset for determining results of the player interacting via the Give verb with this hotspot.
+	/// This should be an <b>instance</b> of the <code>ItemDataAsset</code> sub-class, not the
+	/// class itself. Right-click in the content drawer, and choose <i>Miscellaneous > Data Asset</i>
+	/// then choose one of the <code>ItemDataAsset</code> sub-classes to create an instance.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemHandling")
+	TSoftObjectPtr<UItemDataAsset> OnGiveSuccessItem;
 
 	//////////////////////////////////
 	///

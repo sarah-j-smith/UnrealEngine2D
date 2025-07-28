@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "../Player/AdventurePlayerController.h"
+#include "AdventureGame/AdventureGame.h"
 #include "Engine/TimerHandle.h"
 
 #include "Engine/GameInstance.h"
@@ -181,7 +182,12 @@ private:
 	inline AAdventurePlayerController *GetAdventureController() const
 	{
 		APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-		return Cast<AAdventurePlayerController>(PlayerController);
+		AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
+		if (!IsValid(AdventurePlayerController))
+		{
+			UE_LOG(LogAdventureGame, Warning, TEXT("Adventure player controller is null"));
+		}
+		return AdventurePlayerController;
 	}
 
 	static UAdventureGameHUD *GetHUD();

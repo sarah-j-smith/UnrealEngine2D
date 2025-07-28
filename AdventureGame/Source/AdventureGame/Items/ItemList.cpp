@@ -66,7 +66,7 @@ UInventoryItem *UItemList::AddItemToInventory(EItemKind ItemToAdd)
 		);
 		InventoryItem->ItemKind = ItemToAdd;
 	}
-	InventoryItem->ItemList = this;
+	InventoryItem->SetItemList(this);
 	AddItemToInventory(InventoryItem);
 	OnInventoryChanged.Broadcast(Identifier);
 #if WITH_EDITOR
@@ -103,10 +103,9 @@ void UItemList::RemoveItemKindsFromInventory(const TSet<EItemKind>& ItemsToRemov
 		UE_LOG(LogAdventureGame, Warning, TEXT("Failed to remove some items from Inventory - %s"),
 			*FItemKind::GetListDescription(ItemsToRemove.Array()));
 	}
-	if (UNLIKELY(GetWorld()->IsEditorWorld()))
-	{
-		DumpInventoryToLog();
-	}
+#if WITH_EDITOR
+	DumpInventoryToLog();
+#endif
 }
 
 void UItemList::GetInventoryItemsArray(TArray<UInventoryItem *> &Result) const

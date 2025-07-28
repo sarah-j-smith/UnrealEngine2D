@@ -6,6 +6,7 @@
 
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
+#include "Engine/TimerHandle.h"
 
 #include "InteractionHUD.generated.h"
 
@@ -21,7 +22,7 @@ public:
 	UTextBlock *InteractionDescription;
 
 	UFUNCTION(BlueprintCallable)
-	void SetText(FText NewText) const;
+	void SetText(FText NewText);
 
 	UFUNCTION(BlueprintCallable)
 	void HighlightText();
@@ -40,7 +41,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	FLinearColor TextNormalColor = FLinearColor::Red;
 
+
 private:
 	bool TextLocked;
-	
 };

@@ -60,6 +60,9 @@ public:
 
 	void SetInputLocked(bool bLocked);
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Getter="IsInputLocked", Category = UI)
+	bool bInputLocked;
+	
 	bool IsInputLocked() const;
 
 	bool IsAlreadyAtHotspotClicked() const
@@ -119,6 +122,9 @@ private:
 	///
 
 public:
+	UFUNCTION(BlueprintCallable, Category = "Items")
+	void SwapSourceAndTarget();
+	
 	/// Which item will be the <b>subject</b> of the current verb eg "Open Box"
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Commands")	
 	UInventoryItem *SourceItem;
@@ -134,7 +140,7 @@ public:
 	/// Which item will the <b>object</b> of the current verb for
 	/// example the door in "Use key on door"
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Items")
-	const UInventoryItem *TargetItem;
+	UInventoryItem *TargetItem;
 	
 	/// Clears the <code>SourceItem</code> to null and sets it unlocked.
 	UFUNCTION(Blueprintable)
@@ -180,11 +186,6 @@ public:
 
 	void PerformInstantAction();
 
-	UFUNCTION(BlueprintCallable, Category="Items")
-	void CombineItems(const UInventoryItem *InventoryItemSource,
-		const UInventoryItem *InventoryItemToCombineWith,
-		EItemKind ResultingItem, FText TextToBark);
-	
 	/// Tell the UI to put the current verb and any current inventory item into the text display
 	/// and if the InventoryItemInteraction is true, highlight the text.
 	void TriggerUpdateInventoryText();

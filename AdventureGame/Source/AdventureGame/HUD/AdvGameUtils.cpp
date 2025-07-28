@@ -33,7 +33,7 @@ FText AdvGameUtils::GetGivingItemText(const UInventoryItem* CurrentItem, const U
     FFormatNamedArguments VerbArgs;
     VerbArgs.Add("Subject", SubjectText);
     VerbArgs.Add("Object", TargetText);
-    return FText::Format(LOCTABLE(ITEM_DESCRIPTIONS_KEY, G_USE_SUBJECT_ON_OBJECT_KEY), VerbArgs);
+    return FText::Format(LOCTABLE(ITEM_DESCRIPTIONS_KEY, G_GIVE_SUBJECT_TO_OBJECT_KEY), VerbArgs);
 }
 
 FText AdvGameUtils::GetUsingItemText(const UInventoryItem* CurrentItem, const UInventoryItem* TargetItem,

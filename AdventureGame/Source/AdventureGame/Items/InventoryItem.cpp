@@ -6,7 +6,7 @@
 #include "../Constants.h"
 #include "../AdventureGame.h"
 #include "../Player/AdventurePlayerController.h"
-
+#include "ItemList.h"
 #include "Internationalization/StringTableRegistry.h"
 
 //////////////////////////////////
@@ -14,36 +14,39 @@
 /// STATIC IMPLEMENTATIONS
 ///
 
-void UInventoryItem::OnItemCombineSuccess_Implementation()
+void UInventoryItem::OnItemUseSuccess_Implementation()
 {
-    UE_LOG(LogAdventureGame, Log, TEXT("OnItemCombineSuccess Success - default."));
+    UE_LOG(LogAdventureGame, Log, TEXT("OnItemUseSuccess Success - default."));
+    
+    if (UItemDataAsset *ItemDataAsset = OnUseSuccessItem.LoadSynchronous())
+    {
+        if (AAdventurePlayerController *Apc = GetAdventurePlayerController())
+        {
+            ItemDataAsset->SetAdventurePlayerController(Apc);
+            ItemDataAsset->OnItemUseSuccess();
+            return;
+        }
+    }
+    OnItemUseFailure();
 }
 
-void UInventoryItem::OnItemCombineFailure_Implementation()
+void UInventoryItem::OnItemUseFailure_Implementation()
 {
     BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "ItemUsedDefaultText"));
 }
 
-void UInventoryItem::CombineWithInteractableItem(EItemKind ResultingItem, FText BarkText)
+void UInventoryItem::OnItemGiveSuccess_Implementation()
 {
-    if (const auto Apc = this->AdventurePlayerController.Pin())
+    if (UItemDataAsset *ItemDataAsset = OnGiveSuccessItem.LoadSynchronous())
     {
-        if (Apc->SourceItem)
+        if (AAdventurePlayerController *Apc = GetAdventurePlayerController())
         {
-            Apc->CombineItems(
-                Apc->SourceItem,
-                this, ResultingItem,
-                BarkText.IsEmpty() ? LOCTABLE(ITEM_STRINGS_KEY, "CombineSuccessResultText") : BarkText);
+            ItemDataAsset->SetAdventurePlayerController(Apc);
+            ItemDataAsset->OnItemGiveSuccess();
             return;
         }
     }
-    UE_LOG(LogAdventureGame, Warning,
-        TEXT("Could not CombineWithInteractableItem: AdventurePlayerController->CurrentItem null."));
-}
-
-void UInventoryItem::OnItemGiveSuccess_Implementation()
-{
-    UE_LOG(LogAdventureGame, Log, TEXT("OnItemGiveSuccess Success - default."));
+    OnItemGiveFailure();
 }
 
 void UInventoryItem::OnItemGiveFailure_Implementation()
@@ -116,9 +119,10 @@ void UInventoryItem::OnPush_Implementation()
 
 void UInventoryItem::OnUse_Implementation()
 {
-    IVerbInteractions::OnUse_Implementation();
-    BarkAndEnd(LOCTABLE(ITEM_STRINGS_KEY, "UseDefaultText"));
-    UE_LOG(LogAdventureGame, VeryVerbose, TEXT("On use"));
+    UE_LOG(LogAdventureGame, Fatal, TEXT("SHOULD NEVER HAPPEN"
+        " - when the player clicks the Use verb and then an item "
+        "the AdventurePlayerController goes into targeting mode, looking for a Hotspot"
+        " or another Item to use it on."));
 }
 
 void UInventoryItem::OnWalkTo_Implementation()
@@ -130,25 +134,44 @@ void UInventoryItem::OnWalkTo_Implementation()
 void UInventoryItem::OnItemUsed_Implementation()
 {
     IVerbInteractions::OnItemUsed_Implementation();
+
+    // **this** InventoryItem is the target and APC->SourceItem is the source of a Use
+    // verb. Check that the Source can validly use on this.
     if (const auto Apc = AdventurePlayerController.Pin())
     {
-        auto SourceKind = AdventurePlayerController->SourceItem->ItemKind;
-        auto InteractableKind = AdventurePlayerController->SourceItem->InteractableItem;
-        if (SourceKind == ItemKind)
+        if (AdventurePlayerController->SourceItem->ItemKind == ItemKind)
         {
-            // Item is used on itself
+            // Item is used on itself - failure - this should not be necessary,
+            // but needed in the case that during game design this item mistakenly
+            // has its interactable item set to another with the same item kind.
             AdventurePlayerController->InterruptCurrentAction();
-            OnItemCombineFailure();
+            OnItemUseFailure();
         }
-        else if (SourceKind == InteractableItem || InteractableKind == ItemKind)
+        else if (CanInteractWith(AdventurePlayerController->SourceItem))
         {
-            OnItemCombineSuccess();
+            // This item has interactable item
+            OnItemUseSuccess();
+        }
+        else if (const UItemDataAsset *ItemDataAsset = OnUseSuccessItem.LoadSynchronous())
+        {
+            // We are the target, the second item clicked, the pickle.
+            const EItemKind SrcKind = AdventurePlayerController->SourceItem->ItemKind;
+            const EItemKind TgtKind = AdventurePlayerController->TargetItem->ItemKind;
+            if (ItemDataAsset->SourceItem == SrcKind && ItemDataAsset->TargetItem == TgtKind)
+            {
+                OnItemUseSuccess();
+            }
+            else if (ItemDataAsset->SourceItem == TgtKind && ItemDataAsset->TargetItem == SrcKind && ItemDataAsset->CanSwapSourceAndTarget)
+            {
+                AdventurePlayerController->SwapSourceAndTarget();
+                OnItemUseSuccess();
+            }
         }
         else
         {
             // Item is not the one that can be used with this
             AdventurePlayerController->InterruptCurrentAction();
-            OnItemCombineFailure();
+            OnItemUseFailure();
         }
     }
 }
@@ -170,4 +193,24 @@ void UInventoryItem::BarkAndEnd(FText BarkText)
         Apc->PlayerBark(BarkText);
         Apc->InterruptCurrentAction();
     }
+}
+
+AAdventurePlayerController *UInventoryItem::GetAdventurePlayerController() const
+{
+    return AdventurePlayerController.Get();
+}
+
+UItemList *UInventoryItem::GetItemList() const
+{
+    return ItemList.Get();
+}
+
+void UInventoryItem::SetAdventurePlayerController(AAdventurePlayerController* Controller)
+{
+    AdventurePlayerController = Controller;
+}
+
+void UInventoryItem::SetItemList(UItemList *ItemList)
+{
+    this->ItemList = ItemList;
 }

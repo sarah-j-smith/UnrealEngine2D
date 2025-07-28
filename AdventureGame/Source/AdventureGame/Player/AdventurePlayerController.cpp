@@ -262,16 +262,18 @@ UInventoryItem* AAdventurePlayerController::ItemAddToInventory(const EItemKind& 
         {
             if (UInventoryItem* Item = Inventory->AddItemToInventory(ItemToAdd))
             {
-                Item->AdventurePlayerController = this;
+                Item->SetAdventurePlayerController(this);
                 return Item;
             }
         }
+#if WITH_EDITOR
         else
         {
             FString DebugString = FItemKind::GetDescription(ItemToAdd).ToString();
             UE_LOG(LogAdventureGame, Warning, TEXT("Cannot create %s - already held in inventory"),
                 *DebugString);
         }
+#endif
     }
     return nullptr;
 }
@@ -280,7 +282,11 @@ void AAdventurePlayerController::ItemRemoveFromInventory(const EItemKind& ItemTo
 {
     if (UItemList* Inventory = GetInventoryItemList())
     {
+        EItemKind SourceKind = SourceItem->ItemKind;
+        EItemKind TargetKind = TargetItem->ItemKind;
         Inventory->RemoveItemKindFromInventory(ItemToRemove);
+        if (!Inventory->Contains(SourceKind)) ClearSourceItem();
+        if (!Inventory->Contains(TargetKind)) ClearTargetItem();
     }
 }
 
@@ -288,7 +294,11 @@ void AAdventurePlayerController::ItemsRemoveFromInventory(const TSet<EItemKind>&
 {
     if (UItemList* Inventory = GetInventoryItemList())
     {
+        EItemKind SourceKind = SourceItem->ItemKind;
+        EItemKind TargetKind = TargetItem->ItemKind;
         Inventory->RemoveItemKindsFromInventory(ItemsToRemove);
+        if (!Inventory->Contains(SourceKind)) ClearSourceItem();
+        if (!Inventory->Contains(TargetKind)) ClearTargetItem();
     }
 }
 
@@ -489,6 +499,13 @@ void AAdventurePlayerController::HandleAIMovementCompleteNotify(EPathFollowingRe
     GetWorldTimerManager().SetTimerForNextTick(MovementCompleteTimerDelegate);
 }
 
+void AAdventurePlayerController::SwapSourceAndTarget()
+{
+    UInventoryItem* TargetItem = this->TargetItem;
+    this->TargetItem = this->SourceItem;
+    this->SourceItem = TargetItem;
+}
+
 void AAdventurePlayerController::HandleMovementComplete()
 {
     if (CurrentHotSpot && (LastPathResult == EAIMoveResult::Success))
@@ -498,7 +515,6 @@ void AAdventurePlayerController::HandleMovementComplete()
         PerformHotSpotInteraction();
     }
     AIStatus = EAIStatus::Idle;
-    InterruptCurrentAction();
 }
 
 void AAdventurePlayerController::AssignVerb(EVerbType NewVerb)
@@ -569,18 +585,16 @@ void AAdventurePlayerController::PerformItemAction()
     case EVerbType::WalkTo:
         UInventoryItem::Execute_OnLookAt(SourceItem);
         break;
-    case EVerbType::UseItem:
-        UInventoryItem::Execute_OnItemUsed(SourceItem);
-        break;
-    case EVerbType::GiveItem:
-        UInventoryItem::Execute_OnItemGiven(SourceItem);
-        break;
+    default:
+        UE_LOG(LogAdventureGame, Warning, TEXT("Unexpected verb %s in PerformItemAction"),
+            *VerbGetDescriptiveString(CurrentVerb).ToString())
     }
     TriggerBeginAction();
 }
 
 void AAdventurePlayerController::PerformInstantAction()
 {
+    SetInputLocked(true);
     CurrentCommand = EPlayerCommand::InstantActive;
     if (SourceItem)
     {
@@ -606,47 +620,23 @@ void AAdventurePlayerController::PerformItemInteraction()
     {
         return;
     }
-
+    CurrentHotSpot = nullptr;
+    SetInputLocked(true);
     CurrentCommand = EPlayerCommand::Active;
     TriggerBeginAction();
 
     switch (CurrentVerb)
     {
     case EVerbType::GiveItem:
-        UInventoryItem::Execute_OnItemGiven(const_cast<UInventoryItem*>(TargetItem));
+        UInventoryItem::Execute_OnItemGiven(TargetItem);
         break;
     case EVerbType::UseItem:
-        UInventoryItem::Execute_OnItemUsed(const_cast<UInventoryItem*>(TargetItem));
+        UInventoryItem::Execute_OnItemUsed(TargetItem);
         break;
     default:
         UE_LOG(LogAdventureGame, Warning, TEXT("Unexpected interaction verb %s for perform item interaction with %s"),
                *VerbGetDescriptiveString(CurrentVerb).ToString(), *TargetItem->ShortDescription.ToString());
     }
-}
-
-void AAdventurePlayerController::CombineItems(const UInventoryItem* InventoryItemSource,
-                                              const UInventoryItem* InventoryItemToCombineWith,
-                                              EItemKind ResultingItem, FText TextToBark)
-{
-    check(InventoryItemSource);
-    check(InventoryItemToCombineWith);
-    check(InventoryItemToCombineWith != InventoryItemSource);
-    check(InventoryItemToCombineWith->ItemKind != InventoryItemSource->ItemKind);
-    check(InventoryItemSource->InteractableItem == InventoryItemToCombineWith->ItemKind)
-    if (UInventoryItem* NewItem = ItemAddToInventory(ResultingItem))
-    {
-        NewItem->AdventurePlayerController = this;
-        PlayerBark(TextToBark);
-        InterruptCurrentAction();
-    }
-#if WITH_EDITOR
-    else
-    {
-        GEngine->AddOnScreenDebugMessage(1, 3.0, FColor::White,
-    TEXT("Combine items failed - check ST_Item item and hotspot blueprints"),
-                             false, FVector2D(2.0, 2.0));
-    }
-#endif
 }
 
 void AAdventurePlayerController::TriggerUpdateInventoryText()
@@ -667,6 +657,8 @@ UItemList* AAdventurePlayerController::GetInventoryItemList()
 
 void AAdventurePlayerController::PerformHotSpotInteraction()
 {
+    SetInputLocked(true);
+    
     // This `Execute_Verb` pattern will call C++ and Blueprint overrides.
     // The use of eg CurrentHotSpot->OnClose() does not work as BP's don't do
     // polymorphism and have to be dispatched in code.
@@ -719,6 +711,8 @@ void AAdventurePlayerController::PerformHotSpotInteraction()
  */
 void AAdventurePlayerController::InterruptCurrentAction()
 {
+    SetInputLocked(false);
+    
     if (const AAdventureCharacter* Pc = PlayerCharacter)
     {
         Pc->GetMovementComponent()->StopActiveMovement();

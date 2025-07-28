@@ -95,15 +95,13 @@ public:
     * Add the given item to the current players inventory of held
     * items. Instantiates an `UInventoryItem` instance of the class
     * from the `InventoryDataTable`. Caller should populate other fields
-    * including `AdventureController`. If the Description field is empty
-    * it defaults to using the enum's descriptive string.
+    * including `AdventureController`. 
     *
-    * At present only one instance of any `ItemKind` can exist in the inventory
+    * At present only one instance of any `ItemKind` is assumed to exist in the inventory
     * at a time. This might change in the future, but for now its not supported
-    * to have more than one of anything.
+    * to have more than one of anything, although that is not enforced by this function.
     * 
     * @param ItemToAdd EItemKind to create an InventoryItem instance of.
-    * @param Description FText optional description to give to the item
     * @return InventoryItem Created and added.
     */
     UFUNCTION(BlueprintCallable)
