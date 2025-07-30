@@ -114,3 +114,15 @@ https://dev.epicgames.com/community/learning/tutorials/Dd0L/unreal-engine-enviro
 
 It's a full-unicode retro gaming font. As far as I can tell Cody is the original
 author of this font, and its been resold many times on the internet by unethical persons.
+
+## Strings and i18n
+
+I want the game to be in other languages than just English. I have experience of development where we paid a lot of attention
+and effort to translation files and it seems bad to cut this out, even at this early stage.
+
+So: I'm using string tables.
+
+* See [this Unreal Garden blog post](https://unreal-garden.com/tutorials/stringtable-cpp/) for a good discussion of how to set this up.
+
+Note: By default Unreal will not include your CSV file(s) as part of the packaging process, even if they are inside the content folder. Make sure to add your CSVs directory to Additional Non-Asset Directories to Package in your project's Packaging settings.
+
