@@ -6,16 +6,11 @@ These instructions are for Mac. From:
 
 * Kaan Alpar, [GameDev.tv](https://www.gamedev.tv/dashboard/courses/115)
 
-# Setup C++, Visual Studio Code for Unreal Engine
+# Use Rider
 
-* [Install VS Code]
-* [Install clang and setup VS Code for clang]
-   - Including [Prerequisites] of setup of VS Code for Mac
-   - And installing clang/Xcode and setting up
-
-[Install VS Code]: https://code.visualstudio.com/
-[Install clang and setup VS Code fo clang]: https://code.visualstudio.com/docs/cpp/config-clang-mac
-[Prerequisites]: https://code.visualstudio.com/docs/cpp/config-clang-mac#_prerequisites
+* Crazy easy, crazy powerful and free to use for personal use.
+* Much, much better integration with Unreal. 
+* [Rider with Unreal instructions](https://www.jetbrains.com/help/rider/Unreal_Engine__Before_You_Start.html)
 
 # Install and Run Unreal Engine 5.3.2
 
@@ -28,6 +23,8 @@ These instructions are for Mac. From:
 [Download Unreal]: https://www.unrealengine.com/en-US/download
 
 # Generate Build Files
+
+Disregard all this, and let Rider do it.
 
 The regen of the project will create:
 
@@ -48,34 +45,6 @@ Instead of refreshing the project from Unreal you can also run:
 # Editing Code
 
 * Adding any files requires a re-run of the regen script.
-* If there are issues with intellisense check [this guide for VSCode]
-* Try including these lines in `c_cpp_properties.json`:
-
-* c_cpp_properties.json - [full file]
-
-```json
-{
-    "configurations": [
-        {
-            // other settings
-            "includePath": [ 
-                "${workspaceFolder}/Intermediate/**", 
-                "${workspaceFolder}/Plugins/**", 
-                "${workspaceFolder}/Source/**" 
-            ]           
-        },
-    ],
-    "version": 4
-}
-```
-
-* [Reference for variables] like `workspaceFolder`
-
-[this guide for VSCode]: https://code.visualstudio.com/docs/cpp/configure-intellisense
-
-[Reference for variables]: https://code.visualstudio.com/docs/editor/variables-reference
-
-[full file]: https://gist.github.com/sarah-j-smith/317386821d3de5b08fcf7605187caf60
 
 # HowTo 
 
