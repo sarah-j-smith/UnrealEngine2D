@@ -36,4 +36,5 @@ public:
     /// a call to <code>LoadGame</code> on the Game Instance. 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save Game")
     void OnAdventureLoad(const UAdventureGameInstance *GameInstance);
+
 };

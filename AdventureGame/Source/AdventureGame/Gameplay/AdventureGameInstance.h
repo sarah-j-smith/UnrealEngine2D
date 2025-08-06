@@ -80,6 +80,7 @@ public:
 	UFUNCTION()
 	void OnRoomUnloaded();
 
+	/// Run the OnLoadRoom event to load a new level, and unload the current level.
 	void TriggerRoomTransition();
 
 	
@@ -107,13 +108,28 @@ private:
 	
 	enum class ERoomTransitionPhase
 	{
+		/// The game is just launching and the player has not issued any commands yet
 		GameNotStarted,
+
+		/// The game is loading up the starting room, and play is locked
 		LoadStartingRoom,
+
+		/// The game has been played for a time, and a valid loaded room is currently shown
 		RoomCurrent,
+
+		/// Yet another new room is being loaded, the game is locked.
 		LoadNewRoom,
+
+		/// The room that was loading is now loaded, and is about to be set up
 		NewRoomLoaded,
+
+		/// An old room that was in memory is being unloaded
 		UnloadOldRoom,
+
+		/// The room that was unloading has finished being removed from memory
 		RoomUnloaded,
+
+		/// Everything is nearly done, there's a short delay being processed to allow settling
 		DelayProcessing,
 	};
 	
@@ -199,4 +215,6 @@ private:
 	void LoadDoor(const ADoor *Door);
 private:
 	FDelegateHandle OnInventoryChangedHandle;
+
+	void LogSaveGameStatus(USaveGame *SaveGame);
 };

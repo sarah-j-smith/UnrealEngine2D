@@ -10,6 +10,16 @@ enum class EItemKind: uint8;
 class UInventoryItem;
 class AAdventurePlayerController;
 
+#define SHORT_LETTER_COUNT 12
+#define MEDIUM_LETTER_COUNT 20
+#define LONG_LETTER_COUNT 30
+#define EXTRA_LONG_LETTER_COUNT 45
+
+#define SHORT_BARK_TIME 1.5f
+#define MEDIUM_BARK_TIME 3.0f
+#define LONG_BARK_TIME 5.0f
+#define EXTRA_LONG_BARK_TIME 8.0f
+
 /**
  * 
  */
@@ -42,4 +52,7 @@ public:
 
     UFUNCTION(BlueprintPure)
     static FString GetProjectVersion();
+
+    UFUNCTION(BLueprintCallable, Category = "Player Actions", meta = (WorldContext = "WorldContextObject"))
+    static float GetBarkTime(FString BarkText);
 };

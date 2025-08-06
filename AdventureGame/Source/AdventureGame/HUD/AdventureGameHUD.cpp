@@ -121,6 +121,15 @@ void UAdventureGameHUD::SetInventoryText()
     }
 }
 
+void UAdventureGameHUD::ShowPromptList()
+{
+    UISwitcher->SetActiveWidget(PromptList);
+}
+
+void UAdventureGameHUD::HidePromptList()
+{
+}
+
 void UAdventureGameHUD::HandleInventoryChanged(FName Identifier)
 {
     if (Identifier == "Inventory")

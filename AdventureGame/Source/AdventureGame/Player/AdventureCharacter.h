@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AdventurePlayerController.h"
-#include "BarkText.h"
+#include "../Dialog/BarkText.h"
 #include "PaperZDCharacter.h"
 #include "PaperZDAnimInstance.h"
 #include "FollowCamera.h"
@@ -47,7 +47,14 @@ private:
 	
 	FZDOnAnimationOverrideEndSignature OnTurnRightOverrideEndDelegate;
 	
-public:	
+public:
+	/// Marker object to anchor bark text
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Barking)
+	USphereComponent* Sphere;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Barking)
+	FColor BarkColor = FColor::White;
+	
 	/// Animation sequence for interacting with objects
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Animation)
 	UPaperZDAnimSequence *InteractLeftAnimationSequence;
@@ -129,57 +136,10 @@ public:
 	/// BARKING
 	///
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Barking)
-	TSubclassOf<UBarkText> BarkTextClass;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Barking)
-	TObjectPtr<UBarkText> BarkText;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Barking)
-	FVector2D BarkTextSize = FVector2D(800, 180);
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Barking)
-	TObjectPtr<UWidgetComponent> BarkTextComponent;
-
-	void PlayerBark(const FText &NewBarkText);
+	void PlayerBark(FText TextToBark);
 
 	void ClearBark();
 
-	void BarkTimerTimeout();
-
-	void ConstrainBarkText();
-
-	FTimerHandle BarkTimerHandle;
-
-	bool bBarkTimerActive = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Barking)
-	float BarkDelay = 3.0f;
-
-private:
-
-	/// Vector from the Capsule position to the postion of the bark text
-	FVector BarkRelativeOffset;
-	
-	void InitializeBarkTextConfines(AFollowCamera *Camera);
-
-	/// Recalculates the UpdatedBarkConfineMax & Min based on the initialised
-	/// Bark Confines. Use after the text has been set.
-	/// Potentially expensive call - do not call inside Tick()
-	void UpdateBarkTextConfines();
-
-	bool bBarkTextConfinesNeedsUpdate = false;
-
-	FVector BarkConfineMax;
-	FVector BarkConfineMin;
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Barking)
-	FVector UpdatedBarkConfineMax;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Barking)
-	FVector UpdatedBarkConfineMin;
-	
 	//////////////////////////////////
 	///
 	/// CAMERA

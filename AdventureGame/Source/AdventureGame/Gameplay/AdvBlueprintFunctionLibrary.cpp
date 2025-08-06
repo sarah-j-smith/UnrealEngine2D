@@ -82,3 +82,13 @@ FString UAdvBlueprintFunctionLibrary::GetProjectVersion()
 
     return ProjectVersion;
 }
+
+float UAdvBlueprintFunctionLibrary::GetBarkTime(FString BarkText)
+{
+    const int LetterCount = BarkText.Len();
+    if (LetterCount <= SHORT_LETTER_COUNT) return SHORT_BARK_TIME;
+    if (LetterCount <= MEDIUM_LETTER_COUNT) return MEDIUM_BARK_TIME;
+    if (LetterCount <= LONG_LETTER_COUNT) return LONG_BARK_TIME;
+    if (LetterCount <= EXTRA_LONG_LETTER_COUNT) return EXTRA_LONG_BARK_TIME;
+    return 0.0f;
+}

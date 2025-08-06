@@ -1,128 +1,39 @@
 # Adventure Game in Unreal Engine
 
-This is my work from following the excellent Lesser Dog [Point and Click 2D Adventure Game tutorial](https://www.youtube.com/watch?v=sEy3c5JcLys&t=7s) on Youtube.
-
 My Dev Environment:
 
 * Mac M3
 * Rider
 * Unreal 5.5
 
-
 ![Screenshot from Ch 1](Docs/images/adventure-clip.gif)
 
 * Screenshot of state at end of Episode 5.
 
-### Update
+I implemented the main game logic in Unreal C++. At the present time I'm ready to move to using
+the framework to make an original game, and I'm not following the tutorial from this point.
 
-I have moved to using a [character sprite sheet](https://danger-goose.itch.io/point-and-click-adventure-game-sprite-template) from _Danger Goose_ on itch.io. And a bunch more things are working now.
+Surface level it looks very much the same as Lesser Dog's [Point and Click 2D Adventure Game tutorial](https://www.youtube.com/watch?v=sEy3c5JcLys&t=7s) on Youtube. See here for the changes:
 
-![Screenshot with updated sprite](Docs/images/current.png)
+* [Differences from Lesser Dog tut](./Docs/Differences.md)
 
-I've also implemented the whole thing in C++ pretty much. There's a lot of per-item
-customisations that make sense to stay in Blueprint, but the C++ implementation makes
-it a lot more manageable. As of right now, actions are working, moving from room to
-room, as at Chapter 5 but with maybe some minor niggles.
+# Learnings
 
-## Math Nodes
+* [PaperZD Animation State Machine](./Docs/AnimationStateMachine.md)
+* [Managing the Commands](./Docs/CommandState.md)
+* [Issues that I ran into](./Docs/Issues.md)
+* [How to customise the screen resolution for other games](./Docs/ScreenAndCamera.md)
+* [How to make this game from scratch](./Docs/)
 
-* Most of the tutorial went as per Lesser Dogs excellent guidance.
-* In Unreal 5 you need to use the `-` and `+` nodes which are generic per type
-* The `AddFloat` or whatever typed nodes are not available in UE5 by default
-* although you can return to them via a config
-
-![BP Adventure Cam script](Docs/images/bp-adventure-cam-blueprint-script.png)
-
-* Screenshot of the `BP_AdventureCam` blueprint `GetCameraConfines` function
-* The `-` and `+` nodes are at the right of the screenshot
-
-### Update
-
-I implemented all of the [camera follow logic in C++](https://github.com/sarah-j-smith/UnrealEngine2D/blob/main/AdventureGame/Source/AdventureGame/FollowCamera.cpp#L53) inside a `FollowCamera` class.
-
-## Nav Mesh Problems
-
-* I had a lot of problems with generating and having my nav mesh show up
-* This comment from [@sentinel2952](https://www.youtube.com/@sentinel2592) helped me track down the solution:
-
-> If you are in ue5 (I'm in 5.4) and having trouble generating the navmesh from the brush at the end, 
-> you can save the brush as a static mesh, then open the new static mesh asset and generate collisions 
-> and then set the collision complexity to "use complex as simple".
-
-![Activate brush editing mode](Docs/images/activate-brush-editing.png)
-
-* Activate brush-editing mode - use Return or Enter to close the shape.
-* Do not add a Nav bounds volume at this time
-
-![Create static mesh](Docs/images/create-static-mesh.png)
-
-* Select the brush in the hierarchy / scene outliner and in the detail panel click _Create Static Mesh_
-
-![Generate collisions](Docs/images/generate-collision.png)
-
-* Locate the mesh you created in the previous step, double-click to open in a new editor tab
-* Select _Auto Convex Collision_ from the Collision menu to generate a collision mesh
-
-![Complex as simple](Docs/images/complex-as-simple.png)
-
-* Change this drop-down in the details panel in the static mesh editor tab to _Use Complex Collision as Simple_
-
-* After this go back to the main editor window, and add the Nav Bounds volume, and continue as per Lesser Dogs instructions
-
-## Player Character Falling
-
-At the end of the first episode on running the project with the player character it fell constantly. What that looks like is the game starts, the character disappears but is visible in the _Outliner_ (the list of all objects in the scene). Clicking on the character in the outliner and expanding the Transform you can see in the Z direction its rapidly and constantly changing. The character has fallen through the floor. In 
-my case the fix for this is:
-
-* change from top to side view (eg "right") 
-* make sure the character mesh/start point is above the red line of the background image
-* make sure the character is inside the nav mesh bounds
-
-# Customisations 
-
-I wanted to change to using Enhanced Input so that I could more easilty switch to mobile, and also
-to use C++ for the bulk of the logic as the blueprints are very complex and hard to follow in the Lesser Dog tutorial. See the source code here:
-
-* [AdventureCharacter.cpp](Source/AdventureGame/AdventureCharacter.cpp)
-
-...and the how to for Inputs here: 
-
-* [Inputs How to](../Docs/HowTo.md#create-inputs)
-
-Also I wanted to have animation states handled using Paper ZD.  See the doc here for this.
-
-* [Paper ZD animation states](Docs/AnimationStateMachine.md)
-
-# Updates
-
-I have moved to using a [character sprite sheet](https://danger-goose.itch.io/point-and-click-adventure-game-sprite-template) from _Danger Goose_ on itch.io. Its intended 
-to be a template that you can then overwrite with your own character art.
-
-![Danger goose character](Docs/images/SpH4M4.gif)
-
-I also implemented pretty much all of the main game logic in C++.
-
-Maybe use this in future - UE5 State Trees
-
-https://dev.epicgames.com/community/learning/tutorials/Dd0L/unreal-engine-environmental-storytelling-npc-action-sequencer
-
-## Fonts Update
+## Fonts Update & Credit
 
 * I'm using [Press Start 2 Play](https://www.zone38.net/font/) now
 * [License text](./3rdParty/LICENSE.txt)
 
-
 It's a full-unicode retro gaming font. As far as I can tell Cody is the original
 author of this font, and its been resold many times on the internet by unethical persons.
 
-## Strings and i18n
+## Sounds Credit
 
-I want the game to be in other languages than just English. I have experience of development where we paid a lot of attention
-and effort to translation files and it seems bad to cut this out, even at this early stage.
-
-So: I'm using string tables.
-
-* See [this Unreal Garden blog post](https://unreal-garden.com/tutorials/stringtable-cpp/) for a good discussion of how to set this up.
-
-Note: By default Unreal will not include your CSV file(s) as part of the packaging process, even if they are inside the content folder. Make sure to add your CSVs directory to Additional Non-Asset Directories to Package in your project's Packaging settings.
+Door - Stone - Large - 001.wav by DWOBoyle -- https://freesound.org/s/474178/ -- License: Attribution 4.0
 

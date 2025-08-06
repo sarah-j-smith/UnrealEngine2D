@@ -1,0 +1,12 @@
+ITEMS_NAMESPACE_KEY - Pickle 
+	/Engine/Binaries/Mac/StringTables/ItemLongDescriptions.csv - "I love these sour little guys." 
+	/Engine/Binaries/Mac/StringTables/ItemDescriptions.csv - "pickled gherkin" 
+
+ITEMS_NAMESPACE_KEY - Pickle_Key 
+	/Engine/Binaries/Mac/StringTables/ItemLongDescriptions.csv - "A pickle that has been carved like a key." 
+	/Engine/Binaries/Mac/StringTables/ItemDescriptions.csv - "pickle key" 
+
+ITEMS_NAMESPACE_KEY - Knife 
+	/Engine/Binaries/Mac/StringTables/ItemLongDescriptions.csv - "Very sharp knife I found." 
+	/Engine/Binaries/Mac/StringTables/ItemDescriptions.csv - "knife" 
+

@@ -1,0 +1,58 @@
+// (c) 2025 Sarah Smith
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Blueprint/UserWidget.h"
+#include "Components/Button.h"
+#include "Components/TextBlock.h"
+#include "DialogPrompt.generated.h"
+
+class UImage;
+
+/**
+ * 
+ */
+UCLASS()
+class ADVENTUREGAME_API UDialogPrompt : public UUserWidget
+{
+    GENERATED_BODY()
+public:
+    virtual void NativeOnInitialized() override;
+
+    /// The bullet at the start of each line
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+    UImage *PromptBullet;
+
+    /// The button to activate the prompt
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+    UButton *PromptButton;
+
+    /// The text of the button
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+    UTextBlock *PromptText;
+
+    UFUNCTION(BlueprintCallable)
+    void SetText(FText TextToSet);
+
+    UFUNCTION(BlueprintCallable)
+    void HighlightText();
+
+    UFUNCTION(BlueprintCallable)
+    void ResetText();
+
+    UFUNCTION(BlueprintCallable)
+    void HidePrompt();
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool HasBeenUsed;
+
+    UFUNCTION()
+    void HandleOnClicked();
+
+    UFUNCTION()
+    void HandleOnHover();
+
+    UFUNCTION()
+    void HandleOnUnhover();
+};

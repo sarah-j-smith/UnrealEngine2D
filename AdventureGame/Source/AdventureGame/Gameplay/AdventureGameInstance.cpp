@@ -11,10 +11,43 @@
 #include "../HotSpots/Door.h"
 #include "../Items/ItemList.h"
 #include "AdventureSave.h"
+#include "AdventureGame/Constants.h"
 
 #include "GameFramework/SaveGame.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Kismet/GameplayStatics.h"
+
+void UAdventureGameInstance::Init()
+{
+	Super::Init();
+
+	/**
+ *	@see UGameplayStatics::CreateSaveGameObject
+ *	@see UGameplayStatics::SaveGameToSlot
+ *	@see UGameplayStatics::DoesSaveGameExist
+ *	@see UGameplayStatics::LoadGameFromSlot
+ *	@see UGameplayStatics::DeleteGameInSlot
+ */
+	// CurrentSaveGame = UGameplayStatics::CreateSaveGameObject(SaveClass);
+	if (UGameplayStatics::DoesSaveGameExist(SAVE_GAME_NAME, 0))
+	{
+		USaveGame *SaveGame = UGameplayStatics::LoadGameFromSlot(SAVE_GAME_NAME, 0);
+		CurrentSaveGame = Cast<UAdventureSave>(SaveGame);
+	}
+
+	if (!Inventory)
+	{
+		if (InventoryClass)
+		{
+			Inventory = NewObject<UItemList>(this, InventoryClass, TEXT("Inventory"));
+		}
+		else
+		{
+			Inventory = NewObject<UItemList>(this, TEXT("Inventory"));
+			UE_LOG(LogAdventureGame, Log, TEXT("Created new inventory of UItemList type. Set InventoryClass property in AdventureGameInstance to customise this."));
+		}
+	}
+}
 
 void UAdventureGameInstance::OnLoadRoom()
 {
@@ -33,6 +66,12 @@ void UAdventureGameInstance::LoadStartingRoom()
 {
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::LoadStartingRoom"));
 	RoomTransitionPhase = ERoomTransitionPhase::LoadStartingRoom;
+
+	if (UAdventureSave *Save = CurrentSaveGame)
+	{
+		
+	}
+	
 	FLatentActionInfo LatentActionInfo = GetLatentActionForHandler(OnRoomLoadedName);
 	UGameplayStatics::LoadStreamLevel(GetWorld(), StartingLevelName,
 	                                  true, false, LatentActionInfo);
@@ -241,29 +280,6 @@ void UAdventureGameInstance::LoadDoor(const ADoor* Door)
 	AdventureCharacter->TeleportToLocation(Door->WalkToPosition);
 	AdventureCharacter->SetFacingDirection(Door->FacingDirection);
 	AdventureCharacter->SetupCamera();
-}
-
-void UAdventureGameInstance::Init()
-{
-	Super::Init();
-
-	if (TSubclassOf<USaveGame> SaveClass = SaveGameClass)
-	{
-		CurrentSaveGame = NewObject<UAdventureSave>(this, SaveClass);
-	}
-
-	if (!Inventory)
-	{
-		if (InventoryClass)
-		{
-			Inventory = NewObject<UItemList>(this, InventoryClass, TEXT("Inventory"));
-		}
-		else
-		{
-			Inventory = NewObject<UItemList>(this, TEXT("Inventory"));
-			UE_LOG(LogAdventureGame, Log, TEXT("Created new inventory of UItemList type. Set InventoryClass property in AdventureGameInstance to customise this."));
-		}
-	}
 }
 
 void UAdventureGameInstance::LoadRoom(ADoor* FromDoor)

@@ -744,7 +744,7 @@ void AAdventurePlayerController::TriggerUpdateInteractionText()
 
 void AAdventurePlayerController::PlayerBark(FText BarkText)
 {
-    PlayerCharacter->PlayerBark(BarkText);
+    AdventureHUDWidget->Bark->SetText(BarkText);
 }
 
 void AAdventurePlayerController::PlayerClimb(int32 UID, EInteractTimeDirection InteractDirection)

@@ -4,12 +4,8 @@
 
 #include "../AdventureGame.h"
 #include "../HUD/AdvGameUtils.h"
-#include "BarkText.h"
 #include "Components/CapsuleComponent.h"
-#include "Blueprint/WidgetLayoutLibrary.h"
-#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
 
@@ -17,9 +13,11 @@ AAdventureCharacter::AAdventureCharacter()
 {
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("Construct: AAdventureCharacter - Player movement controlled by AI"));
 
-	BarkTextComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("BarkTextComponent"));
-	BarkTextComponent->SetupAttachment(RootComponent);
-
+	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
+	Sphere->SetupAttachment(RootComponent);
+	Sphere->SetSphereRadius(4.0);
+	Sphere->SetRelativeLocation(FVector(0, -20, 0));
+	
 	OnClimbOverrideEndDelegate.BindUObject(this, &AAdventureCharacter::OnInteractAnimOverrideEnd);
 	OnInteractOverrideEndDelegate.BindUObject(this, &AAdventureCharacter::OnInteractAnimOverrideEnd);
 }
@@ -27,10 +25,6 @@ AAdventureCharacter::AAdventureCharacter()
 void AAdventureCharacter::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-	BarkTextComponent->SetWidgetClass(BarkTextClass);
-	BarkTextComponent->SetWidgetSpace(EWidgetSpace::Screen);
-	BarkTextComponent->SetDrawSize(BarkTextSize);
-	BarkRelativeOffset = BarkTextComponent->GetComponentLocation() - GetCapsuleComponent()->GetComponentLocation();
 	OnSitOverrideEndDelegate.BindUObject(this, &AAdventureCharacter::OnSitAnimOverrideEnd);
 	OnClimbOverrideEndDelegate.BindUObject(this, &AAdventureCharacter::OnClimbAnimOverrideEnd);
 	OnInteractOverrideEndDelegate.BindUObject(this, &AAdventureCharacter::OnInteractAnimOverrideEnd);
@@ -43,13 +37,6 @@ void AAdventureCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AAdventureCharacter::BeginPlay"));
-
-	check(BarkTextComponent);
-	UUserWidget* ComponentWidget = BarkTextComponent->GetWidget();
-	check(ComponentWidget);
-	BarkText = Cast<UBarkText>(ComponentWidget);
-	check(BarkText);
-	BarkText->SetText(FText::GetEmpty());
 }
 
 void AAdventureCharacter::Tick(float DeltaTime)
@@ -66,15 +53,6 @@ void AAdventureCharacter::Tick(float DeltaTime)
 		{
 			LastNonZeroMovement = Velocity;
 		}
-	}
-
-	if (bBarkTimerActive)
-	{
-		if (bBarkTextConfinesNeedsUpdate)
-		{
-			UpdateBarkTextConfines();
-		}
-		ConstrainBarkText();
 	}
 }
 
@@ -241,44 +219,17 @@ EWalkDirection AAdventureCharacter::GetFacingDirection()
 	return EWalkDirection::Down;
 }
 
-void AAdventureCharacter::PlayerBark(const FText &NewBarkText)
+void AAdventureCharacter::PlayerBark(FText TextToBark)
 {
-	if (bBarkTimerActive)
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (AAdventurePlayerController *Apc = Cast<AAdventurePlayerController>(PlayerController))
 	{
-		ClearBark();
+		// Apc->AdventureHUDWidget->
 	}
-	BarkText->SetText(NewBarkText);
-	BarkTextComponent->SetVisibility(true);
-	bBarkTextConfinesNeedsUpdate = true;
-	GetWorldTimerManager().SetTimer(BarkTimerHandle,
-		this, &AAdventureCharacter::BarkTimerTimeout, 1.0,
-		false, BarkDelay);
-	bBarkTimerActive = true;
 }
 
 void AAdventureCharacter::ClearBark()
 {
-	BarkText->SetText(FText::GetEmpty());
-	BarkTextComponent->SetVisibility(false);
-	GetWorldTimerManager().ClearTimer(BarkTimerHandle);
-	bBarkTimerActive = false;
-}
-
-void AAdventureCharacter::BarkTimerTimeout()
-{
-	ClearBark();
-	bBarkTextConfinesNeedsUpdate = true;
-	UpdateBarkTextConfines();
-}
-
-void AAdventureCharacter::ConstrainBarkText()
-{
-	FVector IdealBarkLocation = GetCapsuleComponent()->GetComponentLocation() + BarkRelativeOffset;
-	FVector NewBarkPosition;
-	NewBarkPosition.X = UKismetMathLibrary::FClamp(IdealBarkLocation.X, UpdatedBarkConfineMin.X, UpdatedBarkConfineMax.X);
-	NewBarkPosition.Y = UKismetMathLibrary::FClamp(IdealBarkLocation.Y, UpdatedBarkConfineMin.Y, UpdatedBarkConfineMax.Y);
-	NewBarkPosition.Z = IdealBarkLocation.Z;
-	BarkTextComponent->SetWorldLocation(NewBarkPosition);
 }
 
 void AAdventureCharacter::SetupCamera()
@@ -300,42 +251,4 @@ void AAdventureCharacter::SetupCamera()
 	{
 		UE_LOG(LogAdventureGame, Warning, TEXT("AAdventureCharacter::SetupCamera failed - misplaced or no camera set in this level?"));
 	}
-	InitializeBarkTextConfines(Camera);
-}
-
-void AAdventureCharacter::InitializeBarkTextConfines(AFollowCamera *Camera)
-{
-	Camera->GetSceneBounds(BarkConfineMax, BarkConfineMin);
-	UE_LOG(LogAdventureGame, Log, TEXT("InitializeBarkTextConfines - GetSceneBounds - ConfineMax: %s - ConfineMin: %s"),
-		*(BarkConfineMax.ToString()), *(BarkConfineMin.ToString()));
-}
-
-void AAdventureCharacter::UpdateBarkTextConfines()
-{
-	if (!bBarkTextConfinesNeedsUpdate) return;
-	if (!BarkTextComponent) return;
-	bBarkTextConfinesNeedsUpdate = false;
-
-	auto Geometry = BarkText->GetCachedGeometry();
-	auto LocalSize = Geometry.GetLocalSize();
-	auto ScreenPosition = Geometry.LocalToAbsolute(FVector2D(0, 0)); //TopLeft
-	auto ScreenSize = Geometry.LocalToAbsolute(LocalSize) - ScreenPosition;
-	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UpdateBarkTextConfines - Screen Size w x h: %f x %f"), ScreenSize.X, ScreenSize.Y);
-
-	auto WorldContextObject = GetWorld();
-	FVector2D ViewportSize = UWidgetLayoutLibrary::GetViewportSize(WorldContextObject);
-	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UpdateBarkTextConfines - ViewportSize w x h: %f x %f"), ViewportSize.X, ViewportSize.Y);
-
-	float WidgetScale = ViewportSize.X / (fabs(BarkConfineMax.X) + fabs(BarkConfineMin.X));
-	
-	float halfWidth = fabs(ScreenSize.X) / (WidgetScale * 2);
-	float height = fabs(ScreenSize.Y) / WidgetScale;
-	
-	/// The anchor point for the bark text is at the bottom center of the rectangle of
-	/// the text. The text grows upward if it is multiple lines.
-	UpdatedBarkConfineMax = BarkConfineMax - FVector(halfWidth, height, 0.0);
-	UpdatedBarkConfineMin = BarkConfineMin + FVector(halfWidth, 0, 0.0);
-	
-	UE_LOG(LogAdventureGame, Log, TEXT("UpdateBarkTextConfines - UpdatedBarkConfineMax: %s - UpdatedBarkConfineMin: %s"),
-		*(UpdatedBarkConfineMax.ToString()), *(UpdatedBarkConfineMin.ToString()));
 }

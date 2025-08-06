@@ -5,10 +5,13 @@
 #include "CoreMinimal.h"
 #include "InteractionHUD.h"
 #include "InventoryUI.h"
+#include "PromptList.h"
 #include "VerbsUI.h"
+#include "AdventureGame/Dialog/BarkText.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
+#include "Components/WidgetSwitcher.h"
 #include "AdventureGameHUD.generated.h"
 
 class AAdventureCharacter;
@@ -37,6 +40,15 @@ public:
 	UInventoryUI *InventoryUI;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	UWidgetSwitcher *UISwitcher;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	UPromptList *PromptList;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	UBarkText *Bark;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UImage *BlackScreen;
 
 	UFUNCTION()
@@ -61,6 +73,10 @@ public:
 	void SetInteractionText();
 
 	void SetInventoryText();
+
+	void ShowPromptList();
+
+	void HidePromptList();
 	
 private:
 	
