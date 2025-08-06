@@ -3,7 +3,6 @@
 #include "AdventureGame.h"
 #include "Constants.h"
 #include "Internationalization/StringTableRegistry.h"
-#include "PropertyEditorModule.h"
 #include "Modules/ModuleManager.h"
 
 DEFINE_LOG_CATEGORY(LogAdventureGame);

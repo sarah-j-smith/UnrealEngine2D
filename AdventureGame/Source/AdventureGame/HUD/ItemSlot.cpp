@@ -6,7 +6,6 @@
 #include "../Player/AdventurePlayerController.h"
 #include "../Items/InventoryItem.h"
 #include "Kismet/GameplayStatics.h"
-#include "Tools/UEdMode.h"
 
 void UItemSlot::NativeOnInitialized()
 {
@@ -85,7 +84,11 @@ void UItemSlot::SetButtonImageFromInventoryItem(const UInventoryItem* InventoryI
 	SavedStyle = ItemSlot->GetBrush();
 	FSlateBrush NewBrush = SavedStyle;
 	NewBrush.DrawAs = ESlateBrushDrawType::Type::Image;
+#if WITH_EDITOR
 	NewBrush.SetResourceObject(InventoryItem->Thumbnail->GetSourceTexture());
+#else
+	NewBrush.SetResourceObject(InventoryItem->Thumbnail->GetBakedTexture());
+#endif
 	ItemSlot->SetBrush(NewBrush);
 }
 

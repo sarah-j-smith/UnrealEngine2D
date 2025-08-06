@@ -53,6 +53,6 @@ public:
     UFUNCTION(BlueprintPure)
     static FString GetProjectVersion();
 
-    UFUNCTION(BLueprintCallable, Category = "Player Actions", meta = (WorldContext = "WorldContextObject"))
-    static float GetBarkTime(FString BarkText);
+    UFUNCTION(BLueprintCallable, Category = "Player Actions", BlueprintPure)
+    static float GetBarkTime(const FString &BarkText);
 };

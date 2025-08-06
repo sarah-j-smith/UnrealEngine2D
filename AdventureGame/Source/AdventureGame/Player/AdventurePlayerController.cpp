@@ -11,6 +11,7 @@
 #include "../Items/InventoryItem.h"
 #include "../HUD/ItemSlot.h"
 #include "../Items/ItemList.h"
+#include "AdventureGame/Gameplay/AdvBlueprintFunctionLibrary.h"
 
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
@@ -24,6 +25,7 @@ AAdventurePlayerController::AAdventurePlayerController()
     bEnableMouseOverEvents = true;
 
     MovementCompleteTimerDelegate.BindUObject(this, &AAdventurePlayerController::HandleMovementComplete);
+    BarkTimerDelegate.BindUObject(this, &AAdventurePlayerController::OnBarkTimerTimeOut);
 
     UE_LOG(LogAdventureGame, VeryVerbose, TEXT("Construct: AAdventurePlayerController"));
 }
@@ -187,6 +189,8 @@ void AAdventurePlayerController::HandlePointAndClickInput()
     if (!IsValid(PlayerCharacter)) return;
     if (!Cast<AAdventureAIController>(PlayerCharacter->Controller)) return;
 
+    if (IsBarking) ClearBark();
+    
     if (AHotSpot* HotSpot = HotSpotClicked())
     {
         HandleHotSpotClicked(HotSpot);
@@ -319,7 +323,9 @@ void AAdventurePlayerController::HandleInventoryItemClicked(UItemSlot* ItemSlot)
 
     if (TargetLocked == EChoiceState::Locked && SourceLocked == EChoiceState::Locked)
     {
+#if WITH_EDITOR
         UE_LOG(LogAdventureGame, Warning, TEXT("Ignoring further click on %s - source and target are locked"), *DebugString);
+#endif
         return;
     }
     
@@ -554,7 +560,6 @@ void AAdventurePlayerController::PerformItemAction()
     switch (CurrentVerb)
     {
     case EVerbType::Give:
-        UE_LOG(LogAdventureGame, Warning, TEXT("EVerbType::Give - %s"), *DebugString);
         UInventoryItem::Execute_OnGive(SourceItem);
         break;
     case EVerbType::Open:
@@ -570,7 +575,6 @@ void AAdventurePlayerController::PerformItemAction()
         UInventoryItem::Execute_OnLookAt(SourceItem);
         break;
     case EVerbType::TalkTo:
-        UE_LOG(LogAdventureGame, Warning, TEXT("EVerbType::TalkTo - %s"), *DebugString);
         UInventoryItem::Execute_OnTalkTo(SourceItem);
         break;
     case EVerbType::Use:
@@ -742,9 +746,53 @@ void AAdventurePlayerController::TriggerUpdateInteractionText()
     UpdateInteractionTextDelegate.Broadcast();
 }
 
-void AAdventurePlayerController::PlayerBark(FText BarkText)
+void AAdventurePlayerController::PlayerBark(FText BarkText, TOptional<FColor> TextColor, float TimeToPause,
+    USphereComponent *Position, int32 BarkTaskUid)
 {
-    AdventureHUDWidget->Bark->SetText(BarkText);
+    if (IsBarking) ClearBark();
+
+    if (Position == nullptr)
+    {
+        Position = PlayerCharacter->Sphere;
+    }
+    IsBarking = true;
+    AdventureHUDWidget->AddBarkText(BarkText, Position, TextColor.Get(PlayerCharacter->BarkColor));
+
+    CurrentBarkTask = BarkTaskUid;
+    CurrentBarkText = BarkText;
+
+    if (TimeToPause == 0)
+    {
+        TimeToPause = UAdvBlueprintFunctionLibrary::GetBarkTime(BarkText.ToString());
+    }
+    GetWorldTimerManager().SetTimer(TimerHandle_Bark, BarkTimerDelegate, 1.0f, false, TimeToPause);
+}
+
+void AAdventurePlayerController::OnBarkTimerTimeOut()
+{
+    if (IsBarking)
+    {
+        EndBark.Broadcast(CurrentBarkText, CurrentBarkTask, true);
+        CurrentBarkTask = 0;
+        CurrentBarkText = FText::GetEmpty();
+        ClearBark();
+    }
+}
+
+
+void AAdventurePlayerController::ClearBark()
+{
+    if (CurrentBarkTask != 0 && !CurrentBarkText.IsEmpty())
+    {
+        // Player or something else interrupted the current bark.
+        EndBark.Broadcast(CurrentBarkText, CurrentBarkTask, false);
+    }
+    if (IsBarking)
+    {
+        GetWorldTimerManager().ClearTimer(TimerHandle_Bark);
+        IsBarking = false;
+    }
+    AdventureHUDWidget->Bark->ClearText();
 }
 
 void AAdventurePlayerController::PlayerClimb(int32 UID, EInteractTimeDirection InteractDirection)

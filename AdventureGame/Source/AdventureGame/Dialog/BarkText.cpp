@@ -5,6 +5,8 @@
 
 #include "../AdventureGame.h"
 #include "BarkLine.h"
+#include "AdventureGame/Constants.h"
+#include "AdventureGame/HUD/AdvGameUtils.h"
 
 #include "Components/VerticalBox.h"
 #include "Components/TextBlock.h"
@@ -19,7 +21,7 @@ void UBarkText::SetText(FText NewText)
 	if (NewText.IsEmpty()) return;
 	if (NewText.ToString().Contains(NEW_LINE_SEPARATOR))
 	{
-		auto Lines = NewLineSeperatedToArray(NewText);
+		auto Lines = AdvGameUtils::NewLineSeperatedToArrayText(NewText);
 		SetBarkLines(Lines);
 		return;
 	}
@@ -34,6 +36,7 @@ void UBarkText::SetText(FText NewText)
 	if (UBarkLine *BarkLine = Cast<UBarkLine>(Widget))
 	{
 		BarkLine->Text->SetText(NewText);
+		BarkLine->Text->SetColorAndOpacity(BarkTextColor);
 		BarkContainer->AddChildToVerticalBox(Widget);
 	}
 	DumpBarkText();
@@ -75,22 +78,6 @@ void UBarkText::AddQueuedBarkLine()
 			SetBarkLineTimer();
 		}
 	}
-}
-
-TArray<FText> UBarkText::NewLineSeperatedToArray(const FText& NewText)
-{
-	FString Line = NewText.ToString();
-	if (!Line.Contains(NEW_LINE_SEPARATOR)) return TArray<FText>({ NewText });
-	TArray<FText> NewLines;
-	FString First;
-	FString Rest;
-	while (Line.Split(NEW_LINE_SEPARATOR, &First, &Rest))
-	{
-		NewLines.Add(FText::FromString(First.TrimStartAndEnd()));
-		Line = Rest;
-	}
-	NewLines.Add(FText::FromString(Line.TrimStartAndEnd()));
-	return NewLines;
 }
 
 void UBarkText::SetBarkLineTimer()

@@ -9,12 +9,10 @@
 
 class UBarkLine;
 class UVerticalBox;
+class USphereComponent;
 
 #define G_MAX_BARK_LINES 3
-
 #define BARK_LINE_DELAY 3.0f
-
-#define NEW_LINE_SEPARATOR TEXT("\\n")
 
 /**
  * 
@@ -32,6 +30,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UVerticalBox *BarkContainer;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FColor BarkTextColor = FColor::Orange;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USphereComponent* BarkPosition;
+
 	UFUNCTION(BlueprintCallable)
 	void SetText(FText NewText);
 
@@ -48,8 +52,6 @@ public:
 	
 private:
 	TArray<FText> BarkLines;
-
-	TArray<FText> NewLineSeperatedToArray(const FText& NewText);
 
 	void SetBarkLineTimer();
 

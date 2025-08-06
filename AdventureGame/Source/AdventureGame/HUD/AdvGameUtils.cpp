@@ -67,3 +67,30 @@ FText AdvGameUtils::GetVerbWithHotSpotText(const AHotSpot* HotSpot, const EVerbT
     VerbArgs.Add("Subject", HotSpot->ShortDescription);
     return FText::Format(LOCTABLE(ITEM_DESCRIPTIONS_KEY, G_VERB_SUBJECT_KEY), VerbArgs);
 }
+
+TArray<FText> AdvGameUtils::NewLineSeperatedToArrayText(const FText& NewText)
+{
+    FString Line = NewText.ToString();
+    if (!Line.Contains(NEW_LINE_SEPARATOR)) return TArray<FText>({ NewText });
+    TArray<FString> NewLines = NewLineSeperatedToArrayString(Line);
+    TArray<FText> OutText;
+    Algo::Transform(NewLines, OutText, [](const FString& Str){ return FText::FromString(Str); });
+    return OutText;
+}
+
+TArray<FString> AdvGameUtils::NewLineSeperatedToArrayString(const FString& NewString)
+{
+    if (NewString.Contains(NEW_LINE_SEPARATOR))
+    {
+        TArray<FString> NewLines;
+        FString First, Rest, Buf = NewString;
+        while (Buf.Split(NEW_LINE_SEPARATOR, &First, &Rest))
+        {
+            NewLines.Add(First.TrimStartAndEnd());
+            Buf = Rest;
+        }
+        NewLines.Add(Buf.TrimStartAndEnd());
+        return NewLines;
+    }
+    return TArray({ NewString });
+}

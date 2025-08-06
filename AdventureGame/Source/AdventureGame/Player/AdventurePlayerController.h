@@ -27,6 +27,7 @@ DECLARE_MULTICAST_DELEGATE(FInterruptAction);
 DECLARE_MULTICAST_DELEGATE(FUpdateInteractionText);
 
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FEndAction, EInteractionType /* Interaction */, int32 /* UID */, bool /* Completed */);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FEndBark, FText /* BarkText */, int32 /* UID */, bool /* Completed */);
 
 /**
  * 
@@ -41,11 +42,38 @@ public:
 
 	//////////////////////////////////
 	///
+	/// PLAYER BARK
+	///
+	
+	void PlayerBark(FText BarkText, TOptional<FColor> TextColor = TOptional<FColor>(),
+		float TimeToPause = 0, USphereComponent *Position = nullptr, int32 BarkTaskUid = 0);
+
+	void ClearBark();
+
+	/// This flag is true when the Bark Timer is running, and false otherwise.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsBarking = false;
+
+	FEndBark EndBark;
+
+private:
+	FText CurrentBarkText;
+	int32 CurrentBarkTask;
+	FTimerHandle TimerHandle_Bark;
+	FTimerDelegate BarkTimerDelegate;
+
+	UFUNCTION()
+	void OnBarkTimerTimeOut();
+
+public:
+	
+	//////////////////////////////////
+	///
 	/// EVENT HANDLERS
 	///
 	
 	FEndAction EndAction;
-	
+
 	virtual void BeginPlay() override;
 	
 	void HandlePointAndClickInput();
@@ -300,9 +328,6 @@ public:
 	FInterruptAction InterruptActionDelegate;
 	FUpdateInteractionText UpdateInteractionTextDelegate;
 	FUpdateInteractionText UpdateInventoryTextDelegate;
-
-	UFUNCTION(BlueprintCallable)
-	void PlayerBark(FText BarkText);
 	
 	void PlayerClimb(int32 UID, EInteractTimeDirection InteractDirection);
 	

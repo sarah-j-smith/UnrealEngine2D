@@ -130,6 +130,17 @@ void UAdventureGameHUD::HidePromptList()
 {
 }
 
+void UAdventureGameHUD::AddBarkText(const FText& BarkText, USphereComponent* Position, TOptional<FColor> TextColor)
+{
+    Bark->BarkTextColor = TextColor.Get(FColor::White);
+    Bark->BarkPosition = Position;
+    Bark->SetText(BarkText);
+}
+
+void UAdventureGameHUD::ClearBarkText()
+{
+}
+
 void UAdventureGameHUD::HandleInventoryChanged(FName Identifier)
 {
     if (Identifier == "Inventory")

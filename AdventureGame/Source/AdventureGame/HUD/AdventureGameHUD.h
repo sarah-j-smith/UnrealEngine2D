@@ -14,6 +14,7 @@
 #include "Components/WidgetSwitcher.h"
 #include "AdventureGameHUD.generated.h"
 
+class USphereComponent;
 class AAdventureCharacter;
 class AAdventurePlayerController;
 
@@ -77,6 +78,11 @@ public:
 	void ShowPromptList();
 
 	void HidePromptList();
+
+	void AddBarkText(const FText &BarkText, USphereComponent *Position,
+		TOptional<FColor> TextColor = TOptional<FColor>());
+
+	void ClearBarkText();
 	
 private:
 	

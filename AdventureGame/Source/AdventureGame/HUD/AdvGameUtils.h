@@ -84,4 +84,20 @@ struct AdvGameUtils
         const AHotSpot* HotSpot,
         const EVerbType Verb
     );
+
+    /**
+     * Create an array of texts, by splitting the given text on the
+     * newline character "\n"
+     * @param NewText Text to split
+     * @return Array of texts.
+     */
+    static TArray<FText> NewLineSeperatedToArrayText(const FText& NewText);
+    
+    /**
+     * Create an array of strings, by splitting the given text on the
+     * newline character "\n"
+     * @param NewString Text to split
+     * @return Array of strings.
+     */
+    static TArray<FString> NewLineSeperatedToArrayString(const FString& NewString);
 };

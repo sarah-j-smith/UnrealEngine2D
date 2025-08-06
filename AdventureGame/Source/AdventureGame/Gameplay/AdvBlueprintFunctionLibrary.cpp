@@ -4,6 +4,8 @@
 #include "AdvBlueprintFunctionLibrary.h"
 #include "../Player/AdventurePlayerController.h"
 #include "../Enums/ItemKind.h"
+#include "AdventureGame/Constants.h"
+#include "AdventureGame/HUD/AdvGameUtils.h"
 #include "Kismet/GameplayStatics.h"
 
 AAdventurePlayerController* UAdvBlueprintFunctionLibrary::GetAdventureController(const UObject* WorldContextObject)
@@ -83,12 +85,24 @@ FString UAdvBlueprintFunctionLibrary::GetProjectVersion()
     return ProjectVersion;
 }
 
-float UAdvBlueprintFunctionLibrary::GetBarkTime(FString BarkText)
+float UAdvBlueprintFunctionLibrary::GetBarkTime(const FString& BarkText)
 {
+    int LineCount = 1;
+    if (BarkText.Contains(NEW_LINE_SEPARATOR))
+    {
+        for (auto Element : BarkText)
+        {
+            if (Element == '\n')
+            {
+                ++LineCount;
+            }
+        }
+    }
+    float LineDelay = LineCount * BARK_LINE_DELAY;
     const int LetterCount = BarkText.Len();
-    if (LetterCount <= SHORT_LETTER_COUNT) return SHORT_BARK_TIME;
-    if (LetterCount <= MEDIUM_LETTER_COUNT) return MEDIUM_BARK_TIME;
-    if (LetterCount <= LONG_LETTER_COUNT) return LONG_BARK_TIME;
-    if (LetterCount <= EXTRA_LONG_LETTER_COUNT) return EXTRA_LONG_BARK_TIME;
-    return 0.0f;
+    if (LetterCount <= SHORT_LETTER_COUNT) return LineDelay + SHORT_BARK_TIME;
+    if (LetterCount <= MEDIUM_LETTER_COUNT) return LineDelay + MEDIUM_BARK_TIME;
+    if (LetterCount <= LONG_LETTER_COUNT) return LineDelay + LONG_BARK_TIME;
+    if (LetterCount <= EXTRA_LONG_LETTER_COUNT) return LineDelay + EXTRA_LONG_BARK_TIME;
+    return LineDelay * 2.0;
 }
