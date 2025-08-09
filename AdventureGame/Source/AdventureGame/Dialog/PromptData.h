@@ -16,6 +16,15 @@ struct ADVENTUREGAME_API FPromptData: public FTableRowBase
 
     bool CanBeShown() const;
 
+    /**
+     * Mark this prompt as not visible. It will not be shown to the player. Various
+     * actions or events could hide a prompt, for example if a character took an
+     * action that closed off a branch of the story.
+     */
+    void Hide();
+
+    bool IsIndex(int PromptIndex, int SubIndex) const;
+
     int32 NextSubIndex() const
     {
         return PromptSubNumber + 1;

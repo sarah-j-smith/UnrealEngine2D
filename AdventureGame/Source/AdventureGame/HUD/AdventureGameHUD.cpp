@@ -26,6 +26,12 @@ void UAdventureGameHUD::NativeOnInitialized()
             this, &UAdventureGameHUD::UpdateInventoryTextEvent);
         AdventurePlayerController = APC;
     }
+    
+    FString PlatformName = UGameplayStatics::GetPlatformName();
+    if (PlatformName == "IOS" || PlatformName == "Android")
+    {
+        IsMobileTouch = true;
+    }
 
     UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameHUD::NativeOnInitialized"));
 }
@@ -174,6 +180,9 @@ void UAdventureGameHUD::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 {
     Super::NativeTick(MyGeometry, InDeltaTime);
 
-    bool MouseIsOverUI = IsHovered();
-    AdventurePlayerController->SetMouseOverUI(MouseIsOverUI);
+    if (!IsMobileTouch)
+    {
+        bool MouseIsOverUI = IsHovered();
+        AdventurePlayerController->SetMouseOverUI(MouseIsOverUI);
+    }
 }

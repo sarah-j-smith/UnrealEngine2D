@@ -9,13 +9,14 @@
 
 DECLARE_MULTICAST_DELEGATE(FPointAndClickDelegate);
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FTouchInputDelegate, float /* XCoord */, float /* YCoord */ );
+
 UCLASS()
 class ADVENTUREGAME_API APuck : public APawn
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
 	APuck();
 
 	// MARK: Inputs
@@ -23,12 +24,20 @@ public:
 	UInputAction* PointAndClickInput = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inputs)
+	UInputAction* TouchInput = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inputs)
 	UInputMappingContext* InputMappingContext = nullptr;
 
 	UFUNCTION(BlueprintCallable, Category = Input)
 	void HandlePointAndClick(const FInputActionValue &Value);
 
+	UFUNCTION(BlueprintCallable, Category = Input)
+	void HandleTouchInput(const FInputActionValue &Value);
+
 	FPointAndClickDelegate PointAndClickDelegate;
+
+	FTouchInputDelegate TouchInputDelegate;
 	
 protected:
 	// Called when the game starts or when spawned

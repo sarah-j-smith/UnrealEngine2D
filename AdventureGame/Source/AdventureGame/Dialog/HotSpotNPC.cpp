@@ -2,6 +2,8 @@
 
 
 #include "HotSpotNPC.h"
+
+#include "DialogComponent.h"
 #include "PaperFlipbookComponent.h"
 #include "../Player/AdventurePlayerController.h"
 #include "Kismet/GameplayStatics.h"
@@ -13,6 +15,10 @@ AHotSpotNPC::AHotSpotNPC()
 
     FlipbookComponent = CreateDefaultSubobject<UPaperFlipbookComponent>("FlipbookComponent");
     FlipbookComponent->SetupAttachment(RootComponent);
+    FlipbookComponent->SetLooping(true);
+    FlipbookComponent->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
+
+    DialogComponent = CreateDefaultSubobject<UDialogComponent>("DialogComponent");
 
     if (DefaultFlipbook)
     {
@@ -24,9 +30,6 @@ AHotSpotNPC::AHotSpotNPC()
 void AHotSpotNPC::BeginPlay()
 {
     Super::BeginPlay();
-
-    ConversationDataLoad.Execute(this);
-    FillConversationData();
 }
 
 // Called every frame
@@ -45,36 +48,7 @@ void AHotSpotNPC::OnConverseWith_Implementation()
     }
 }
 
-void AHotSpotNPC::FillConversationData()
+void AHotSpotNPC::OnTalkTo_Implementation()
 {
-    if (ConversationData.Num() > 0) return; // already filled
-    for (const auto TopicTable : TopicList)
-    {
-        TArray<FPromptData> PromptsForTopic;
-        TArray<FPromptData*> PromptPtrs;
-        TopicTable->GetAllRows<FPromptData>("FillConversationData", PromptPtrs);
-        for (const FPromptData *PromptData : PromptPtrs)
-        {
-            if (PromptData)
-            {
-                PromptsForTopic.Add(*PromptData);
-            }
-        }
-        FConversationData TopicConversationData;
-        TopicConversationData.ConversationPromptArray = PromptsForTopic;
-        ConversationData.Add(TopicConversationData);
-    }
+    Super::OnTalkTo_Implementation();
 }
-
-void AHotSpotNPC::UpdatePromptAtIndex(int32 TopicIndex, int32 PromptIndex)
-{
-    auto TopicData = ConversationData[TopicIndex];
-    const int32 LastValidPromptIndex = TopicData.ConversationPromptArray.Num() - 1;
-    auto PromptData = TopicData.ConversationPromptArray[PromptIndex];
-
-    if (PromptData.SingleUse)
-    {
-        
-    }
-}
-

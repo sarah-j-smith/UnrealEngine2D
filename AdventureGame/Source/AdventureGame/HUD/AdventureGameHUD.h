@@ -85,6 +85,7 @@ public:
 	void ClearBarkText();
 	
 private:
+    bool IsMobileTouch = false;
 	
 	TWeakObjectPtr<AAdventureCharacter> PlayerCharacter;
 

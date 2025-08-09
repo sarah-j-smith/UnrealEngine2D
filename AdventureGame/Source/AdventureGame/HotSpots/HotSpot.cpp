@@ -174,6 +174,10 @@ void AHotSpot::OnItemUsed_Implementation()
 			// recipe in the ItemDataAsset. 
 			if (Apc->SourceItem->ItemKind == ItemDataAsset->SourceItem)
 			{
+				if (IsValid(ItemDataAsset->UseSuccessSound))
+				{
+					UGameplayStatics::PlaySound2D(this, ItemDataAsset->UseSuccessSound);
+				}
 				ItemDataAsset->OnItemUseSuccess();
 				return;
 			}

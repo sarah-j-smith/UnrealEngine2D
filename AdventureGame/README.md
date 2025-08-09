@@ -37,3 +37,10 @@ author of this font, and its been resold many times on the internet by unethical
 
 Door - Stone - Large - 001.wav by DWOBoyle -- https://freesound.org/s/474178/ -- License: Attribution 4.0
 
+button 6.wav by bubaproducer -- https://freesound.org/s/107153/ -- License: Attribution 4.0
+
+VS Button Click 04.mp3 by Vilkas_Sound -- https://freesound.org/s/707041/ -- License: Attribution 4.0
+
+Looping Gentle Wind Ambience on an Open Desert Plain.wav by dhallcomposer -- https://freesound.org/s/697217/ -- License: Creative Commons 0
+
+Button hover.wav by Fachii -- https://freesound.org/s/338229/ -- License: Creative Commons 0

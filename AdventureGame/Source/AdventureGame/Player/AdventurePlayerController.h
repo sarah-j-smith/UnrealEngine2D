@@ -71,10 +71,18 @@ public:
 	///
 	/// EVENT HANDLERS
 	///
+
+#if WITH_EDITORONLY_DATA
+	/// For game debugging, teleport to locations instead of walking there.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool TeleportInsteadOfWalk = false;
+#endif
 	
 	FEndAction EndAction;
 
 	virtual void BeginPlay() override;
+
+	void HandleTouchInput(float X, float Y);
 	
 	void HandlePointAndClickInput();
 
@@ -372,6 +380,9 @@ private:
 	
 	/// Get the Hotspot under the click location, or null if no hotspot was found
 	AHotSpot *HotSpotClicked();
+
+	/// Get the Hotspot under the tap location, or null if no hotspot was found
+	AHotSpot *HotSpotTapped(float LocationX, float LocationY);
 
 	/// Invoke AI to move the character to the HotSpot's MoveToLocation
 	void WalkToHotSpot(AHotSpot *HotSpot);

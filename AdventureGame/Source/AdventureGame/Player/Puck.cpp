@@ -24,6 +24,12 @@ void APuck::HandlePointAndClick(const FInputActionValue& Value)
 	PointAndClickDelegate.Broadcast();
 }
 
+void APuck::HandleTouchInput(const FInputActionValue& Value)
+{
+	const FVector2D TouchLocation = Value.Get<FVector2D>();
+	TouchInputDelegate.Broadcast(TouchLocation.X, TouchLocation.Y);
+}
+
 // Called when the game starts or when spawned
 void APuck::BeginPlay()
 {
@@ -65,6 +71,8 @@ void APuck::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	{
 		InputComponent->BindAction(PointAndClickInput, ETriggerEvent::Triggered, this,
 								   &APuck::HandlePointAndClick);
+		InputComponent->BindAction(TouchInput, ETriggerEvent::Triggered, this,
+								   &APuck::HandleTouchInput);
 		UE_LOG(LogAdventureGame, Verbose, TEXT("APuck::SetupPlayerInputComponent PointAndClickInput bindings done"));
 	}
 }

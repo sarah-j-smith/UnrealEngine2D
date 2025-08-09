@@ -43,7 +43,6 @@ void UItemDataAsset::OnItemUseSuccess_Implementation()
                     if (!Success && Door->DoorState != EDoorState::Locked)
                     {
                         AdventurePlayerController->PlayerBark(LOCTABLE(ITEM_STRINGS_KEY, "AlreadyUnlocked"));
-                        
                     }
                 }
             }
@@ -66,7 +65,6 @@ void UItemDataAsset::OnItemUseSuccess_Implementation()
             break;
         }
         AdventurePlayerController->PlayerBark(Success ? UseSuccessBarkText : UseFailureBarkText);
-        StartTimer();
     }
 }
 

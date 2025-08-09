@@ -9,11 +9,9 @@
 #include "AdventureGame/HotSpots/HotSpot.h"
 #include "HotSpotNPC.generated.h"
 
+class UDialogComponent;
 class UPaperFlipbook;
 class UPaperFlipbookComponent;
-
-DECLARE_DYNAMIC_DELEGATE_OneParam(FConversationDataLoad, AHotSpotNPC *, NPC);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FConversationDataSave, AHotSpotNPC *, NPC);
 
 /**
  * An Non-player Character who just stays in the one position, and uses
@@ -36,33 +34,16 @@ public:
     // Called every frame
     virtual void Tick(float DeltaTime) override;
 
-    FConversationDataLoad ConversationDataLoad;
-    FConversationDataSave ConversationDataSave;
-
     virtual void OnConverseWith_Implementation() override;
 
-    // Copy the data out of the TopicList tables into local ConversationData arrays
-    UFUNCTION(BlueprintCallable, Category = "HotSpot")
-    void FillConversationData();
+    virtual void OnTalkTo_Implementation() override;
 
-    UFUNCTION(BlueprintCallable, Category = "HotSpot")
-    void UpdatePromptAtIndex(int32 TopicIndex, int32 PromptIndex);
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "NPC")
+    UDialogComponent *DialogComponent;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
     UPaperFlipbookComponent *FlipbookComponent;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "NPC")
     UPaperFlipbook *DefaultFlipbook;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Dialog")
-    FLinearColor TextColor = G_NPC_Default_Text_Colour;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog")
-    TArray<FConversationData> ConversationData;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog")
-    TArray<UDataTable *> TopicList;
-
-private:
-    
 };

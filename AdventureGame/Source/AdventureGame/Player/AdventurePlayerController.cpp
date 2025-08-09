@@ -168,6 +168,7 @@ APawn* AAdventurePlayerController::SetupPuck(AAdventureCharacter* PlayerCharacte
         FRotator::ZeroRotator);
 
     Puck->PointAndClickDelegate.AddUObject(this, &AAdventurePlayerController::HandlePointAndClickInput);
+    Puck->TouchInputDelegate.AddUObject(this, &AAdventurePlayerController::HandleTouchInput);
     return Puck;
 }
 
@@ -183,8 +184,38 @@ void AAdventurePlayerController::SetupAIController(APawn* AttachToPawn)
         this, &AAdventurePlayerController::HandleAIMovementCompleteNotify);
 }
 
+void AAdventurePlayerController::HandleTouchInput(float LocationX, float LocationY)
+{
+    const FString Message = FString::Printf(TEXT("TouchInput x: %f, y: %f"), LocationX, LocationY);
+    GEngine->AddOnScreenDebugMessage(1, 5.0, FColor::Cyan,
+                        *Message,false, FVector2D(2.0, 2.0));
+
+    if (IsPerformingTaskInteraction || LockInput) return;
+    if (!IsValid(PlayerCharacter)) return;
+
+    if (IsBarking) ClearBark();
+    
+    if (AHotSpot* HotSpot = HotSpotTapped(LocationX, LocationY))
+    {
+        HandleHotSpotClicked(HotSpot);
+    }
+    else
+    {
+        FVector MouseWorldLocation, MouseWorldDirection;
+        DeprojectScreenPositionToWorld(LocationX, LocationY, MouseWorldLocation, MouseWorldDirection);
+
+        const FVector PlayerLocation = PlayerCharacter->GetCapsuleComponent()->GetComponentLocation();
+        MouseWorldLocation.Z = PlayerLocation.Z;
+        HandleLocationClicked(MouseWorldLocation);
+    }
+}
+
 void AAdventurePlayerController::HandlePointAndClickInput()
 {
+    GEngine->AddOnScreenDebugMessage(1, 5.0, FColor::White,
+                        TEXT("PointAndClick"),
+                                 false, FVector2D(2.0, 2.0));
+
     if (IsPerformingTaskInteraction || LockInput || IsMouseOverUI) return;
     if (!IsValid(PlayerCharacter)) return;
     if (!Cast<AAdventureAIController>(PlayerCharacter->Controller)) return;
@@ -411,10 +442,7 @@ AHotSpot* AAdventurePlayerController::HotSpotClicked()
 {
     FHitResult HitResult;
     GetHitResultUnderCursor(ECC_Visibility, true, HitResult);
-    if (!HitResult.IsValidBlockingHit())
-    {
-        GetHitResultUnderFinger(ETouchIndex::Type::Touch1, ECC_Visibility, true, HitResult);
-    }
+    if (!HitResult.IsValidBlockingHit()) return nullptr;
     AActor* HitActor = HitResult.GetActor();
     if (AHotSpot* HotSpot = Cast<AHotSpot>(HitActor))
     {
@@ -427,6 +455,23 @@ AHotSpot* AAdventurePlayerController::HotSpotClicked()
     }
     return nullptr;
 }
+
+AHotSpot* AAdventurePlayerController::HotSpotTapped(float X, float Y)
+{
+    FHitResult HitResult;
+    GetHitResultUnderFinger(ETouchIndex::Type::Touch1, ECC_Visibility, true, HitResult);
+    if (!HitResult.IsValidBlockingHit()) return nullptr;
+    AActor* HitActor = HitResult.GetActor();
+    if (AHotSpot* HotSpot = Cast<AHotSpot>(HitActor))
+    {
+        FString HotSpotMessage = FString::Printf(TEXT("Got HotSpot: %s"), *HotSpot->GetName());
+        GEngine->AddOnScreenDebugMessage(1, 20.0, FColor::White, HotSpotMessage,
+                                         false, FVector2D(2.0, 2.0));
+        return HotSpot;
+    }
+    return nullptr;
+}
+
 
 void AAdventurePlayerController::ClearCurrentPath()
 {
@@ -467,6 +512,19 @@ void AAdventurePlayerController::WalkToLocation(const FVector& Location)
     {
         return;
     }
+    
+#if WITH_EDITOR
+    if (TeleportInsteadOfWalk)
+    {
+        FVector Dest = Location; Dest.Z = PlayerCharacter->GetCapsuleComponent()->GetComponentLocation().Z;
+        PlayerCharacter->TeleportToLocation(Dest);
+        LastPathResult = EAIMoveResult::Success;
+        AIStatus = EAIStatus::AlreadyThere;
+        GetWorldTimerManager().SetTimerForNextTick(MovementCompleteTimerDelegate);
+        return;
+    }
+#endif
+    
     AIStatus = EAIStatus::MakingRequest;
     switch (AI->MoveToLocation(Location, 1.0))
     {
@@ -494,6 +552,7 @@ void AAdventurePlayerController::WalkToLocation(const FVector& Location)
  */
 void AAdventurePlayerController::HandleAIMovementCompleteNotify(EPathFollowingResult::Type Result)
 {
+    UE_LOG(LogAdventureGame, Warning, TEXT("HandleAIMovementCompleteNotify"));
     if (Result == EPathFollowingResult::Success)
     {
         if (AIStatus == EAIStatus::MakingRequest)
@@ -514,17 +573,21 @@ void AAdventurePlayerController::SwapSourceAndTarget()
 
 void AAdventurePlayerController::HandleMovementComplete()
 {
+    UE_LOG(LogAdventureGame, Warning, TEXT("HandleAIMovementCompleteNotify"));
+    AIStatus = EAIStatus::Idle;
     if (CurrentHotSpot && (LastPathResult == EAIMoveResult::Success))
     {
         PlayerCharacter->SetFacingDirection(CurrentHotSpot->FacingDirection);
         PlayerCharacter->TeleportToLocation(CurrentHotSpot->WalkToPosition);
         PerformHotSpotInteraction();
+        return;
     }
-    AIStatus = EAIStatus::Idle;
+    InterruptCurrentAction();
 }
 
 void AAdventurePlayerController::AssignVerb(EVerbType NewVerb)
 {
+    ClearBark();
     CurrentVerb = NewVerb;
     switch (NewVerb)
     {
@@ -598,7 +661,6 @@ void AAdventurePlayerController::PerformItemAction()
 
 void AAdventurePlayerController::PerformInstantAction()
 {
-    SetInputLocked(true);
     CurrentCommand = EPlayerCommand::InstantActive;
     if (SourceItem)
     {
@@ -661,8 +723,6 @@ UItemList* AAdventurePlayerController::GetInventoryItemList()
 
 void AAdventurePlayerController::PerformHotSpotInteraction()
 {
-    SetInputLocked(true);
-    
     // This `Execute_Verb` pattern will call C++ and Blueprint overrides.
     // The use of eg CurrentHotSpot->OnClose() does not work as BP's don't do
     // polymorphism and have to be dispatched in code.

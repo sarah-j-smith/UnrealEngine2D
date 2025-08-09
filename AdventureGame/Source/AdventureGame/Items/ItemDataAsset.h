@@ -47,31 +47,40 @@ public:
 
 	/// If the items are used the other way around, does it matter?
 	/// Using a TV remote on a TV might matter - may want to say "false"
-	/// since "Use screwdriver on clock" does not sound right. But if its
+	/// since "Use TV on remote" does not sound right. But if its
 	/// like mixing two ingredients "Use flour on water" should be the
 	/// same as "Use water on flour" - so use <code>true</code> which
 	/// is the default.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ItemAction")
 	bool CanSwapSourceAndTarget = true;
 
+	/// What text to bark if the Use is successful
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="BarkText")
 	FText UseSuccessBarkText;
 
+	/// What sound to play if the Use is successful
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ItemAction")
+	USoundWave *UseSuccessSound;
+
+	/// What text to bark if the Use fails
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="BarkText")
 	FText UseFailureBarkText;
 
+	/// What text to bark if the Give is successful
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="BarkText")
 	FText GiveSuccessBarkText;
 
+	/// What text to bark if the Give fails
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="BarkText")
 	FText GiveFailureBarkText;
 
+	/// If the tool is used on a consumable, what should the result be
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ItemAction")
 	EItemKind ToolResultItem;
 
 	/// How many seconds should the players command remain highlighted
 	/// and input locked after executing it.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float InteractionTimeout = 5.0f;
 
 	UFUNCTION(BlueprintCallable, Category="ItemAction")

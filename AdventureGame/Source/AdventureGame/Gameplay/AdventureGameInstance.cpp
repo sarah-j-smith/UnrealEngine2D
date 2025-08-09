@@ -15,6 +15,7 @@
 
 #include "GameFramework/SaveGame.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 void UAdventureGameInstance::Init()
@@ -277,7 +278,14 @@ void UAdventureGameInstance::LoadDoor(const ADoor* Door)
 	AAdventurePlayerController* AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
 	AAdventureCharacter* AdventureCharacter = AdventurePlayerController->PlayerCharacter;
 
-	AdventureCharacter->TeleportToLocation(Door->WalkToPosition);
+	FVector Location = Door->WalkToPoint->GetComponentLocation();
+	Location.Z = AdventureCharacter->GetCapsuleComponent()->GetComponentLocation().Z;
+	AdventureCharacter->TeleportToLocation(Location);
+	TArray<FName> Sockts = Door->WalkToPoint->GetAllSocketNames();
+	for (FName Sockt : Sockts)
+	{
+		UE_LOG(LogAdventureGame, Warning, TEXT("UAdventureGameInstance::LoadDoor - got: %s"), *Sockt.ToString());
+	}
 	AdventureCharacter->SetFacingDirection(Door->FacingDirection);
 	AdventureCharacter->SetupCamera();
 }

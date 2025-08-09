@@ -8,7 +8,16 @@ bool FPromptData::CanBeShown() const
     // If a prompt is SingleUse and has been selected already then we can't show it.
     if (SingleUse && HasBeenSelected) return false;
 
-    // If its otherwise not a SingleUse prompt that has already been shown, then
-    // it can be shown if its visible.
+    // Otherwise, it can be shown as long as its visible.
     return Visible;
+}
+
+void FPromptData::Hide()
+{
+    Visible = false;
+}
+
+bool FPromptData::IsIndex(int PromptIndex, int SubIndex) const
+{
+    return PromptNumber == PromptIndex && SubIndex == PromptSubNumber;
 }

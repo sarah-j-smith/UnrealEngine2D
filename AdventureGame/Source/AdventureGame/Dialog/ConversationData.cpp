@@ -2,17 +2,18 @@
 
 #include "AdventureGame/AdventureGame.h"
 #include "AdventureGame/Constants.h"
+#include "Algo/Count.h"
 
-TArray<FPromptData> FConversationData::DisplayPrompts()
+void FConversationData::DisplayPrompts(TArray<FPromptData>& OutPromptData) const
 {
-    TArray<FPromptData> PromptsToDisplay;
+    OutPromptData.Empty();
     const int MaxPromptIndex = GetMaxPromptIndex();
     int PromptIndex = 0;
     int PromptSubindex = 0;
     int PromptCount = 0;
     while (PromptCount < GMax_Number_Of_Prompts && PromptIndex <= MaxPromptIndex)
     {
-        if (const FPromptData *Prompt = FindPromptAtIndex(PromptIndex, PromptSubindex))
+        if (const FPromptData* Prompt = FindPromptAtIndex(PromptIndex, PromptSubindex))
         {
             while (Prompt && Prompt->SingleUse && Prompt->HasBeenSelected)
             {
@@ -20,21 +21,49 @@ TArray<FPromptData> FConversationData::DisplayPrompts()
             }
             if (Prompt)
             {
-                PromptsToDisplay.Add(*Prompt);
+                OutPromptData.Add(*Prompt);
                 ++PromptCount;
             }
         }
         PromptIndex++;
         PromptSubindex = 0;
     }
-    if (PromptsToDisplay.Num() == 0)
+    if (OutPromptData.Num() == 0)
     {
         UE_LOG(LogAdventureGame, Warning, TEXT("No prompts selected."));
     }
-    return PromptsToDisplay;
 }
 
-FPromptData * FConversationData::FindPromptAtIndex(int32 PromptIndex, int32 SubIndex)
+void FConversationData::MarkPromptSelected(int PromptIndex, int SubIndex)
+{
+    FPromptData* FoundResult = ConversationPromptArray.FindByPredicate(
+        [PromptIndex, SubIndex](const FPromptData& PromptData)
+        {
+            return PromptData.IsIndex(PromptIndex, SubIndex);
+        });
+    FoundResult->HasBeenSelected = true;
+    if (FoundResult->SingleUse)
+    {
+        FoundResult->Visible = false;
+    }
+}
+
+int FConversationData::PromptsAvailableCount() const
+{
+    int Count = 0;
+    TSet<int32> PromptIndexes;
+    for (FPromptData Prompt : ConversationPromptArray)
+    {
+        if (Prompt.CanBeShown() && !PromptIndexes.Contains(Prompt.PromptNumber))
+        {
+            PromptIndexes.Add(Prompt.PromptNumber);
+            ++Count;
+        }
+    }
+    return Count;
+}
+
+const FPromptData* FConversationData::FindPromptAtIndex(int32 PromptIndex, int32 SubIndex) const
 {
     return ConversationPromptArray.FindByPredicate(
         [PromptIndex, SubIndex](const FPromptData& PromptData)
@@ -43,7 +72,7 @@ FPromptData * FConversationData::FindPromptAtIndex(int32 PromptIndex, int32 SubI
         });
 }
 
-int FConversationData::GetMaxPromptIndex()
+int FConversationData::GetMaxPromptIndex() const
 {
     int MaxPromptIndex = -1;
     for (FPromptData PromptData : ConversationPromptArray)
