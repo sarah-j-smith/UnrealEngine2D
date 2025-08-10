@@ -16,6 +16,8 @@ class ADVENTUREGAME_API ADoor : public APickUp
 {
 	GENERATED_BODY()
 public:
+	virtual EVerbType CheckForDefaultCommand() const override;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Door)
 	FName LevelToLoad;
 

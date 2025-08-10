@@ -82,6 +82,8 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void Tick(float DeltaTime) override;
+
 	void HandleTouchInput(float X, float Y);
 	
 	void HandlePointAndClickInput();
@@ -137,6 +139,11 @@ private:
 		Success,
 		Fail
 	};
+	
+	UFUNCTION()
+	void HandleAIMovementCompleteNotify(EPathFollowingResult::Type Result);
+
+	bool ShouldCompleteMovementNextTick = false;
 
 	UFUNCTION()
 	void HandleMovementComplete();
@@ -145,12 +152,11 @@ private:
 
 	void ClearCurrentPath();
 
-	UFUNCTION()
-	void HandleAIMovementCompleteNotify(EPathFollowingResult::Type Result);
-
-	FTimerDelegate MovementCompleteTimerDelegate;
-
 	EAIMoveResult LastPathResult = EAIMoveResult::Unknown;
+	
+	void TeleportToLocation(const FVector &Location);
+	
+	void SetVerbAndCommandFromHotSpot(AHotSpot *HotSpot);
 	
 	//////////////////////////////////
 	///
@@ -251,10 +257,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
 	FVector CurrentTargetLocation = FVector::ZeroVector;
 
-	/// When the character is performing a sequence of chained actions do not allow any input
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Commands")
-	bool IsPerformingTaskInteraction = false;
-
 	bool ShouldHighlightInteractionText() const
 	{
 		return CurrentCommand == EPlayerCommand::Active || CurrentCommand == EPlayerCommand::InstantActive;
@@ -330,6 +332,9 @@ public:
 	/// Stops any current action, items and hotspots, clearing the status
 	UFUNCTION(BlueprintCallable, Category="Verb", DisplayName="ClearAction")
 	void InterruptCurrentAction();
+
+	UPROPERTY(BlueprintReadWrite, Category="Actions")
+	bool ShouldInterruptCurrentActionOnNextTick = false;
 
 	FRunInterruptedActionDelegate RunInterruptedActionDelegate;
 	FBeginAction BeginActionDelegate;

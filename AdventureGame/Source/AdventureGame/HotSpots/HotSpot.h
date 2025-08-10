@@ -13,6 +13,8 @@
 
 #include "HotSpot.generated.h"
 
+enum class EVerbType : uint8;
+
 class UPaperSprite;
 class AAdventurePlayerController;
 /**
@@ -84,6 +86,9 @@ public:
 	///
 	/// VERB TRIGGER EVENTS
 	///
+
+	UFUNCTION(BlueprintCallable, Category = "HotSpot")
+	virtual EVerbType CheckForDefaultCommand() const;
 
 	UFUNCTION(BlueprintCallable, Category = "VerbInteractions")
 	virtual void OnClose_Implementation() override;

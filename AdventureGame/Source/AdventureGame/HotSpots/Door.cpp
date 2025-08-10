@@ -35,6 +35,21 @@ bool ADoor::CloseDoor()
 	return false;
 }
 
+EVerbType ADoor::CheckForDefaultCommand() const
+{
+	switch (DoorState) {
+	case EDoorState::Closed:
+		return EVerbType::Open;
+	case EDoorState::Opened:
+		return EVerbType::Use;
+	case EDoorState::Locked:
+		return EVerbType::LookAt;
+	default:
+		break;
+	}
+	return Super::CheckForDefaultCommand();
+}
+
 bool ADoor::UnlockDoor()
 {
 	if (CanUnlockDoorOrItem(DoorState))

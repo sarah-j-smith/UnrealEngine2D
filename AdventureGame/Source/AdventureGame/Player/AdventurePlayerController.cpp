@@ -11,6 +11,7 @@
 #include "../Items/InventoryItem.h"
 #include "../HUD/ItemSlot.h"
 #include "../Items/ItemList.h"
+#include "../HotSpots/Door.h"
 #include "AdventureGame/Gameplay/AdvBlueprintFunctionLibrary.h"
 
 #include "Components/CapsuleComponent.h"
@@ -24,7 +25,6 @@ AAdventurePlayerController::AAdventurePlayerController()
     DefaultMouseCursor = EMouseCursor::Crosshairs;
     bEnableMouseOverEvents = true;
 
-    MovementCompleteTimerDelegate.BindUObject(this, &AAdventurePlayerController::HandleMovementComplete);
     BarkTimerDelegate.BindUObject(this, &AAdventurePlayerController::OnBarkTimerTimeOut);
 
     UE_LOG(LogAdventureGame, VeryVerbose, TEXT("Construct: AAdventurePlayerController"));
@@ -113,6 +113,22 @@ void AAdventurePlayerController::BeginPlay()
     SetupAIController(PlayerCharacter);
 }
 
+void AAdventurePlayerController::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
+
+    if (ShouldInterruptCurrentActionOnNextTick)
+    {
+        InterruptCurrentAction();
+        ShouldInterruptCurrentActionOnNextTick = false;
+    }
+    if (ShouldCompleteMovementNextTick)
+    {
+        HandleMovementComplete();
+        ShouldCompleteMovementNextTick = false;
+    }
+}
+
 void AAdventurePlayerController::SetupHUD()
 {
     check(AdventureHUDClass);
@@ -190,7 +206,7 @@ void AAdventurePlayerController::HandleTouchInput(float LocationX, float Locatio
     GEngine->AddOnScreenDebugMessage(1, 5.0, FColor::Cyan,
                         *Message,false, FVector2D(2.0, 2.0));
 
-    if (IsPerformingTaskInteraction || LockInput) return;
+    if (LockInput) return;
     if (!IsValid(PlayerCharacter)) return;
 
     if (IsBarking) ClearBark();
@@ -212,11 +228,15 @@ void AAdventurePlayerController::HandleTouchInput(float LocationX, float Locatio
 
 void AAdventurePlayerController::HandlePointAndClickInput()
 {
-    GEngine->AddOnScreenDebugMessage(1, 5.0, FColor::White,
-                        TEXT("PointAndClick"),
-                                 false, FVector2D(2.0, 2.0));
-
-    if (IsPerformingTaskInteraction || LockInput || IsMouseOverUI) return;
+#if WITH_EDITOR
+    const TCHAR * LockInp = LockInput ? TEXT("true") : TEXT("false");
+    const TCHAR * MouseOverUI = IsMouseOverUI ? TEXT("true") : TEXT("false");
+    UE_LOG(LogAdventureGame, Log, TEXT("HandlePointAndClickInput - LockInput: %s, IsMouseOverUI: %s"),
+        LockInp, MouseOverUI);
+    UE_LOG(LogAdventureGame, Log, TEXT("*** CurrentCommand: %s - Current Verb: %s"), *UEnum::GetValueAsString(CurrentCommand),
+        *VerbGetDescriptiveString(CurrentVerb).ToString());
+#endif
+    if (LockInput || IsMouseOverUI) return;
     if (!IsValid(PlayerCharacter)) return;
     if (!Cast<AAdventureAIController>(PlayerCharacter->Controller)) return;
 
@@ -224,6 +244,7 @@ void AAdventurePlayerController::HandlePointAndClickInput()
     
     if (AHotSpot* HotSpot = HotSpotClicked())
     {
+        SetVerbAndCommandFromHotSpot(HotSpot);
         HandleHotSpotClicked(HotSpot);
     }
     else
@@ -240,9 +261,13 @@ void AAdventurePlayerController::HandlePointAndClickInput()
     }
 }
 
-
 void AAdventurePlayerController::HandleHotSpotClicked(AHotSpot* HotSpot)
 {
+    if (!IsValid(HotSpot)) return;
+#if WITH_EDITOR
+    UE_LOG(LogAdventureGame, Log, TEXT("HandleHotSpotClicked - %s - command: %s"), *HotSpot->ShortDescription.ToString(),
+        *UEnum::GetValueAsString(CurrentCommand));
+#endif
     switch (CurrentCommand)
     {
     case EPlayerCommand::None:
@@ -275,6 +300,10 @@ void AAdventurePlayerController::HandleHotSpotClicked(AHotSpot* HotSpot)
 
 void AAdventurePlayerController::HandleLocationClicked(const FVector& Location)
 {
+#if WITH_EDITOR
+    UE_LOG(LogAdventureGame, Log, TEXT("HandleLocationClicked - %s - command: %s"), *Location.ToString(),
+        *UEnum::GetValueAsString(CurrentCommand));
+#endif
     CurrentTargetLocation = Location;
     switch (CurrentCommand)
     {
@@ -484,16 +513,26 @@ void AAdventurePlayerController::ClearCurrentPath()
 
 void AAdventurePlayerController::WalkToHotSpot(AHotSpot* HotSpot)
 {
-    const FVector PlayerLocation = PlayerCharacter->GetCapsuleComponent()->GetComponentLocation();
+    const UCapsuleComponent *Capsule = PlayerCharacter->GetCapsuleComponent();
+    const FVector PlayerLocation = Capsule->GetComponentLocation();
 
     FVector HotSpotWalkToLocation = HotSpot->WalkToPosition;
     HotSpotWalkToLocation.Z = PlayerLocation.Z;
 
+    float Distance = FVector::Distance(HotSpotWalkToLocation, PlayerLocation);
+    if (Distance < Capsule->GetScaledCapsuleRadius())
+    {
+        // Character is there already, or very close to. Teleport to location and carry on.
+        TeleportToLocation(HotSpotWalkToLocation);
+        CurrentHotSpot = HotSpot;
+        return;
+    }
     WalkToLocation(HotSpotWalkToLocation);
     switch (AIStatus)
     {
     case EAIStatus::Moving:
     case EAIStatus::AlreadyThere:
+        // Don't set the hotspot unless we know the player can reach it.
         CurrentHotSpot = HotSpot;
     default:
         break;
@@ -516,11 +555,7 @@ void AAdventurePlayerController::WalkToLocation(const FVector& Location)
 #if WITH_EDITOR
     if (TeleportInsteadOfWalk)
     {
-        FVector Dest = Location; Dest.Z = PlayerCharacter->GetCapsuleComponent()->GetComponentLocation().Z;
-        PlayerCharacter->TeleportToLocation(Dest);
-        LastPathResult = EAIMoveResult::Success;
-        AIStatus = EAIStatus::AlreadyThere;
-        GetWorldTimerManager().SetTimerForNextTick(MovementCompleteTimerDelegate);
+        TeleportToLocation(Location);
         return;
     }
 #endif
@@ -561,7 +596,38 @@ void AAdventurePlayerController::HandleAIMovementCompleteNotify(EPathFollowingRe
         }
         LastPathResult = EAIMoveResult::Success;
     }
-    GetWorldTimerManager().SetTimerForNextTick(MovementCompleteTimerDelegate);
+    ShouldCompleteMovementNextTick = true;
+}
+
+void AAdventurePlayerController::TeleportToLocation(const FVector& Location)
+{
+    FVector Dest = Location;
+    Dest.Z = PlayerCharacter->GetCapsuleComponent()->GetComponentLocation().Z;
+    PlayerCharacter->TeleportToLocation(Dest);
+    LastPathResult = EAIMoveResult::Success;
+    AIStatus = EAIStatus::AlreadyThere;
+    ShouldCompleteMovementNextTick = true;
+}
+
+void AAdventurePlayerController::SetVerbAndCommandFromHotSpot(AHotSpot* HotSpot)
+{
+    // If the player has not selected a verb, but has clicked on a hotspot, polymorphically
+    // check with the hotspot for a default command that the player might expect, such as "Look"
+    // or "Open" for a closed door, or "Use" for an open door, or "Talk to" for an NPC.
+    if (CurrentCommand != EPlayerCommand::None && CurrentCommand != EPlayerCommand::Hover) return;
+
+    // Player clicked on a hotspot without specifying a verb first.
+    if (CurrentVerb != EVerbType::WalkTo)
+    {
+        // If CurrentCommand is None/Hover then the verb _should be_ the default
+        UE_LOG(LogAdventureGame, Warning, TEXT("HotSpot %s clicked with no command but verb %s unexpectedly set!!"),
+            *HotSpot->ShortDescription.ToString(), *VerbGetDescriptiveString(CurrentVerb).ToString());
+    }
+    CurrentVerb = HotSpot->CheckForDefaultCommand();
+    if (CurrentVerb != EVerbType::WalkTo)
+    {
+        CurrentCommand = CurrentVerb == EVerbType::Use ? EPlayerCommand::UsePending : EPlayerCommand::VerbPending;
+    }
 }
 
 void AAdventurePlayerController::SwapSourceAndTarget()
@@ -588,6 +654,8 @@ void AAdventurePlayerController::HandleMovementComplete()
 void AAdventurePlayerController::AssignVerb(EVerbType NewVerb)
 {
     ClearBark();
+    ClearSourceItem();
+    ClearTargetItem();
     CurrentVerb = NewVerb;
     switch (NewVerb)
     {
@@ -598,7 +666,6 @@ void AAdventurePlayerController::AssignVerb(EVerbType NewVerb)
         CurrentCommand = EPlayerCommand::GivePending;
         break;
     case EVerbType::WalkTo:
-        InterruptCurrentAction();
         break;
     default:
         CurrentCommand = EPlayerCommand::VerbPending;
@@ -661,9 +728,17 @@ void AAdventurePlayerController::PerformItemAction()
 
 void AAdventurePlayerController::PerformInstantAction()
 {
+#if WITH_EDITOR
+    FString DebugString;
+    if (SourceItem) DebugString = SourceItem->ShortDescription.ToString();
+    if (CurrentHotSpot && DebugString.IsEmpty()) DebugString = CurrentHotSpot->ShortDescription.ToString();
+    UE_LOG(LogAdventureGame, Warning, TEXT("PerformInstantAction %s - %s"),
+           *VerbGetDescriptiveString(CurrentVerb).ToString(), *DebugString);
+#endif
     CurrentCommand = EPlayerCommand::InstantActive;
     if (SourceItem)
     {
+        // Clicking on something in your own inventory
         UInventoryItem::Execute_OnLookAt(SourceItem);
         TriggerUpdateInventoryText();
     }
@@ -723,6 +798,8 @@ UItemList* AAdventurePlayerController::GetInventoryItemList()
 
 void AAdventurePlayerController::PerformHotSpotInteraction()
 {
+    UE_LOG(LogAdventureGame, Warning, TEXT("PerformHotSpotInteraction - verb %s for hotspot %s"),
+           *VerbGetDescriptiveString(CurrentVerb).ToString(), *CurrentHotSpot->ShortDescription.ToString());
     // This `Execute_Verb` pattern will call C++ and Blueprint overrides.
     // The use of eg CurrentHotSpot->OnClose() does not work as BP's don't do
     // polymorphism and have to be dispatched in code.

@@ -65,6 +65,7 @@ void UItemDataAsset::OnItemUseSuccess_Implementation()
             break;
         }
         AdventurePlayerController->PlayerBark(Success ? UseSuccessBarkText : UseFailureBarkText);
+        AdventurePlayerController->ShouldInterruptCurrentActionOnNextTick = true;
     }
 }
 

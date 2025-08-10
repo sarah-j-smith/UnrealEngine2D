@@ -26,6 +26,8 @@ public:
     // Sets default values for this actor's properties
     AHotSpotNPC();
 
+    virtual EVerbType CheckForDefaultCommand() const override;
+
 protected:
     // Called when the game starts or when spawned
     virtual void BeginPlay() override;

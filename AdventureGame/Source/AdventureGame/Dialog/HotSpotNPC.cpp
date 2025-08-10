@@ -26,6 +26,15 @@ AHotSpotNPC::AHotSpotNPC()
     }
 }
 
+EVerbType AHotSpotNPC::CheckForDefaultCommand() const
+{
+    if (DialogComponent->ConversationCount() > 0)
+    {
+        return EVerbType::TalkTo;
+    }
+    return Super::CheckForDefaultCommand();
+}
+
 // Called when the game starts or when spawned
 void AHotSpotNPC::BeginPlay()
 {

@@ -74,6 +74,11 @@ void AHotSpot::OnEndCursorOver(AActor *TouchedActor)
 	}
 }
 
+EVerbType AHotSpot::CheckForDefaultCommand() const
+{
+	return EVerbType::WalkTo;
+}
+
 void AHotSpot::OnClose_Implementation()
 {
 	IVerbInteractions::OnClose_Implementation();
@@ -158,7 +163,7 @@ void AHotSpot::OnWalkTo_Implementation()
 		{
 			APC->PlayerBark(LOCTABLE(ITEM_STRINGS_KEY, "HotSpotWalkArrived"));;
 		}
-		APC->InterruptCurrentAction();
+		APC->ShouldInterruptCurrentActionOnNextTick = true;
 	}
 }
 
@@ -278,6 +283,6 @@ void AHotSpot::BarkAndEnd(const FText& Text) const
 	if (AAdventurePlayerController *APC = Cast<AAdventurePlayerController>(PC); IsValid(APC))
 	{
 		APC->PlayerBark(Text);
-		APC->InterruptCurrentAction();
+		APC->ShouldInterruptCurrentActionOnNextTick = true;
 	}
 }

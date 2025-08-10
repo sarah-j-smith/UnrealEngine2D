@@ -3,6 +3,8 @@
 
 #include "PickUp.h"
 
+#include "AdventureGame/Enums/VerbType.h"
+
 
 // Sets default values
 APickUp::APickUp()
@@ -17,6 +19,15 @@ APickUp::APickUp()
     SpriteComponent->SetVisibility(true);
 
     Pickup = true;
+}
+
+EVerbType APickUp::CheckForDefaultCommand() const
+{
+    if (SpriteComponent->IsVisible())
+    {
+        return EVerbType::PickUp;
+    }
+    return Super::CheckForDefaultCommand();
 }
 
 // Called when the game starts or when spawned
