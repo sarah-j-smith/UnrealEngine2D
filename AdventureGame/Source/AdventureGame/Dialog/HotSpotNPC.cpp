@@ -51,13 +51,21 @@ void AHotSpotNPC::OnConverseWith_Implementation()
 {
     IDialogInteractable::OnConverseWith_Implementation();
     APlayerController *PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-    if (AAdventurePlayerController *APC = Cast<AAdventurePlayerController>(PC); IsValid(APC))
+    TArray<FPromptData> PromptsToShow;
+    DialogComponent->LoadPrompts(PromptsToShow);
+    if (const AAdventurePlayerController *Apc = Cast<AAdventurePlayerController>(PC); IsValid(Apc))
     {
-        // APC->AdventureHUDWidget->ShowBlackScreen()
+        Apc->AdventureHUDWidget->ShowPromptList();
+        UPromptList *Prompts = Apc->AdventureHUDWidget->PromptList;
+        const int MaxPrompts = std::min(Prompts->PromptEntries.Num(),PromptsToShow.Num());
+        for (int i = 0; i < MaxPrompts; ++i)
+        {
+            Prompts->SetPromptText(PromptsToShow[i].PromptText[0], PromptsToShow[i].HasBeenSelected, i);
+        }
     }
 }
 
 void AHotSpotNPC::OnTalkTo_Implementation()
 {
-    Super::OnTalkTo_Implementation();
+    Execute_OnConverseWith(this);
 }

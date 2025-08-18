@@ -70,6 +70,15 @@ void UDialogComponent::UpdatePromptAtIndex(int32 TopicIndex, int32 PromptIndex)
     }
 }
 
+void UDialogComponent::LoadPrompts(TArray<FPromptData> &PromptsToShow)
+{
+    if (ConversationData.IsEmpty()) return;
+    if (TopicIndex < ConversationData.Num() && TopicIndex >= 0)
+    {
+        ConversationData[TopicIndex].DisplayPrompts(PromptsToShow);
+    }
+}
+
 int UDialogComponent::ConversationCount() const
 {
     int Count = 0;

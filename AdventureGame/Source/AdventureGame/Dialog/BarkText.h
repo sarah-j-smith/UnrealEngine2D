@@ -13,6 +13,7 @@ class USphereComponent;
 
 #define G_MAX_BARK_LINES 3
 #define BARK_LINE_DELAY 3.0f
+#define BARK_LINE_WIDTH 30
 
 /**
  * 
@@ -24,11 +25,19 @@ class ADVENTUREGAME_API UBarkText : public UUserWidget
 public:
 	virtual void NativeOnInitialized() override;
 
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UBarkLine> BarkLineClass;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UVerticalBox *BarkContainer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float BarkLineDisplayTime = BARK_LINE_DELAY;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 MaxCharactersPerLine = BARK_LINE_WIDTH;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FColor BarkTextColor = FColor::Orange;
@@ -49,8 +58,15 @@ public:
 	void AddQueuedBarkLine();
 
 	FTimerHandle BarkLineTimer;
-	
+
 private:
+	bool IsBarking = false;
+
+	bool bWarningShown = false;
+
+	UPROPERTY()
+	AActor *ViewTarget = nullptr;
+	
 	TArray<FText> BarkLines;
 
 	void SetBarkLineTimer();

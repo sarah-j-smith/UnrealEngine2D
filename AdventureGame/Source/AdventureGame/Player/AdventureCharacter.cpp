@@ -30,6 +30,8 @@ void AAdventureCharacter::OnConstruction(const FTransform& Transform)
 	OnInteractOverrideEndDelegate.BindUObject(this, &AAdventureCharacter::OnInteractAnimOverrideEnd);
 	OnTurnLeftOverrideEndDelegate.BindUObject(this, &AAdventureCharacter::OnTurnLeftAnimOverrideEnd);
 	OnTurnRightOverrideEndDelegate.BindUObject(this, &AAdventureCharacter::OnTurnRightAnimOverrideEnd);
+
+	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AdventureCharacter on construct"));
 }
 
 void AAdventureCharacter::BeginPlay()
@@ -177,10 +179,13 @@ void AAdventureCharacter::TeleportToLocation(FVector NewLocation)
 
 	// in debug stop here to find out why player is falling through the floor
 	// probably a misplaced door or player start object.
-	check(PrevLocation.Z >= MinZValue);
+	if (PrevLocation.Z >= MinZValue)
+	{
+		UE_LOG(LogAdventureGame, Warning, TEXT("AAdventureCharacter::TeleportToLocation - %s"), *NewLocation.ToString());
+	}
 
 	// in prod work around via forcing to MinZValue
-	float ZValue = std::max(PrevLocation.Z, 5.0);
+	float ZValue = std::max(static_cast<float>(NewLocation.Z), MinZValue);
 	SetActorLocation(FVector(NewLocation.X, NewLocation.Y, PrevLocation.Z));
 }
 

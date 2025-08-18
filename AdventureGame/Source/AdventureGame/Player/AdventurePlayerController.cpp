@@ -12,6 +12,7 @@
 #include "../HUD/ItemSlot.h"
 #include "../Items/ItemList.h"
 #include "../HotSpots/Door.h"
+#include "../Gameplay/AdventureSave.h"
 #include "AdventureGame/Gameplay/AdvBlueprintFunctionLibrary.h"
 
 #include "Components/CapsuleComponent.h"
@@ -108,6 +109,8 @@ void AAdventurePlayerController::BeginPlay()
     UAdventureGameInstance* AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
     AdventureGameInstance->OnLoadRoom();
 
+    AdventureGameInstance->Inventory->AddAdventurePlayerControllerWeakRef(this);
+
     TriggerUpdateInteractionText();
     APawn* Pawn = SetupPuck(PlayerCharacter);
     SetupAIController(PlayerCharacter);
@@ -127,6 +130,35 @@ void AAdventurePlayerController::Tick(float DeltaTime)
         HandleMovementComplete();
         ShouldCompleteMovementNextTick = false;
     }
+}
+
+void AAdventurePlayerController::HandleSaveGame(const FString& GameName)
+{
+    if (UAdventureGameInstance* AdventureGameInstance = Cast<UAdventureGameInstance>(GetGameInstance()))
+    {
+        AdventureGameInstance->SaveGame();
+        bool OK = UGameplayStatics::SaveGameToSlot(AdventureGameInstance->CurrentSaveGame, GameName, 0);
+        UE_LOG(LogAdventureGame, VeryVerbose, TEXT("SaveGame: %s Saved - %s"), *GameName, OK ? TEXT("true") : TEXT("false"));
+    }
+}
+
+void AAdventurePlayerController::HandleLoadGame(const FString& GameName)
+{
+    if (UAdventureGameInstance* AdventureGameInstance = Cast<UAdventureGameInstance>(GetGameInstance()))
+    {
+        USaveGame *LoadedGame = UGameplayStatics::LoadGameFromSlot(GameName, 0);
+        if (UAdventureSave *AdventureSave = Cast<UAdventureSave>(LoadedGame))
+        {
+            AdventureGameInstance->CurrentSaveGame = AdventureSave;
+            AdventureGameInstance->LoadGame();
+            UE_LOG(LogAdventureGame, VeryVerbose, TEXT("LoadGame: %s Loaded"), *GameName);
+        }
+        else
+        {
+            UE_LOG(LogAdventureGame, VeryVerbose, TEXT("LoadGame: %s failed, or could not be cast to UAdventureSave"), *GameName);
+        }
+    }
+    TriggerUpdateInteractionText();
 }
 
 void AAdventurePlayerController::SetupHUD()
@@ -231,9 +263,9 @@ void AAdventurePlayerController::HandlePointAndClickInput()
 #if WITH_EDITOR
     const TCHAR * LockInp = LockInput ? TEXT("true") : TEXT("false");
     const TCHAR * MouseOverUI = IsMouseOverUI ? TEXT("true") : TEXT("false");
-    UE_LOG(LogAdventureGame, Log, TEXT("HandlePointAndClickInput - LockInput: %s, IsMouseOverUI: %s"),
+    UE_LOG(LogAdventureGame, VeryVerbose, TEXT("HandlePointAndClickInput - LockInput: %s, IsMouseOverUI: %s"),
         LockInp, MouseOverUI);
-    UE_LOG(LogAdventureGame, Log, TEXT("*** CurrentCommand: %s - Current Verb: %s"), *UEnum::GetValueAsString(CurrentCommand),
+    UE_LOG(LogAdventureGame, VeryVerbose, TEXT("*** CurrentCommand: %s - Current Verb: %s"), *UEnum::GetValueAsString(CurrentCommand),
         *VerbGetDescriptiveString(CurrentVerb).ToString());
 #endif
     if (LockInput || IsMouseOverUI) return;
@@ -265,11 +297,13 @@ void AAdventurePlayerController::HandleHotSpotClicked(AHotSpot* HotSpot)
 {
     if (!IsValid(HotSpot)) return;
 #if WITH_EDITOR
-    UE_LOG(LogAdventureGame, Log, TEXT("HandleHotSpotClicked - %s - command: %s"), *HotSpot->ShortDescription.ToString(),
+    UE_LOG(LogAdventureGame, VeryVerbose, TEXT("HandleHotSpotClicked - %s - command: %s"), *HotSpot->ShortDescription.ToString(),
         *UEnum::GetValueAsString(CurrentCommand));
 #endif
     switch (CurrentCommand)
     {
+    case EPlayerCommand::InstantActive:
+        InterruptCurrentAction();
     case EPlayerCommand::None:
     case EPlayerCommand::Hover:
         CurrentHotSpot = HotSpot;
@@ -301,12 +335,14 @@ void AAdventurePlayerController::HandleHotSpotClicked(AHotSpot* HotSpot)
 void AAdventurePlayerController::HandleLocationClicked(const FVector& Location)
 {
 #if WITH_EDITOR
-    UE_LOG(LogAdventureGame, Log, TEXT("HandleLocationClicked - %s - command: %s"), *Location.ToString(),
+    UE_LOG(LogAdventureGame, VeryVerbose, TEXT("HandleLocationClicked - %s - command: %s"), *Location.ToString(),
         *UEnum::GetValueAsString(CurrentCommand));
 #endif
     CurrentTargetLocation = Location;
     switch (CurrentCommand)
     {
+    case EPlayerCommand::InstantActive:
+        InterruptCurrentAction();
     case EPlayerCommand::None:
     case EPlayerCommand::Hover:
         ClearSourceItem();
@@ -346,11 +382,9 @@ void AAdventurePlayerController::ItemRemoveFromInventory(const EItemKind& ItemTo
 {
     if (UItemList* Inventory = GetInventoryItemList())
     {
-        EItemKind SourceKind = SourceItem->ItemKind;
-        EItemKind TargetKind = TargetItem->ItemKind;
         Inventory->RemoveItemKindFromInventory(ItemToRemove);
-        if (!Inventory->Contains(SourceKind)) ClearSourceItem();
-        if (!Inventory->Contains(TargetKind)) ClearTargetItem();
+        if (SourceItem && !Inventory->Contains(SourceItem->ItemKind)) ClearSourceItem();
+        if (TargetItem && !Inventory->Contains(TargetItem->ItemKind)) ClearTargetItem();
     }
 }
 
@@ -358,11 +392,9 @@ void AAdventurePlayerController::ItemsRemoveFromInventory(const TSet<EItemKind>&
 {
     if (UItemList* Inventory = GetInventoryItemList())
     {
-        EItemKind SourceKind = SourceItem->ItemKind;
-        EItemKind TargetKind = TargetItem->ItemKind;
         Inventory->RemoveItemKindsFromInventory(ItemsToRemove);
-        if (!Inventory->Contains(SourceKind)) ClearSourceItem();
-        if (!Inventory->Contains(TargetKind)) ClearTargetItem();
+        if (SourceItem && !Inventory->Contains(SourceItem->ItemKind)) ClearSourceItem();
+        if (TargetItem && !Inventory->Contains(TargetItem->ItemKind)) ClearTargetItem();
     }
 }
 
@@ -519,6 +551,7 @@ void AAdventurePlayerController::WalkToHotSpot(AHotSpot* HotSpot)
     FVector HotSpotWalkToLocation = HotSpot->WalkToPosition;
     HotSpotWalkToLocation.Z = PlayerLocation.Z;
 
+    CurrentHotSpot == nullptr;
     float Distance = FVector::Distance(HotSpotWalkToLocation, PlayerLocation);
     if (Distance < Capsule->GetScaledCapsuleRadius())
     {
@@ -541,16 +574,8 @@ void AAdventurePlayerController::WalkToHotSpot(AHotSpot* HotSpot)
 
 void AAdventurePlayerController::WalkToLocation(const FVector& Location)
 {
-    AAdventureAIController* AI = Cast<AAdventureAIController>(PlayerCharacter->GetController());
-    if (AIStatus == EAIStatus::Moving)
-    {
-        AI->StopMovement();
-        PlayerCharacter->GetMovementComponent()->StopActiveMovement();
-    }
-    else if (AIStatus != EAIStatus::Idle)
-    {
-        return;
-    }
+    StopAIMovement();
+    if (AIStatus != EAIStatus::Idle) return;
     
 #if WITH_EDITOR
     if (TeleportInsteadOfWalk)
@@ -560,20 +585,21 @@ void AAdventurePlayerController::WalkToLocation(const FVector& Location)
     }
 #endif
     
+    AAdventureAIController* AI = Cast<AAdventureAIController>(PlayerCharacter->GetController());
     AIStatus = EAIStatus::MakingRequest;
     switch (AI->MoveToLocation(Location, 1.0))
     {
     case EPathFollowingRequestResult::Type::Failed:
-        UE_LOG(LogAdventureGame, Log, TEXT("Path following request -> failed: %f %f"), Location.X, Location.Y);
+        UE_LOG(LogAdventureGame, VeryVerbose, TEXT("Path following request -> failed: %f %f"), Location.X, Location.Y);
         LastPathResult = EAIMoveResult::Fail;
         break;
     case EPathFollowingRequestResult::Type::RequestSuccessful:
-        UE_LOG(LogAdventureGame, Verbose, TEXT("Path following request -> success: %f %f"), Location.X, Location.Y);
+        UE_LOG(LogAdventureGame, VeryVerbose, TEXT("Path following request -> success: %f %f"), Location.X, Location.Y);
         LastPathResult = EAIMoveResult::Moving;
         AIStatus = EAIStatus::Moving;
         break;
     case EPathFollowingRequestResult::Type::AlreadyAtGoal:
-        UE_LOG(LogAdventureGame, Verbose, TEXT("Path following request -> already there: %f %f"), Location.X,
+        UE_LOG(LogAdventureGame, VeryVerbose, TEXT("Path following request -> already there: %f %f"), Location.X,
                Location.Y);
         break;
     }
@@ -595,8 +621,19 @@ void AAdventurePlayerController::HandleAIMovementCompleteNotify(EPathFollowingRe
             AIStatus = EAIStatus::AlreadyThere;
         }
         LastPathResult = EAIMoveResult::Success;
+        ShouldCompleteMovementNextTick = true;
     }
-    ShouldCompleteMovementNextTick = true;
+    else
+    {
+        if (CurrentHotSpot && (Result == EPathFollowingResult::Blocked || Result == EPathFollowingResult::OffPath))
+        {
+            FVector HotSpotLocation = CurrentHotSpot->WalkToPoint->GetComponentLocation();
+            const FString Message = FString::Printf(TEXT("Movement blocked to %s - %s - is walk to point on the nav mesh?"),
+                *(CurrentHotSpot->ShortDescription.ToString()), *(HotSpotLocation.ToString()));
+            GEngine->AddOnScreenDebugMessage(1, 5.0, FColor::Cyan,
+                                *Message,false, FVector2D(2.0, 2.0));
+        }
+    }
 }
 
 void AAdventurePlayerController::TeleportToLocation(const FVector& Location)
@@ -630,6 +667,22 @@ void AAdventurePlayerController::SetVerbAndCommandFromHotSpot(AHotSpot* HotSpot)
     }
 }
 
+void AAdventurePlayerController::StopAIMovement()
+{
+    AAdventureAIController* AI = Cast<AAdventureAIController>(PlayerCharacter->GetController());
+    if (!IsValid(AI))
+    {
+        UE_LOG(LogAdventureGame, VeryVerbose, TEXT("PlayerCharacter controller expected to be AIController"));
+        return;
+    }
+    if (AIStatus == EAIStatus::Moving)
+    {
+        AI->StopMovement();
+        PlayerCharacter->GetMovementComponent()->StopActiveMovement();
+        AIStatus = EAIStatus::Idle;
+    }
+}
+
 void AAdventurePlayerController::SwapSourceAndTarget()
 {
     UInventoryItem* TargetItem = this->TargetItem;
@@ -639,10 +692,11 @@ void AAdventurePlayerController::SwapSourceAndTarget()
 
 void AAdventurePlayerController::HandleMovementComplete()
 {
-    UE_LOG(LogAdventureGame, Warning, TEXT("HandleAIMovementCompleteNotify"));
+    UE_LOG(LogAdventureGame, VeryVerbose, TEXT("HandleMovementComplete"));
     AIStatus = EAIStatus::Idle;
     if (CurrentHotSpot && (LastPathResult == EAIMoveResult::Success))
     {
+        UE_LOG(LogAdventureGame, VeryVerbose, TEXT("CurrentHotSpot && (LastPathResult == EAIMoveResult::Success)"));
         PlayerCharacter->SetFacingDirection(CurrentHotSpot->FacingDirection);
         PlayerCharacter->TeleportToLocation(CurrentHotSpot->WalkToPosition);
         PerformHotSpotInteraction();
@@ -852,6 +906,7 @@ void AAdventurePlayerController::PerformHotSpotInteraction()
  */
 void AAdventurePlayerController::InterruptCurrentAction()
 {
+    UE_LOG(LogAdventureGame, VeryVerbose, TEXT("InterruptCurrentAction"));
     SetInputLocked(false);
     
     if (const AAdventureCharacter* Pc = PlayerCharacter)
@@ -915,7 +970,6 @@ void AAdventurePlayerController::OnBarkTimerTimeOut()
         ClearBark();
     }
 }
-
 
 void AAdventurePlayerController::ClearBark()
 {

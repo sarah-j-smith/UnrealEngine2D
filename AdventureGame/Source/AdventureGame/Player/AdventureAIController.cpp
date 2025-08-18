@@ -22,5 +22,6 @@ void AAdventureAIController::OnConstruction(const FTransform& Transform)
 
 void AAdventureAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
 {
+	UE_LOG(LogAdventureGame, Display, TEXT("OnMoveCompleted %s - %s"), *RequestID.ToString(), *Result.ToString());
 	MoveCompletedDelegate.Broadcast(Result.Code);
 }

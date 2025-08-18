@@ -33,7 +33,7 @@ constexpr FLinearColor G_UI_Dimmed_Colour = FLinearColor( COL(0x7D), COL(0x65), 
 /// Disabled orange 58471BFF
 constexpr FLinearColor G_UI_Disabled_Colour = FLinearColor( COL(0x58), COL(0x47), COL(0x1B), 1.0f);
 
-/// Disabled orange 58471BFF
+/// Default text color 58471BFF
 constexpr FLinearColor G_NPC_Default_Text_Colour = FLinearColor( COL(0x44), COL(0x47), COL(0xEE), 1.0f);
 
 constexpr int32 GMax_Number_Of_Prompts = 5;

@@ -10,7 +10,7 @@ public class AdventureGame : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "Paper2D" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "AIModule" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "AIModule", "GameplayTags" });
 		
 	    PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });  // , "UnrealEd", "PropertyEditor"
 		

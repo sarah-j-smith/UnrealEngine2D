@@ -3,8 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "../Player/AdventurePlayerController.h"
 #include "AdventureGame/AdventureGame.h"
+#include "AdventureGame/Enums/RoomTransitionPhase.h"
+#include "AdventureGame/HotSpots/Door.h"
 #include "Engine/TimerHandle.h"
 
 #include "Engine/GameInstance.h"
@@ -41,10 +44,16 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
 	TSubclassOf<UItemList> InventoryClass;
 
+private:
+	void CreateInventory();
+	
+
 	//////////////////////////////////
 	///
 	/// DOOR MANAGEMENT
 	///
+
+public:
 	
 	/// Call from a blueprint of a door to trigger loading the room.
 	UFUNCTION(BlueprintCallable, Category="GameInstance")
@@ -60,7 +69,33 @@ public:
 
 	/// Set this value to the of which door the player should started at
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="GameInstance")
-	FName StartingDoorLabel = "A1"; 
+	FName StartingDoorLabel = "A1";
+
+	/// TriggerRoomTransition to a room based on a door that has a new level name and door label
+	void SetDestinationFromDoor(ADoor *NewCurrentDoor)
+	{
+		CurrentDoor = NewCurrentDoor;
+		CurrentDoorLabel = CurrentDoor->DoorLabel;
+		CurrentLevelName = CurrentDoor->LevelToLoad;
+		TriggerRoomTransition();
+	}
+
+	/// TriggerRoomTransition to a room based on the level name and door label
+	void SetLoadTarget(FName LevelName, FName DoorLabel)
+	{
+		UE_LOG(LogAdventureGame, Display, TEXT("UAdventureGameInstance::SetLoadTarget - Level: %s, Door: %s"),
+			*(LevelName.ToString()), *(DoorLabel.ToString()));
+		CurrentDoor = nullptr;
+		CurrentDoorLabel = DoorLabel;
+		CurrentLevelName = LevelName;
+		TriggerRoomTransition();
+	}
+
+	// The name of door the player character is at, or was most recently at.
+	FName CurrentDoorLabel = FName("A1");
+
+	// The name of the current lavel
+	FName CurrentLevelName = FName("TowerExterior");
 
 	//////////////////////////////////
 	///
@@ -89,9 +124,18 @@ public:
 	/// SAVE GAME
 	///
 
+	/// If true, when the game is launched a saved game will be checked for, and if it
+	/// exists it will be loaded. Useful for debugging though.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GameInstance")
+	bool ShouldCheckForSaveGameOnLoad = false;
+	
+	/// Store current game state into the <code>CurrentSaveGame</code> object ready for it to
+	/// be serialised to persistent storage with the given name.
 	UFUNCTION(BlueprintCallable, Category="SaveGame")
 	void SaveGame();
 
+	/// Retrieve current game state from the <code>CurrentSaveGame</code> object and make it
+	/// active in the current game.
 	UFUNCTION(BlueprintCallable, Category="SaveGame")
 	void LoadGame();
 
@@ -105,33 +149,6 @@ private:
 	const FName OnLoadRoomName = "OnLoadRoom";
 	const FName OnRoomLoadedName = "OnRoomLoaded";
 	const FName OnRoomUnloadedName = "OnRoomUnloaded";
-	
-	enum class ERoomTransitionPhase
-	{
-		/// The game is just launching and the player has not issued any commands yet
-		GameNotStarted,
-
-		/// The game is loading up the starting room, and play is locked
-		LoadStartingRoom,
-
-		/// The game has been played for a time, and a valid loaded room is currently shown
-		RoomCurrent,
-
-		/// Yet another new room is being loaded, the game is locked.
-		LoadNewRoom,
-
-		/// The room that was loading is now loaded, and is about to be set up
-		NewRoomLoaded,
-
-		/// An old room that was in memory is being unloaded
-		UnloadOldRoom,
-
-		/// The room that was unloading has finished being removed from memory
-		RoomUnloaded,
-
-		/// Everything is nearly done, there's a short delay being processed to allow settling
-		DelayProcessing,
-	};
 	
 	ERoomTransitionPhase RoomTransitionPhase = ERoomTransitionPhase::GameNotStarted;
 
@@ -158,6 +175,13 @@ private:
 	//     OnRoomLoadTimerTimeout()      
 	//     SetupRoom()
 	//     StartNewRoom()                RoomCurrent
+	//
+	// On Init() calling LoadGame() the StartingDoorLabel
+	// and StartingLevelName will be set to values from the save
+	// game. Then, when the AdventurePlayerController calls OnLoadRoom
+	// with GameNotStarted, the save game room will be loaded.
+	// Its important at this point that the Starting Level does _not_
+	// have Permanently Loaded set to true in the levels window.
 
 	/// Load up the room specified by the current door
 	void LoadRoom();
@@ -189,13 +213,13 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category="Room")
 	float RoomLoadDelay = 0.5;
-
+	
 	//////////////////////////////////
 	///
 	/// UTILITIES
 	///
 	
-	inline AAdventurePlayerController *GetAdventureController() const
+	AAdventurePlayerController *GetAdventureController() const
 	{
 		APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 		AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
@@ -207,14 +231,19 @@ private:
 	}
 
 	static UAdventureGameHUD *GetHUD();
-
-	FName CurrentDoorLabel = FName("A1");
 	
 	ADoor *FindDoor(FName DoorLabel);
 
 	void LoadDoor(const ADoor *Door);
-private:
+
 	FDelegateHandle OnInventoryChangedHandle;
 
 	void LogSaveGameStatus(USaveGame *SaveGame);
+
+public:
+
+	/// All the tags currently set in the game
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Save Game")
+	FGameplayTagContainer AdventureTags;
+	
 };

@@ -100,4 +100,12 @@ struct AdvGameUtils
      * @return Array of strings.
      */
     static TArray<FString> NewLineSeperatedToArrayString(const FString& NewString);
+
+    /**
+     * Wrap a line of text so that it fits into the given length.
+     * @param NewText Text to wrap
+     * @param MaxLength Maximum length of a line
+     * @return Array of lines, all less than or equal to MaxLength
+     */
+    static TArray<FText> WrapTextLinesToMaxCharacters(const FText& NewText, uint32 MaxLength = 30);
 };

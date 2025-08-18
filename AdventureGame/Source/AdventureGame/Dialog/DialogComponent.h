@@ -47,9 +47,14 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog")
     TArray<FConversationData> ConversationData;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog")
+    int32 TopicIndex = 0;
+    
     /// Data tables that contain the dialogue at design time, in the editor.
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog")
     TArray<UDataTable *> TopicList;
+
+    void LoadPrompts(TArray<FPromptData> &PromptsToShow);
 
     int ConversationCount() const;
 private:

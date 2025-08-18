@@ -94,3 +94,20 @@ TArray<FString> AdvGameUtils::NewLineSeperatedToArrayString(const FString& NewSt
     }
     return TArray({ NewString });
 }
+
+TArray<FText> AdvGameUtils::WrapTextLinesToMaxCharacters(const FText& NewText, uint32 MaxLength)
+{
+    TArray<FText> WrappedLines;
+    uint32 CurrentStringIndex = 0;
+    FString CurrentLine = NewText.ToString();
+    while (CurrentLine.Len() > MaxLength)
+    {
+        int32 SplitPoint = MaxLength;
+        while (CurrentLine[--SplitPoint] != ' ' && SplitPoint > 0) {}
+        if (SplitPoint < 0) SplitPoint = MaxLength; // Did not find a space to split at
+        WrappedLines.Add(FText::FromString(CurrentLine.Left(SplitPoint)));
+        CurrentLine = CurrentLine.Mid(SplitPoint).TrimStartAndEnd();
+    }
+    WrappedLines.Add(FText::FromString(CurrentLine));
+    return WrappedLines;
+}

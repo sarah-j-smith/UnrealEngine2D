@@ -86,6 +86,9 @@ public:
 	
 private:
     bool IsMobileTouch = false;
+
+	UPROPERTY()
+	UWidget *DefaultWidget = nullptr;
 	
 	TWeakObjectPtr<AAdventureCharacter> PlayerCharacter;
 

@@ -14,6 +14,7 @@
 #include "../Enums/VerbType.h"
 #include "Puck.h"
 #include "../Items/InventoryItem.h"
+#include "AdventureGame/Constants.h"
 
 #include "GameFramework/PlayerController.h"
 #include "AdventurePlayerController.generated.h"
@@ -83,6 +84,15 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Save Game")
+	FString DefaultSaveGameName = SAVE_GAME_NAME;
+
+	UFUNCTION(BlueprintCallable, Category="Save Game")
+	void HandleSaveGame(const FString& GameName);
+
+	UFUNCTION(BlueprintCallable, Category="Save Game")
+	void HandleLoadGame(const FString& GameName);
 
 	void HandleTouchInput(float X, float Y);
 	
@@ -157,6 +167,8 @@ private:
 	void TeleportToLocation(const FVector &Location);
 	
 	void SetVerbAndCommandFromHotSpot(AHotSpot *HotSpot);
+
+	void StopAIMovement();
 	
 	//////////////////////////////////
 	///

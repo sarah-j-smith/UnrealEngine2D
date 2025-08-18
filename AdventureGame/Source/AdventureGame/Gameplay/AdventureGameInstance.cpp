@@ -22,37 +22,22 @@ void UAdventureGameInstance::Init()
 {
 	Super::Init();
 
-	/**
- *	@see UGameplayStatics::CreateSaveGameObject
- *	@see UGameplayStatics::SaveGameToSlot
- *	@see UGameplayStatics::DoesSaveGameExist
- *	@see UGameplayStatics::LoadGameFromSlot
- *	@see UGameplayStatics::DeleteGameInSlot
- */
-	// CurrentSaveGame = UGameplayStatics::CreateSaveGameObject(SaveClass);
-	if (UGameplayStatics::DoesSaveGameExist(SAVE_GAME_NAME, 0))
+	CreateInventory();
+	
+	if (ShouldCheckForSaveGameOnLoad && UGameplayStatics::DoesSaveGameExist(SAVE_GAME_NAME, 0))
 	{
-		USaveGame *SaveGame = UGameplayStatics::LoadGameFromSlot(SAVE_GAME_NAME, 0);
-		CurrentSaveGame = Cast<UAdventureSave>(SaveGame);
-	}
-
-	if (!Inventory)
-	{
-		if (InventoryClass)
+		if (USaveGame *SaveGame = UGameplayStatics::LoadGameFromSlot(SAVE_GAME_NAME, 0))
 		{
-			Inventory = NewObject<UItemList>(this, InventoryClass, TEXT("Inventory"));
-		}
-		else
-		{
-			Inventory = NewObject<UItemList>(this, TEXT("Inventory"));
-			UE_LOG(LogAdventureGame, Log, TEXT("Created new inventory of UItemList type. Set InventoryClass property in AdventureGameInstance to customise this."));
+			CurrentSaveGame = Cast<UAdventureSave>(SaveGame);
+			LoadGame();
 		}
 	}
 }
 
 void UAdventureGameInstance::OnLoadRoom()
 {
-	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::OnLoadRoom"));
+	UE_LOG(LogAdventureGame, Display, TEXT("UAdventureGameInstance::OnLoadRoom - RoomTransitionPhase: %s"),
+		*(UEnum::GetValueAsString(RoomTransitionPhase)));
 	if (RoomTransitionPhase == ERoomTransitionPhase::GameNotStarted)
 	{
 		LoadStartingRoom();
@@ -65,14 +50,13 @@ void UAdventureGameInstance::OnLoadRoom()
 
 void UAdventureGameInstance::LoadStartingRoom()
 {
-	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::LoadStartingRoom"));
+	// Load the room whose level name is in StartingLevelName, then call OnRoomLoaded.
+	// This is done before there is a scene, or a player controller. Since there is no
+	// scene we don't have to unload that previous level. 
+	UE_LOG(LogAdventureGame, Log, TEXT("UAdventureGameInstance::LoadStartingRoom - %s"),
+		*StartingLevelName.ToString());
 	RoomTransitionPhase = ERoomTransitionPhase::LoadStartingRoom;
 
-	if (UAdventureSave *Save = CurrentSaveGame)
-	{
-		
-	}
-	
 	FLatentActionInfo LatentActionInfo = GetLatentActionForHandler(OnRoomLoadedName);
 	UGameplayStatics::LoadStreamLevel(GetWorld(), StartingLevelName,
 	                                  true, false, LatentActionInfo);
@@ -83,13 +67,14 @@ void UAdventureGameInstance::OnRoomLoaded()
 	switch (RoomTransitionPhase)
 	{
 	case ERoomTransitionPhase::LoadStartingRoom:
-		UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::OnRoomLoaded - LoadStartingRoom"));
+		UE_LOG(LogAdventureGame, Log, TEXT("UAdventureGameInstance::OnRoomLoaded - LoadStartingRoom"));
+		CurrentLevelName = StartingLevelName;
 		CurrentDoorLabel = StartingDoorLabel;
 		RoomTransitionPhase = ERoomTransitionPhase::NewRoomLoaded;
 		NewRoomDelay();
 		break;
 	case ERoomTransitionPhase::LoadNewRoom:
-		UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::OnRoomLoaded - LoadNewRoom"));
+		UE_LOG(LogAdventureGame, Log, TEXT("UAdventureGameInstance::OnRoomLoaded - LoadNewRoom"));
 		RoomTransitionPhase = ERoomTransitionPhase::NewRoomLoaded;
 		UnloadRoom();
 	default:
@@ -115,8 +100,11 @@ void UAdventureGameInstance::OnRoomLoadTimerTimeout()
 
 void UAdventureGameInstance::SetupRoom()
 {
-	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::SetupRoom"));
+	auto f = UGameplayStatics::GetCurrentLevelName(GetWorld());
+	UE_LOG(LogAdventureGame, Display, TEXT("UAdventureGameInstance::SetupRoom - %s"), *f);
 
+	UE_LOG(LogAdventureGame, Display, TEXT("Look for door %s"), *CurrentDoorLabel.ToString());
+	
 	// Find the door with the label.
 	const ADoor* Door = FindDoor(CurrentDoorLabel);
 	LoadDoor(Door);
@@ -174,6 +162,8 @@ void UAdventureGameInstance::SaveGame()
 		CurrentSaveGame->Inventory.Add(Item->ItemKind);
 	}
 
+	CurrentSaveGame->AdventureTags = AdventureTags;
+
 	CurrentSaveGame->OnAdventureSave(this);
 }
 
@@ -181,30 +171,38 @@ void UAdventureGameInstance::LoadGame()
 {
 	if (!IsValid(CurrentSaveGame)) return;
 
-	StartingDoorLabel = CurrentSaveGame->StartingDoorLabel;
-	StartingLevelName = CurrentSaveGame->StartingLevel;
+	if (RoomTransitionPhase == ERoomTransitionPhase::GameNotStarted)
+	{
+		StartingDoorLabel = CurrentSaveGame->StartingDoorLabel;
+		StartingLevelName = CurrentSaveGame->StartingLevel;
+		
+		UE_LOG(LogAdventureGame, Display, TEXT("UAdventureGameInstance::LoadGame - GameNotStarted"));
+	}
+	else if (CurrentSaveGame->StartingLevel != CurrentLevelName)
+	{
+		SetLoadTarget(CurrentSaveGame->StartingLevel, CurrentSaveGame->StartingDoorLabel);
+	}
 
-	// Inventory Items persist from level to level, where the player pawn is recreated
-	// so is there a problem keeping a persistent reference to the Adventure Controller
-	// on the inventory item?
-	//
-	// According to this page the Player Controller persists throughout the game:
-	// https://dev.epicgames.com/documentation/en-us/unreal-engine/player-controllers-in-unreal-engine
-	//
-	// Also the Inventory Items just have a weak reference. So if its
-	// destroyed it won't be retained as bad pointer.
 	AAdventurePlayerController* AdventurePlayerController = GetAdventureController();
 	for (const EItemKind Item : CurrentSaveGame->Inventory)
 	{
 		UInventoryItem *NewItem = Inventory->AddItemToInventory(Item);
-		NewItem->SetAdventurePlayerController(AdventurePlayerController);
+		if (AdventurePlayerController)
+		{
+			NewItem->SetAdventurePlayerController(AdventurePlayerController);
+		}
 	}
 
+	AdventureTags = CurrentSaveGame->AdventureTags;
+	
 	CurrentSaveGame->OnAdventureLoad(this);
 }
 
 void UAdventureGameInstance::LoadRoom()
 {
+	// Load the room whose level name is in CurrentLevelName, then call OnRoomLoaded.
+	// This is done when there is a scene, and a player controller, we must blank the screen,
+	// stop player input, and unload that previous level (that unload is done in OnRoomLoaded). 
 	RoomTransitionPhase = ERoomTransitionPhase::LoadNewRoom;
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	AAdventurePlayerController* AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
@@ -212,11 +210,10 @@ void UAdventureGameInstance::LoadRoom()
 	AdventurePlayerController->InterruptCurrentAction();
 	GetHUD()->ShowBlackScreen();
 
-	// Save the CurrentDoorLabel because the CurrentDoor will be destroyed when the level is unloaded
-	CurrentDoorLabel = CurrentDoor->DoorLabel;
+	UE_LOG(LogAdventureGame, Display, TEXT("UAdventureGameInstance::LoadRoom - %s"), *CurrentLevelName.ToString());
 
 	FLatentActionInfo LatentActionInfo = GetLatentActionForHandler(OnRoomLoadedName);
-	UGameplayStatics::LoadStreamLevel(GetWorld(), CurrentDoor->LevelToLoad,
+	UGameplayStatics::LoadStreamLevel(GetWorld(), CurrentLevelName,
 	                                  true, false, LatentActionInfo);
 }
 
@@ -254,7 +251,7 @@ ADoor* UAdventureGameInstance::FindDoor(FName DoorLabel)
 	}))
 	{
 #if WITH_EDITOR
-		UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::FindDoor - got: %s"),
+		UE_LOG(LogAdventureGame, Display, TEXT("UAdventureGameInstance::FindDoor - got: %s"),
 		       *(Cast<ADoor>(*FoundDoor)->ShortDescription.ToString()));
 #endif
 		return Cast<ADoor>(*FoundDoor);
@@ -271,7 +268,7 @@ void UAdventureGameInstance::LoadDoor(const ADoor* Door)
 		return;
 	}
 	
-	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UAdventureGameInstance::LoadDoor: %s"),
+	UE_LOG(LogAdventureGame, Display, TEXT("UAdventureGameInstance::LoadDoor: %s"),
 	       *(Cast<ADoor>(Door)->ShortDescription.ToString()));
 	
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
@@ -290,14 +287,32 @@ void UAdventureGameInstance::LoadDoor(const ADoor* Door)
 	AdventureCharacter->SetupCamera();
 }
 
+void UAdventureGameInstance::LogSaveGameStatus(USaveGame* SaveGame)
+{
+}
+
+void UAdventureGameInstance::CreateInventory()
+{
+	if (!Inventory)
+	{
+		if (InventoryClass)
+		{
+			Inventory = NewObject<UItemList>(this, InventoryClass, TEXT("Inventory"));
+		}
+		else
+		{
+			Inventory = NewObject<UItemList>(this, TEXT("Inventory"));
+			UE_LOG(LogAdventureGame, Log, TEXT("Created new inventory of UItemList type. Set InventoryClass property in AdventureGameInstance to customise this."));
+		}
+	}
+}
+
 void UAdventureGameInstance::LoadRoom(ADoor* FromDoor)
 {
 	UWorld* World = FromDoor->GetWorld();
 	UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(World);
 	UAdventureGameInstance* AdventureGameInstance = Cast<UAdventureGameInstance>(GameInstance);
-	AdventureGameInstance->CurrentDoor = FromDoor;
-	AdventureGameInstance->CurrentDoorLabel = FromDoor->DoorLabel;
-	AdventureGameInstance->TriggerRoomTransition();
+	AdventureGameInstance->SetDestinationFromDoor(FromDoor);
 }
 
 UAdventureGameHUD* UAdventureGameInstance::GetHUD()

@@ -29,7 +29,7 @@ UBarkTask* UBarkTask::DoBarkTask(const UObject* WorldContextObject, const FText 
     BlueprintNode->BarkLocation = BarkLocation;
     BlueprintNode->TimeToBark = BarkTime;
 
-    UE_LOG(LogAdventureGame, Log, TEXT("UBarkTask created"));
+    UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UBarkTask created"));
 
     // Register with the game instance to avoid being garbage collected
     BlueprintNode->RegisterWithGameInstance(WorldContextObject);
@@ -40,7 +40,7 @@ void UBarkTask::Activate()
 {
     Super::Activate();
 
-    UE_LOG(LogAdventureGame, Log, TEXT("UBarkTask Activate - %s"), *(BarkText.ToString()));
+    UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UBarkTask Activate - %s"), *(BarkText.ToString()));
 
     auto Apc = GetAdventureController();
     Apc->PlayerBark(BarkText, TextColor, TimeToBark, BarkLocation, MyUID);
@@ -59,7 +59,7 @@ void UBarkTask::BarkCompleted(FText Text, int32 UID, bool bSuccess)
 {
     if (UID == MyUID)
     {
-        UE_LOG(LogAdventureGame, Verbose, TEXT("Task completion message UID: %d - BarkText: %s"),
+        UE_LOG(LogAdventureGame, VeryVerbose, TEXT("Task completion message UID: %d - BarkText: %s"),
                UID, *(BarkText.ToString()));
         if (bSuccess)
         {
@@ -73,7 +73,7 @@ void UBarkTask::BarkCompleted(FText Text, int32 UID, bool bSuccess)
     }
     else
     {
-        UE_LOG(LogAdventureGame, Verbose, TEXT("Ignoring task completion message UID: %d - BarkText: %s"),
+        UE_LOG(LogAdventureGame, VeryVerbose, TEXT("Ignoring task completion message UID: %d - BarkText: %s"),
                UID, *(BarkText.ToString()));
     }
 }

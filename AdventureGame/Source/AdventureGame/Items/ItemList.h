@@ -8,6 +8,7 @@
 
 #include "ItemList.generated.h"
 
+class AAdventurePlayerController;
 enum class EItemKind : uint8;
 class UInventoryItem;
 
@@ -20,8 +21,7 @@ UCLASS(Blueprintable, BlueprintType)
 class ADVENTUREGAME_API UItemList : public UObject
 {
     GENERATED_BODY()
-
-private:
+    
     /*
      * Use a Linked List here because the TArray throws exceptions
      * when you remove data from the middle of it due to the way it
@@ -122,4 +122,6 @@ public:
     /// Copy pointers to the current inventory into the given array out argument.
     /// @param Result Reference to an array of Inventory Item pointers. This array will be emptied and over-written.
     void GetInventoryItemsArray(TArray<UInventoryItem *> &Result) const;
+
+    void AddAdventurePlayerControllerWeakRef(AAdventurePlayerController *AdventurePlayerController);
 };

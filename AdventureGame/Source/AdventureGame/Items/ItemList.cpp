@@ -117,6 +117,14 @@ void UItemList::GetInventoryItemsArray(TArray<UInventoryItem *> &Result) const
 	}
 }
 
+void UItemList::AddAdventurePlayerControllerWeakRef(AAdventurePlayerController* AdventurePlayerController)
+{
+	for (const FInventoryList *Iterator = Inventory; Iterator; Iterator = Iterator->Next)
+	{
+		Iterator->Element->SetAdventurePlayerController(AdventurePlayerController);
+	}
+}
+
 
 void UItemList::DumpInventoryToLog() const
 {

@@ -129,11 +129,19 @@ void UAdventureGameHUD::SetInventoryText()
 
 void UAdventureGameHUD::ShowPromptList()
 {
-    UISwitcher->SetActiveWidget(PromptList);
+    if (UISwitcher->GetActiveWidget() != PromptList)
+    {
+        DefaultWidget = UISwitcher->GetActiveWidget();
+        UISwitcher->SetActiveWidget(PromptList);
+    }
 }
 
 void UAdventureGameHUD::HidePromptList()
 {
+    if (UISwitcher->GetActiveWidget() != DefaultWidget)
+    {
+        UISwitcher->SetActiveWidget(DefaultWidget);
+    }
 }
 
 void UAdventureGameHUD::AddBarkText(const FText& BarkText, USphereComponent* Position, TOptional<FColor> TextColor)
