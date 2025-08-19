@@ -144,6 +144,13 @@ void UAdventureGameHUD::HidePromptList()
     }
 }
 
+void UAdventureGameHUD::AddBarkText(const TArray<FText> &BarkTextArray, USphereComponent* Position, TOptional<FColor> TextColor)
+{
+    Bark->BarkTextColor = TextColor.Get(FColor::White);
+    Bark->BarkPosition = Position;
+    Bark->SetBarkLines(BarkTextArray);
+}
+
 void UAdventureGameHUD::AddBarkText(const FText& BarkText, USphereComponent* Position, TOptional<FColor> TextColor)
 {
     Bark->BarkTextColor = TextColor.Get(FColor::White);
@@ -153,6 +160,7 @@ void UAdventureGameHUD::AddBarkText(const FText& BarkText, USphereComponent* Pos
 
 void UAdventureGameHUD::ClearBarkText()
 {
+    Bark->ClearText();
 }
 
 void UAdventureGameHUD::HandleInventoryChanged(FName Identifier)

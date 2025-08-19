@@ -13,6 +13,11 @@ AHotSpotNPC::AHotSpotNPC()
 {
     PrimaryActorTick.bCanEverTick = false;
 
+    // This is not a "real" sphere - its not a mesh, its just a collision volume defined by dimensions
+    BarkPosition = CreateDefaultSubobject<USphereComponent>(TEXT("BarkPosition"));
+    BarkPosition->SetupAttachment(RootComponent);
+    BarkPosition->SetSphereRadius(4.0f);
+
     FlipbookComponent = CreateDefaultSubobject<UPaperFlipbookComponent>("FlipbookComponent");
     FlipbookComponent->SetupAttachment(RootComponent);
     FlipbookComponent->SetLooping(true);
@@ -51,17 +56,11 @@ void AHotSpotNPC::OnConverseWith_Implementation()
 {
     IDialogInteractable::OnConverseWith_Implementation();
     APlayerController *PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-    TArray<FPromptData> PromptsToShow;
-    DialogComponent->LoadPrompts(PromptsToShow);
-    if (const AAdventurePlayerController *Apc = Cast<AAdventurePlayerController>(PC); IsValid(Apc))
+    if (AAdventurePlayerController *Apc = Cast<AAdventurePlayerController>(PC); IsValid(Apc))
     {
         Apc->AdventureHUDWidget->ShowPromptList();
-        UPromptList *Prompts = Apc->AdventureHUDWidget->PromptList;
-        const int MaxPrompts = std::min(Prompts->PromptEntries.Num(),PromptsToShow.Num());
-        for (int i = 0; i < MaxPrompts; ++i)
-        {
-            Prompts->SetPromptText(PromptsToShow[i].PromptText[0], PromptsToShow[i].HasBeenSelected, i);
-        }
+        Apc->SetInputLocked(true);
+        DialogComponent->HandleConversations(Apc->AdventureHUDWidget->PromptList, Apc->AdventureHUDWidget->Bark);
     }
 }
 

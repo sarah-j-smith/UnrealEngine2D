@@ -7,6 +7,8 @@
 #include "Blueprint/UserWidget.h"
 #include "PromptList.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPromptClickedDelegate, int, PromptIndex);
+
 /**
  * 
  */
@@ -16,6 +18,9 @@ class ADVENTUREGAME_API UPromptList : public UUserWidget
     GENERATED_BODY()
 public:
     virtual void NativeOnInitialized() override;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FOnPromptClickedDelegate PromptClickedEvent;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
     UDialogPrompt *Prompt1;
@@ -38,6 +43,24 @@ public:
     UFUNCTION(BlueprintCallable)
     void HidePromptEntries();
 
+    void SetPromptMenusEnabled(bool Enabled);
+
     UFUNCTION(BlueprintCallable)
     void SetPromptText(FText TextToBark, bool HasBeenSelected, uint8 RowIndex);
+
+private:
+    UFUNCTION()
+    void OnPrompt1Clicked();
+    
+    UFUNCTION()
+    void OnPrompt2Clicked();
+    
+    UFUNCTION()
+    void OnPrompt3Clicked();
+    
+    UFUNCTION()
+    void OnPrompt4Clicked();
+    
+    UFUNCTION()
+    void OnPrompt5Clicked();
 };

@@ -40,6 +40,9 @@ public:
 
     virtual void OnTalkTo_Implementation() override;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    USphereComponent* BarkPosition;
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "NPC")
     UDialogComponent *DialogComponent;
 

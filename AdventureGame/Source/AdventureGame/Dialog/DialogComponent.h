@@ -3,13 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "ConversationData.h"
 #include "AdventureGame/Constants.h"
+#include "AdventureGame/Enums/DialogState.h"
 #include "Components/ActorComponent.h"
 #include "DialogComponent.generated.h"
 
+class UBarkText;
+class UPromptList;
 DECLARE_DYNAMIC_DELEGATE_OneParam(FConversationDataLoad, UDialogComponent *, DialogComponent);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FConversationDataSave, UDialogComponent *, DialogComponent);
+
+DECLARE_MULTICAST_DELEGATE(FConversationEnded);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class ADVENTUREGAME_API UDialogComponent : public UActorComponent
@@ -40,6 +46,10 @@ public:
     FConversationDataLoad ConversationDataLoad;
     FConversationDataSave ConversationDataSave;
 
+    FConversationEnded ConversationEndedEvent;
+
+    EDialogState DialogState = EDialogState::Hidden;
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Dialog")
     FLinearColor TextColor = G_NPC_Default_Text_Colour;
 
@@ -57,7 +67,33 @@ public:
     void LoadPrompts(TArray<FPromptData> &PromptsToShow);
 
     int ConversationCount() const;
-private:
-    
 
+    void HandleConversations(UPromptList *Prompts, UBarkText *BarkText);
+
+    void StopMonitoringConversations();
+
+    void AssignNewTopic(UDataTable *NewTopic);
+private:
+    UFUNCTION()
+    void HandlePromptClick(int PromptIndex);
+
+    TArray<int> Stack;
+
+    void ShowNextDialogPrompts();
+
+    TArray<FPromptData> PromptsToShow;
+
+    UPROPERTY()
+    UPromptList *PromptList;
+
+    UPROPERTY()
+    UBarkText *BarkTextDisplay;
+
+    FTimerHandle BarkTimerHandle;
+    FTimerDelegate BarkTimerDelegate;
+
+    UFUNCTION()
+    void OnBarkTimerTimeout();
+
+    void PopConversationTopic();
 };

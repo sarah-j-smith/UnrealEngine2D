@@ -82,6 +82,8 @@ public:
 	void AddBarkText(const FText &BarkText, USphereComponent *Position,
 		TOptional<FColor> TextColor = TOptional<FColor>());
 
+	void AddBarkText(const TArray<FText> &BarkTextArray, USphereComponent* Position, TOptional<FColor> TextColor);
+
 	void ClearBarkText();
 	
 private:

@@ -938,7 +938,7 @@ void AAdventurePlayerController::TriggerUpdateInteractionText()
     UpdateInteractionTextDelegate.Broadcast();
 }
 
-void AAdventurePlayerController::PlayerBark(FText BarkText, TOptional<FColor> TextColor, float TimeToPause,
+void AAdventurePlayerController::PlayerBark(const FText &BarkText, TOptional<FColor> TextColor, float TimeToPause,
     USphereComponent *Position, int32 BarkTaskUid)
 {
     if (IsBarking) ClearBark();
@@ -956,6 +956,34 @@ void AAdventurePlayerController::PlayerBark(FText BarkText, TOptional<FColor> Te
     if (TimeToPause == 0)
     {
         TimeToPause = UAdvBlueprintFunctionLibrary::GetBarkTime(BarkText.ToString());
+    }
+    GetWorldTimerManager().SetTimer(TimerHandle_Bark, BarkTimerDelegate, 1.0f, false, TimeToPause);
+}
+
+void AAdventurePlayerController::PlayerBarkLines(const TArray<FText>& BarkTextArray, TOptional<FColor> TextColor,
+    float TimeToPause, USphereComponent* Position, int32 BarkTaskUid)
+{
+    if (BarkTextArray.IsEmpty()) return;
+    if (IsBarking) ClearBark();
+
+    if (Position == nullptr)
+    {
+        Position = PlayerCharacter->Sphere;
+    }
+    IsBarking = true;
+    AdventureHUDWidget->AddBarkText(BarkTextArray, Position,
+        TextColor.Get(G_NPC_Default_Text_Colour.ToFColor(true
+        )));
+
+    CurrentBarkTask = BarkTaskUid;
+    CurrentBarkText = BarkTextArray[0];
+
+    if (TimeToPause == 0)
+    {
+        for (FText Text : BarkTextArray)
+        {
+            TimeToPause += UAdvBlueprintFunctionLibrary::GetBarkTime(Text.ToString());
+        }
     }
     GetWorldTimerManager().SetTimer(TimerHandle_Bark, BarkTimerDelegate, 1.0f, false, TimeToPause);
 }

@@ -46,7 +46,10 @@ public:
 	/// PLAYER BARK
 	///
 	
-	void PlayerBark(FText BarkText, TOptional<FColor> TextColor = TOptional<FColor>(),
+	void PlayerBark(const FText &BarkText, TOptional<FColor> TextColor = TOptional<FColor>(),
+		float TimeToPause = 0, USphereComponent *Position = nullptr, int32 BarkTaskUid = 0);
+
+	void PlayerBarkLines(const TArray<FText> &BarkTextArray, TOptional<FColor> TextColor = TOptional<FColor>(),
 		float TimeToPause = 0, USphereComponent *Position = nullptr, int32 BarkTaskUid = 0);
 
 	void ClearBark();

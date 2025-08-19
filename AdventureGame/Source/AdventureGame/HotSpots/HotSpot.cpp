@@ -17,7 +17,6 @@ AHotSpot::AHotSpot()
 	WalkToPoint = CreateDefaultSubobject<USphereComponent>(TEXT("PlayerDetectorSphere"));
 	WalkToPoint->SetupAttachment(RootComponent);
 	WalkToPoint->SetSphereRadius(4.0f);
-
 }
 
 void AHotSpot::BeginPlay()
