@@ -9,7 +9,9 @@
 #include "../HUD/PromptList.h"
 #include "AdventureGame/AdventureGame.h"
 #include "AdventureGame/Gameplay/AdvBlueprintFunctionLibrary.h"
+#include "AdventureGame/HUD/AdvGameUtils.h"
 #include "AdventureGame/Player/AdventurePlayerController.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 UDialogComponent::UDialogComponent()
@@ -26,11 +28,9 @@ UDialogComponent::UDialogComponent()
 void UDialogComponent::BeginPlay()
 {
     Super::BeginPlay();
-    
+
     ConversationDataLoad.ExecuteIfBound(this);
     FillConversationData();
-
-    BarkTimerDelegate.BindUObject(this, &UDialogComponent::OnBarkTimerTimeout);
 }
 
 
@@ -52,7 +52,7 @@ void UDialogComponent::FillConversationData()
         TArray<FPromptData> PromptsForTopic;
         TArray<FPromptData*> PromptPtrs;
         TopicTable->GetAllRows<FPromptData>("FillConversationData", PromptPtrs);
-        for (const FPromptData *PromptData : PromptPtrs)
+        for (const FPromptData* PromptData : PromptPtrs)
         {
             if (PromptData)
             {
@@ -71,7 +71,7 @@ void UDialogComponent::UpdatePromptAtIndex(int32 TopicIndex, int32 PromptIndex)
     ConversationData[TopicIndex].MarkPromptSelected(PromptIndex, PromptSubIndex);
 }
 
-void UDialogComponent::LoadPrompts(TArray<FPromptData> &PromptsToShow)
+void UDialogComponent::LoadPrompts(TArray<FPromptData>& PromptsToShow)
 {
     if (ConversationData.IsEmpty()) return;
     if (TopicIndex < ConversationData.Num() && TopicIndex >= 0)
@@ -81,8 +81,8 @@ void UDialogComponent::LoadPrompts(TArray<FPromptData> &PromptsToShow)
     else
     {
         UE_LOG(LogAdventureGame, Warning,
-            TEXT("TopicIndex %d is not in the bounds of conversation topics, 0 to %d"),
-            TopicIndex, ConversationData.Num());
+               TEXT("TopicIndex %d is not in the bounds of conversation topics, 0 to %d"),
+               TopicIndex, ConversationData.Num());
     }
 }
 
@@ -99,43 +99,29 @@ int UDialogComponent::ConversationCount() const
     return Count;
 }
 
-void UDialogComponent:: HandleConversations(UPromptList *Prompts, UBarkText *BarkText)
+void UDialogComponent::HandleConversations()
 {
-    PromptList = Prompts;
-    BarkTextDisplay = BarkText;
+    InitialiseForBarking();
+    // Get the prompts and display them on the buttons, wait for the player to click
     PromptsToShow.Empty();
     LoadPrompts(PromptsToShow);
-    const int MaxPrompts = std::min(Prompts->PromptEntries.Num(),PromptsToShow.Num());
-    if (MaxPrompts > 0)
-    {
-        Prompts->PromptClickedEvent.AddDynamic(this, &UDialogComponent::HandlePromptClick);
-        for (int i = 0; i < MaxPrompts; ++i)
-        {
-            Prompts->SetPromptText(PromptsToShow[i].PromptText[0], PromptsToShow[i].HasBeenSelected, i);
-        }
-        DialogState = EDialogState::Prompts;
-    }
-    else
-    {
-        UE_LOG(LogAdventureGame, Warning, TEXT("Prompts are empty"));
-    }
+    DisplayPrompts();
+    PromptList->PromptClickedEvent.AddDynamic(this, &UDialogComponent::HandlePromptClick);
 }
 
 void UDialogComponent::StopMonitoringConversations()
 {
-    GetOwner()->GetWorldTimerManager().ClearTimer(BarkTimerHandle);
-    PromptList->PromptClickedEvent.RemoveAll(this);
-    PromptList = nullptr;
-    BarkTextDisplay->ClearText();
+    TearDownBarkingSetup();
     PromptsToShow.Empty();
     DialogState = EDialogState::Hidden;
+    ConversationEndedEvent.Broadcast();
 }
 
-void UDialogComponent::AssignNewTopic(UDataTable* NewTopic)
+void UDialogComponent::AssignNewTopic(const UDataTable* NewTopic)
 {
     int IndexToSet = 0;
     if (!IsValid(NewTopic)) return;
-    for (UDataTable* Topic : TopicList)
+    for (const UDataTable* Topic : TopicList)
     {
         if (Topic == NewTopic)
         {
@@ -149,50 +135,140 @@ void UDialogComponent::AssignNewTopic(UDataTable* NewTopic)
 
 void UDialogComponent::HandlePromptClick(int PromptIndex)
 {
+    CurrentPromptIndex = PromptIndex - 1; // Prompts are numbered 1 - 5
     PromptList->SetPromptMenusEnabled(false);
-    DialogState = EDialogState::Player;
     UpdatePromptAtIndex(PromptIndex, PromptIndex);
-    const AHotSpotNPC *NPC = Cast<AHotSpotNPC>(GetOwner());
-    check(NPC);
-    check(BarkTextDisplay);
-    float BarkTime = 0.0f;
-    float PlayerBarkTime = 0.0f;
-    for (const FText& NPCText : PromptsToShow[PromptIndex].NPCResponse)
-    {
-        PlayerBarkTime = UAdvBlueprintFunctionLibrary::GetBarkTime(NPCText.ToString());
-    }
-    for (const FText &PlayerText : PromptsToShow[PromptIndex].PromptText)
-    {
-        BarkTime += UAdvBlueprintFunctionLibrary::GetBarkTime(PlayerText.ToString());
-    }
-    AAdventurePlayerController *Apc = Cast<AAdventurePlayerController>(BarkTextDisplay->GetOwningPlayer());
-    Apc->PlayerBark(PromptsToShow[PromptIndex].PromptText[0], FColor::White, PlayerBarkTime);
-    BarkTextDisplay->SetBarkLines(PromptsToShow[PromptIndex].NPCResponse);
+    ShowPlayerBark();
+}
 
-    // Calls OnBarkTimerTimeout -> ShowNextDialogPrompts
-    NPC->GetWorldTimerManager().SetTimer(BarkTimerHandle, BarkTimerDelegate, 1.0, false, BarkTime);
+void UDialogComponent::DisplayPrompts()
+{
+    PromptList->SetPromptMenusEnabled(true);
+    const int MaxPrompts = std::min(PromptList->PromptEntries.Num(), PromptsToShow.Num());
+    if (MaxPrompts <= 0)
+    {
+        UE_LOG(LogAdventureGame, Warning, TEXT("Prompts are empty - aborting conversation"));
+        StopMonitoringConversations();
+        return;
+    }
+    for (int i = 0; i < MaxPrompts; ++i)
+    {
+        PromptList->SetPromptText(PromptsToShow[i].PromptText[0], PromptsToShow[i].HasBeenSelected, i);
+    }
+    DialogState = EDialogState::Prompts;
+}
+
+void UDialogComponent::ShowPlayerBark()
+{
+    UE_LOG(LogAdventureGame, Warning, TEXT("ShowPlayerBark"));
+    DialogState = EDialogState::Player;
+    const FBarkRequest* PlayerRequest = FBarkRequest::CreatePlayerMultilineRequest(
+        PromptsToShow[CurrentPromptIndex].PromptText);
+    BarkUID = PlayerRequest->GetUID();
+    Bark->AddBarkRequest(PlayerRequest);
+}
+
+void UDialogComponent::ShowNPCResponse()
+{
+    UE_LOG(LogAdventureGame, Warning, TEXT("ShowNPCResponse"));
+    DialogState = EDialogState::NPC;
+    const AHotSpotNPC* NPC = Cast<AHotSpotNPC>(GetOwner());
+    check(NPC);
+    const FBarkRequest* NPCRequest = FBarkRequest::CreateNPCMultilineRequest(
+        PromptsToShow[CurrentPromptIndex].NPCResponse, 0,
+        NPC->BarkPosition, TextColor.ToFColor(true));
+    BarkUID = NPCRequest->GetUID();
+    Bark->AddBarkRequest(NPCRequest);
 }
 
 void UDialogComponent::ShowNextDialogPrompts()
 {
+    if (PromptsToShow[CurrentPromptIndex].EndsConversation)
+    {
+#if WITH_EDITOR
+        if (PromptsToShow[CurrentPromptIndex].SwitchTopic)
+        {
+            const FString PromptText = PromptsToShow[CurrentPromptIndex].PromptText[0].ToString().Left(20);
+            UE_LOG(LogAdventureGame, Error, TEXT("Ignoring switch topic on prompt %s - because it ends conversation"),
+                   *PromptText);
+        }
+#endif
+        if (!PopConversationTopic())
+        {
+            StopMonitoringConversations();
+            return;
+        }
+    }
+    else if (PromptsToShow[CurrentPromptIndex].SwitchTopic)
+    {
+        PushConversationTopic();
+    }
     PromptsToShow.Empty();
     LoadPrompts(PromptsToShow);
-    const int MaxPrompts = std::min(PromptList->PromptEntries.Num(),PromptsToShow.Num());
-    if (MaxPrompts > 0)
+    DisplayPrompts();
+}
+
+void UDialogComponent::InitialiseForBarking()
+{
+    NPC = Cast<AHotSpotNPC>(GetOwner());
+    check(NPC);
+    Apc = Cast<AAdventurePlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+    check(Apc);
+    PromptList = Apc->AdventureHUDWidget->PromptList;
+    Bark = Apc->AdventureHUDWidget->Bark;
+    BarkUID = AdvGameUtils::GetUUID();
+    Apc->ClearBark(true);
+    Bark->BarkRequestCompleteDelegate.AddUObject(this, &UDialogComponent::OnBarkTimerTimeout);
+}
+
+void UDialogComponent::TearDownBarkingSetup()
+{
+    if (Bark)
     {
-        for (int i = 0; i < MaxPrompts; ++i)
+        Bark->BarkRequestCompleteDelegate.RemoveAll(this);
+    }
+    if (PromptList)
+    {
+        PromptList->PromptClickedEvent.RemoveAll(this);
+    }
+    BarkUID = -1;
+    Apc = nullptr;
+    Bark = nullptr;
+    PromptList = nullptr;
+}
+
+void UDialogComponent::OnBarkTimerTimeout(int32 UID)
+{
+    // Triggered by the Player Controller's Bark Timeout.
+    UE_LOG(LogAdventureGame, VeryVerbose, TEXT("OnBarkTimerTimeout: Expected UID: %d vs Got UID: %d"),
+           BarkUID, UID);
+    if (UID == BarkUID)
+    {
+        // Only react if its our text that caused the timeout
+        if (DialogState == EDialogState::Player)
         {
-            PromptList->SetPromptText(PromptsToShow[i].PromptText[0], PromptsToShow[i].HasBeenSelected, i);
+            ShowNPCResponse();
+        }
+        else if (DialogState == EDialogState::NPC)
+        {
+            ShowNextDialogPrompts();
         }
     }
 }
 
-void UDialogComponent::OnBarkTimerTimeout()
+bool UDialogComponent::PopConversationTopic()
 {
-    ShowNextDialogPrompts();
+    if (Stack.Num() > 0)
+    {
+        TopicIndex = Stack.Pop();
+        return true;
+    }
+    return false;
 }
 
-void UDialogComponent::PopConversationTopic()
+void UDialogComponent::PushConversationTopic()
 {
+    Stack.Push(TopicIndex);
+    const UDataTable* NewTopic = PromptsToShow[TopicIndex].SwitchTopic;
+    AssignNewTopic(NewTopic);
 }
-

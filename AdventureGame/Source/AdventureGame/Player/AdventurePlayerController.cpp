@@ -180,8 +180,6 @@ void AAdventurePlayerController::SetupAnimationDelegates()
 
 void AAdventurePlayerController::UpdateMouseOverUI(bool NewMouseIsOverUI)
 {
-    UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AAdventurePlayerController set IsMouseOverUI %s"),
-           *(FString(NewMouseIsOverUI ? "true" : "false")));
     this->IsMouseOverUI = NewMouseIsOverUI;
     if (NewMouseIsOverUI)
     {
@@ -241,7 +239,7 @@ void AAdventurePlayerController::HandleTouchInput(float LocationX, float Locatio
     if (LockInput) return;
     if (!IsValid(PlayerCharacter)) return;
 
-    if (IsBarking) ClearBark();
+    if (IsBarking) ClearBark(true);
     
     if (AHotSpot* HotSpot = HotSpotTapped(LocationX, LocationY))
     {
@@ -272,7 +270,8 @@ void AAdventurePlayerController::HandlePointAndClickInput()
     if (!IsValid(PlayerCharacter)) return;
     if (!Cast<AAdventureAIController>(PlayerCharacter->Controller)) return;
 
-    if (IsBarking) ClearBark();
+    // Player tapped on the screen - interrupt the bark
+    if (IsBarking) ClearBark(true);
     
     if (AHotSpot* HotSpot = HotSpotClicked())
     {
@@ -707,7 +706,7 @@ void AAdventurePlayerController::HandleMovementComplete()
 
 void AAdventurePlayerController::AssignVerb(EVerbType NewVerb)
 {
-    ClearBark();
+    ClearBark(true);
     ClearSourceItem();
     ClearTargetItem();
     CurrentVerb = NewVerb;
@@ -941,8 +940,6 @@ void AAdventurePlayerController::TriggerUpdateInteractionText()
 void AAdventurePlayerController::PlayerBark(const FText &BarkText, TOptional<FColor> TextColor, float TimeToPause,
     USphereComponent *Position, int32 BarkTaskUid)
 {
-    if (IsBarking) ClearBark();
-
     if (Position == nullptr)
     {
         Position = PlayerCharacter->Sphere;
@@ -964,8 +961,6 @@ void AAdventurePlayerController::PlayerBarkLines(const TArray<FText>& BarkTextAr
     float TimeToPause, USphereComponent* Position, int32 BarkTaskUid)
 {
     if (BarkTextArray.IsEmpty()) return;
-    if (IsBarking) ClearBark();
-
     if (Position == nullptr)
     {
         Position = PlayerCharacter->Sphere;
@@ -990,24 +985,30 @@ void AAdventurePlayerController::PlayerBarkLines(const TArray<FText>& BarkTextAr
 
 void AAdventurePlayerController::OnBarkTimerTimeOut()
 {
+    UE_LOG(LogAdventureGame, Warning, TEXT("OnBarkTimerTimeOut"));
     if (IsBarking)
     {
+        UE_LOG(LogAdventureGame, Warning, TEXT("OnBarkTimerTimeOut - IsBarking"));
         EndBark.Broadcast(CurrentBarkText, CurrentBarkTask, true);
         CurrentBarkTask = 0;
         CurrentBarkText = FText::GetEmpty();
-        ClearBark();
+        IsBarking = false;
+        AdventureHUDWidget->Bark->ClearText();
     }
 }
 
-void AAdventurePlayerController::ClearBark()
+void AAdventurePlayerController::ClearBark(bool ShouldInterrupt)
 {
-    if (CurrentBarkTask != 0 && !CurrentBarkText.IsEmpty())
-    {
-        // Player or something else interrupted the current bark.
-        EndBark.Broadcast(CurrentBarkText, CurrentBarkTask, false);
-    }
+    UE_LOG(LogAdventureGame, Warning, TEXT("ClearBark"));
     if (IsBarking)
     {
+        UE_LOG(LogAdventureGame, Warning, TEXT("ClearBark - IsBarking"));
+        // Timer is still running - do we let callers know the text was interrupted?
+        if (ShouldInterrupt)
+        {
+            UE_LOG(LogAdventureGame, Warning, TEXT("ClearBark - ShouldInterrupt"));
+            EndBark.Broadcast(CurrentBarkText, CurrentBarkTask, false);
+        }
         GetWorldTimerManager().ClearTimer(TimerHandle_Bark);
         IsBarking = false;
     }

@@ -179,14 +179,15 @@ void AAdventureCharacter::TeleportToLocation(FVector NewLocation)
 
 	// in debug stop here to find out why player is falling through the floor
 	// probably a misplaced door or player start object.
-	if (PrevLocation.Z >= MinZValue)
+	if (PrevLocation.Z < MinZValue)
 	{
+		// Falling happens with increasingly negative z values.
 		UE_LOG(LogAdventureGame, Warning, TEXT("AAdventureCharacter::TeleportToLocation - %s"), *NewLocation.ToString());
 	}
 
 	// in prod work around via forcing to MinZValue
-	float ZValue = std::max(static_cast<float>(NewLocation.Z), MinZValue);
-	SetActorLocation(FVector(NewLocation.X, NewLocation.Y, PrevLocation.Z));
+	const float ZValue = std::max(static_cast<float>(NewLocation.Z), MinZValue);
+	SetActorLocation(FVector(NewLocation.X, NewLocation.Y, ZValue));
 }
 
 void AAdventureCharacter::SetFacingDirection(EWalkDirection Direction)

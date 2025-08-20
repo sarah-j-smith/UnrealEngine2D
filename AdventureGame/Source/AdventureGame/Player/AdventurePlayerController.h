@@ -52,7 +52,7 @@ public:
 	void PlayerBarkLines(const TArray<FText> &BarkTextArray, TOptional<FColor> TextColor = TOptional<FColor>(),
 		float TimeToPause = 0, USphereComponent *Position = nullptr, int32 BarkTaskUid = 0);
 
-	void ClearBark();
+	void ClearBark(bool ShouldInterrupt = false);
 
 	/// This flag is true when the Bark Timer is running, and false otherwise.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

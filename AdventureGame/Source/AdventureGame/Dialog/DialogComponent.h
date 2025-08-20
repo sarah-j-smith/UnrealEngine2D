@@ -7,11 +7,16 @@
 #include "ConversationData.h"
 #include "AdventureGame/Constants.h"
 #include "AdventureGame/Enums/DialogState.h"
+#include "AdventureGame/Player/AdventurePlayerController.h"
 #include "Components/ActorComponent.h"
+
 #include "DialogComponent.generated.h"
 
+class AHotSpotNPC;
+class AAdventurePlayerController;
 class UBarkText;
 class UPromptList;
+
 DECLARE_DYNAMIC_DELEGATE_OneParam(FConversationDataLoad, UDialogComponent *, DialogComponent);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FConversationDataSave, UDialogComponent *, DialogComponent);
 
@@ -48,12 +53,13 @@ public:
 
     FConversationEnded ConversationEndedEvent;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog")
     EDialogState DialogState = EDialogState::Hidden;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Dialog")
     FLinearColor TextColor = G_NPC_Default_Text_Colour;
 
-    /// 
+    /// Conversations loaded from data tables, ready to be barked.
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog")
     TArray<FConversationData> ConversationData;
 
@@ -63,37 +69,62 @@ public:
     /// Data tables that contain the dialogue at design time, in the editor.
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog")
     TArray<UDataTable *> TopicList;
-
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Prompts")
+    TArray<FPromptData> PromptsToShow;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Prompts")
+    int CurrentPromptIndex = 0;
+    
+    /**
+     * Get the prompts at the current topic as an array of prompt data
+     * from the data tables.
+     * @param PromptsToShow Out parameter to be filled with the prompts
+     */
     void LoadPrompts(TArray<FPromptData> &PromptsToShow);
 
     int ConversationCount() const;
 
-    void HandleConversations(UPromptList *Prompts, UBarkText *BarkText);
+    void HandleConversations();
 
     void StopMonitoringConversations();
 
-    void AssignNewTopic(UDataTable *NewTopic);
+    void AssignNewTopic(const UDataTable *NewTopic);
 private:
     UFUNCTION()
     void HandlePromptClick(int PromptIndex);
 
     TArray<int> Stack;
 
+    void DisplayPrompts();
+    void ShowPlayerBark();
+    void ShowNPCResponse();
     void ShowNextDialogPrompts();
-
-    TArray<FPromptData> PromptsToShow;
-
-    UPROPERTY()
-    UPromptList *PromptList;
+    void InitialiseForBarking();
+    void TearDownBarkingSetup();
 
     UPROPERTY()
-    UBarkText *BarkTextDisplay;
+    UPromptList *PromptList = nullptr;
 
-    FTimerHandle BarkTimerHandle;
+    UPROPERTY()
+    UBarkText *Bark = nullptr;
+
+    UPROPERTY()
+    AAdventurePlayerController *Apc = nullptr;
+
+    UPROPERTY()
+    AHotSpotNPC *NPC = nullptr;
+
     FTimerDelegate BarkTimerDelegate;
+    FTimerHandle BarkTimerHandle;
+    bool IsBarking = false;
 
     UFUNCTION()
-    void OnBarkTimerTimeout();
+    void OnBarkTimerTimeout(int32 UID);
 
-    void PopConversationTopic();
+    bool PopConversationTopic();
+
+    void PushConversationTopic();
+
+    int32 BarkUID = 0;
 };

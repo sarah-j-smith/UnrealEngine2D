@@ -60,7 +60,7 @@ void AHotSpotNPC::OnConverseWith_Implementation()
     {
         Apc->AdventureHUDWidget->ShowPromptList();
         Apc->SetInputLocked(true);
-        DialogComponent->HandleConversations(Apc->AdventureHUDWidget->PromptList, Apc->AdventureHUDWidget->Bark);
+        DialogComponent->HandleConversations();
     }
 }
 

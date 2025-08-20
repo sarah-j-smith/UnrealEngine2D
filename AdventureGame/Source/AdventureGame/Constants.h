@@ -36,7 +36,14 @@ constexpr FLinearColor G_UI_Disabled_Colour = FLinearColor( COL(0x58), COL(0x47)
 /// Default text color 58471BFF
 constexpr FLinearColor G_NPC_Default_Text_Colour = FLinearColor( COL(0x44), COL(0x47), COL(0xEE), 1.0f);
 
+/// Default player bark text color FFFFFFFF
+constexpr FLinearColor G_Player_Default_Text_Colour = FLinearColor(1.0f, 1.0f, 1.0f, 1.0f);
+
 constexpr int32 GMax_Number_Of_Prompts = 5;
 
 
 #define NEW_LINE_SEPARATOR TEXT("\\n")
+
+#define G_MAX_BARK_LINES 3
+#define BARK_LINE_DELAY 3.0f
+#define BARK_LINE_WIDTH 30

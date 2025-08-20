@@ -26,7 +26,7 @@ void UAdventureGameHUD::NativeOnInitialized()
             this, &UAdventureGameHUD::UpdateInventoryTextEvent);
         AdventurePlayerController = APC;
     }
-    
+
     FString PlatformName = UGameplayStatics::GetPlatformName();
     if (PlatformName == "IOS" || PlatformName == "Android")
     {
@@ -53,7 +53,8 @@ void UAdventureGameHUD::SetInteractionText()
     const UInventoryItem* SourceItem = AdventurePlayerController->SourceItem;
     if ((Verb == EVerbType::GiveItem || Verb == EVerbType::UseItem) && SourceItem == nullptr)
     {
-        UE_LOG(LogAdventureGame, Warning, TEXT("Tried to %s with no source item"), *VerbGetDescriptiveString(Verb).ToString());
+        UE_LOG(LogAdventureGame, Warning, TEXT("Tried to %s with no source item"),
+               *VerbGetDescriptiveString(Verb).ToString());
         return;
     }
     if (auto CurrentHotspot = AdventurePlayerController->CurrentHotSpot)
@@ -144,18 +145,19 @@ void UAdventureGameHUD::HidePromptList()
     }
 }
 
-void UAdventureGameHUD::AddBarkText(const TArray<FText> &BarkTextArray, USphereComponent* Position, TOptional<FColor> TextColor)
+void UAdventureGameHUD::AddBarkText(const TArray<FText>& BarkTextArray, USphereComponent* Position,
+                                    TOptional<FColor> TextColor)
 {
-    Bark->BarkTextColor = TextColor.Get(FColor::White);
-    Bark->BarkPosition = Position;
-    Bark->SetBarkLines(BarkTextArray);
+    Bark->AddBarkRequest(FBarkRequest::CreateNPCMultilineRequest(BarkTextArray, 0, Position,
+                                                                 TextColor.Get(
+                                                                     G_Player_Default_Text_Colour.ToFColor(true))));
 }
 
 void UAdventureGameHUD::AddBarkText(const FText& BarkText, USphereComponent* Position, TOptional<FColor> TextColor)
 {
-    Bark->BarkTextColor = TextColor.Get(FColor::White);
-    Bark->BarkPosition = Position;
-    Bark->SetText(BarkText);
+    FColor Col = TextColor.Get(G_Player_Default_Text_Colour.ToFColor(true));
+    FBarkRequest *Request = FBarkRequest::CreateNPCRequest(BarkText, 0, Position, Col);
+    Bark->AddBarkRequest(Request);
 }
 
 void UAdventureGameHUD::ClearBarkText()

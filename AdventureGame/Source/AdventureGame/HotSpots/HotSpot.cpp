@@ -55,7 +55,7 @@ void AHotSpot::OnBeginCursorOver(AActor *TouchedActor)
 	// GEngine->AddOnScreenDebugMessage(1, 3.0, FColor::White, TEXT("HotSpot::OnBeginCursorOver()"),
 	// 							 false, FVector2D(2.0, 2.0));
 
-	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("OnBeginCursorOver"));
+	// UE_LOG(LogAdventureGame, VeryVerbose, TEXT("OnBeginCursorOver"));
 	APlayerController *PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (AAdventurePlayerController *APC = Cast<AAdventurePlayerController>(PC); IsValid(APC))
 	{
@@ -65,7 +65,7 @@ void AHotSpot::OnBeginCursorOver(AActor *TouchedActor)
 
 void AHotSpot::OnEndCursorOver(AActor *TouchedActor)
 {
-	UE_LOG(LogAdventureGame, VeryVerbose, TEXT("OnEndCursorOver"));
+	// UE_LOG(LogAdventureGame, VeryVerbose, TEXT("OnEndCursorOver"));
 	APlayerController *PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (AAdventurePlayerController *APC = Cast<AAdventurePlayerController>(PC); IsValid(APC))
 	{

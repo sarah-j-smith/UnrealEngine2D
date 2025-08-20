@@ -11,18 +11,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e7d87409-0359-4ca5-b933-df4b7b2a98d8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/Enums/DialogState.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/Enums/DialogState.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/Dialog/BarkRequest.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/Dialog/BarkRequest.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AdventureGame.uproject.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/AdventureGame.uproject.DotSettings.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/Dialog/BP_BarkHolder.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/Dialog/BP_BarkHolder.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/Gameplay/BP_AdventureGameInstance.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/Gameplay/BP_AdventureGameInstance.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Levels/AdventureData.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Levels/AdventureData.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Levels/TowerInterior.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Levels/TowerInterior.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Constants.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Constants.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Dialog/BarkText.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Dialog/BarkText.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Dialog/BarkText.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Dialog/BarkText.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Dialog/DialogComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Dialog/DialogComponent.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Dialog/DialogComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Dialog/DialogComponent.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Dialog/HotSpotNPC.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Dialog/HotSpotNPC.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Dialog/HotSpotNPC.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Dialog/HotSpotNPC.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HUD/AdventureGameHUD.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HUD/AdventureGameHUD.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HUD/AdventureGameHUD.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HUD/AdventureGameHUD.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HUD/PromptList.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HUD/PromptList.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HUD/PromptList.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HUD/PromptList.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HotSpots/HotSpot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HotSpots/HotSpot.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Player/AdventureCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Player/AdventureCharacter.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Player/AdventurePlayerController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Player/AdventurePlayerController.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Player/AdventurePlayerController.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Player/AdventurePlayerController.h" afterDir="false" />
     </list>
@@ -135,11 +140,13 @@
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/ContentBrowserData/Public/ContentBrowserDataSource.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/DataLayerEditor/Private/DataLayer/DataLayerMode.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/DetailCustomizations/DetailCustomizations.Build.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/EditorConfig/Public/EditorConfig.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/GraphEditor/Private/MaterialNodes/SGraphNodeMaterialComposite.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Classes/BlueprintPaletteFavorites.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Private/BPDelegateDragDropAction.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Private/BlueprintActionMenuBuilder.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Private/BlueprintCompilationManager.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Private/BlueprintDetailsCustomization.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Private/BlueprintDetailsCustomization.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Private/BlueprintDragDropMenuItem.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Private/BlueprintEditorCommands.h" root0="FORCE_HIGHLIGHTING" />
@@ -161,6 +168,7 @@
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Public/BlueprintEditorContext.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Public/BlueprintEditorModule.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Public/BlueprintNamespaceUtilities.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Public/DetailsDiff.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Public/FindInBlueprints.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Public/SBlueprintDiff.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Public/SBlueprintEditorSelectedDebugObjectWidget.h" root0="FORCE_HIGHLIGHTING" />
@@ -172,6 +180,7 @@
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/LandscapeEditor/Private/LandscapeEdModeTools.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/LandscapeEditor/Private/Tests/LandscapeAutomationTests.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Layers/Private/ActorLayerCollectionViewModel.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Layers/Private/LayerViewModel.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/LevelInstanceEditor/LevelInstanceEditor.Build.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/LevelInstanceEditor/Private/SLevelInstancePivotPicker.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/MaterialEditor/Private/MaterialStatsGrid.h" root0="FORCE_HIGHLIGHTING" />
@@ -266,6 +275,7 @@
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Private/Stats/StatsHierarchical.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Private/UObject/UnrealNames.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Private/Windows/WindowsPlatformStackWalk.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Public/Algo/Find.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Public/Containers/Array.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Public/Containers/ContainerAllocationPolicies.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Public/Containers/List.h" root0="FORCE_HIGHLIGHTING" />
@@ -378,6 +388,7 @@
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Public/ObjectTrace.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Public/PrimitiveSceneInfoData.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Public/Slate/SGameLayerManager.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Public/SpeedTreeWind.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Public/WorldPartition/ActorDescContainerSubsystem.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Public/WorldPartition/DataLayer/WorldDataLayers.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/Experimental/Chaos/Private/Chaos/ContactModification.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -420,6 +431,7 @@
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/OpenColorIOWrapper/OpenColorIOWrapper.Build.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/PacketHandlers/EncryptionComponents/SymmetricEncryption/BlockEncryption/TwoFishBlockEncryptor/TwoFishBlockEncryptor.Build.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/PhysicsCore/PhysicsCore.Build.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/PhysicsCore/Public/Chaos/ChaosConstraintSettings.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/RHI/Private/PipelineFileCache.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/RHI/Private/RHITransition.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/RadAudioCodec/Module/RadAudioDecoder.Build.cs" root0="FORCE_HIGHLIGHTING" />
@@ -442,6 +454,9 @@
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/TypedElementFramework/Public/Elements/Columns/TypedElementMiscColumns.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/TypedElementFramework/Public/Elements/Framework/TypedElementQueryBuilder.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/UELibrary/UELibrary.Build.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Private/Components/PanelWidget.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Private/Components/VerticalBox.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Private/Components/Widget.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Private/Components/WidgetComponent.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Private/Components/WidgetInteractionComponent.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Private/Slate/SObjectWidget.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -451,6 +466,7 @@
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Public/Components/Button.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Public/Components/ContentWidget.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Public/Components/EditableTextBox.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Public/Components/ProgressBar.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Public/Components/SafeZoneSlot.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Public/Components/TextBlock.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Public/Components/TextWidgetTypes.h" root0="FORCE_HIGHLIGHTING" />
@@ -459,10 +475,14 @@
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Public/Slate/WidgetRenderer.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/UniversalObjectLocator/Public/UniversalObjectLocatorFwd.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/VectorVM/Private/VectorVMExperimental.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Runtime/XmlParser/XmlParser.Build.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/ThirdParty/BLAKE3/BLAKE3.Build.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/ThirdParty/Catch2/Catch2.build.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/ThirdParty/ForsythTriOO/ForsythTriOptimizer.Build.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/ThirdParty/ICU/ICU.Build.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/ThirdParty/OpenSubdiv/OpenSubdiv.Build.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/ThirdParty/dr_libs/dr_libs.Build.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/ThirdParty/libPNG/UElibPNG.Build.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/UnrealGame.Target.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Mac/UnrealEditor/Inc/AdventureGame/UHT/AdvBlueprintFunctionLibrary.gen.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Mac/UnrealEditor/Inc/AdventureGame/UHT/AdventureGameInstance.gen.cpp" root0="SKIP_HIGHLIGHTING" />
@@ -495,6 +515,24 @@
     <setting file="file://$PROJECT_DIR$/Source/AdventureGame/Player/AdventurePlayerController.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AdventureGame/Player/FollowCamera.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AdventureGame/Player/FollowCamera.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="cidr-memory-view://2" root0="FORCE_HIGHLIGHTING" />
+    <setting file="cidr-memory-view://3" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -705,7 +743,8 @@
       <workItem from="1755343514298" duration="2642000" />
       <workItem from="1755476949184" duration="718000" />
       <workItem from="1755477678239" duration="27266000" />
-      <workItem from="1755569227074" duration="14787000" />
+      <workItem from="1755569227074" duration="26058000" />
+      <workItem from="1755648087435" duration="23834000" />
     </task>
     <servers />
   </component>
@@ -769,7 +808,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Source/AdventureGame/Player/AdventurePlayerController.cpp</url>
-          <line>688</line>
+          <line>687</line>
           <option name="timeStamp" value="63" />
         </line-breakpoint>
       </breakpoints>
