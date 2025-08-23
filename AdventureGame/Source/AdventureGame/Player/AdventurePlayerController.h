@@ -28,7 +28,7 @@ DECLARE_MULTICAST_DELEGATE(FInterruptAction);
 DECLARE_MULTICAST_DELEGATE(FUpdateInteractionText);
 
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FEndAction, EInteractionType /* Interaction */, int32 /* UID */, bool /* Completed */);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FEndBark, FText /* BarkText */, int32 /* UID */, bool /* Completed */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FEndBark, int32 /* UID */);
 
 /**
  * 
@@ -46,11 +46,9 @@ public:
 	/// PLAYER BARK
 	///
 	
-	void PlayerBark(const FText &BarkText, TOptional<FColor> TextColor = TOptional<FColor>(),
-		float TimeToPause = 0, USphereComponent *Position = nullptr, int32 BarkTaskUid = 0);
+	void PlayerBark(const FText &BarkText, int32 BarkTaskUid = 0);
 
-	void PlayerBarkLines(const TArray<FText> &BarkTextArray, TOptional<FColor> TextColor = TOptional<FColor>(),
-		float TimeToPause = 0, USphereComponent *Position = nullptr, int32 BarkTaskUid = 0);
+	void PlayerBarkLines(const TArray<FText> &BarkTextArray, int32 BarkTaskUid = 0);
 
 	void ClearBark(bool ShouldInterrupt = false);
 
@@ -61,13 +59,11 @@ public:
 	FEndBark EndBark;
 
 private:
-	FText CurrentBarkText;
 	int32 CurrentBarkTask;
-	FTimerHandle TimerHandle_Bark;
-	FTimerDelegate BarkTimerDelegate;
+	int32 BarkID;
 
 	UFUNCTION()
-	void OnBarkTimerTimeOut();
+	void OnBarkTimerTimeOut(int32 BarkID);
 
 public:
 	

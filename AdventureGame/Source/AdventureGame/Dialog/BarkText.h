@@ -76,7 +76,7 @@ private:
 	///
 
 	/// Helper method to set a single line of text into the bark container
-	void SetText(FText NewText);
+	void SetText(const FText &NewText);
 
 	void HideContainer();
 
@@ -111,8 +111,6 @@ private:
 
 	/// A set of lines that is being scrolled into view in the container
 	TArray<FText> BarkLines;
-
-	bool IsLastBarkLine() { return CurrentBarkLine >= BarkLines.Num() - 1; }
 	
 	void SetBarkLineTimer();
 
@@ -128,11 +126,19 @@ private:
 	
 	void LoadNextBarkRequest();
 
-	TArray<const FBarkRequest *> RequestQueue;
+	void AddToLinkedList(const FBarkRequest *BarkRequest);
+
+	FBarkRequest *PopBarkRequest();
+
+	FBarkRequest *RequestQueue;
 
 	const FBarkRequest *CurrentBarkRequest;
 	
 	int32 CurrentUID = -1;
+
+	bool IsRenderTransitionSet = false;
+
+	bool IsOneLineAtMinimumSet = false;
 	
 	/// Called when the BarkLineTimer times out. Keeps feeding the current multiline
 	/// message <code>BarkLines</code> into the bark container; or if that is complete
@@ -145,12 +151,24 @@ public:
 
 };
 
+inline FBarkRequest *UBarkText::PopBarkRequest()
+{
+	if (RequestQueue)
+	{
+		FBarkRequest *BarkRequest = RequestQueue;
+		RequestQueue = RequestQueue->NextRequest;
+		return BarkRequest;
+	}
+	return nullptr;
+}
+
 inline void UBarkText::ClearBarkQueue()
 {
 	IsBarking = false;
-	while (!RequestQueue.IsEmpty())
+	while (RequestQueue)
 	{
-		const FBarkRequest *Request = RequestQueue.Pop();
+		const FBarkRequest *Request = RequestQueue;
+		RequestQueue = RequestQueue->NextRequest;
 		if (Request == CurrentBarkRequest)
 		{
 			CurrentBarkRequest = nullptr;
@@ -161,5 +179,19 @@ inline void UBarkText::ClearBarkQueue()
 	{
 		delete CurrentBarkRequest;
 		CurrentBarkRequest = nullptr;
+	}
+}
+
+inline void UBarkText::AddToLinkedList(const FBarkRequest *BarkRequest)
+{
+	if (RequestQueue)
+	{
+		FBarkRequest *Tail = RequestQueue;
+		for ( ; Tail->NextRequest; Tail = Tail->NextRequest ) {}
+		Tail->NextRequest = const_cast<FBarkRequest*>(BarkRequest);
+	}
+	else
+	{
+		RequestQueue = const_cast<FBarkRequest*>(BarkRequest);
 	}
 }

@@ -13,21 +13,14 @@ UBarkTask::UBarkTask(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
     , WorldContextObject(nullptr)
     , BarkText(FText::GetEmpty())
-    , TimeToBark(0.0f)
-    , BarkLocation(nullptr)
-    , TextColor(FColor::White)
 {
     MyUID = AdvGameUtils::GetUUID();
 }
 
-UBarkTask* UBarkTask::DoBarkTask(const UObject* WorldContextObject, const FText BarkText, float BarkTime,
-                                 USphereComponent* BarkLocation, FColor TextColor)
+UBarkTask* UBarkTask::DoBarkTask(const UObject* WorldContextObject, const FText BarkText)
 {
     UBarkTask* BlueprintNode = NewObject<UBarkTask>();
     BlueprintNode->WorldContextObject = WorldContextObject;
-    BlueprintNode->TextColor = TextColor;
-    BlueprintNode->BarkLocation = BarkLocation;
-    BlueprintNode->TimeToBark = BarkTime;
 
     UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UBarkTask created"));
 
@@ -43,7 +36,7 @@ void UBarkTask::Activate()
     UE_LOG(LogAdventureGame, VeryVerbose, TEXT("UBarkTask Activate - %s"), *(BarkText.ToString()));
 
     auto Apc = GetAdventureController();
-    Apc->PlayerBark(BarkText, TextColor, TimeToBark, BarkLocation, MyUID);
+    Apc->PlayerBark(BarkText, MyUID);
 
     GetAdventureController()->EndBark.AddUObject(this, &UBarkTask::BarkCompleted);
 }
@@ -55,20 +48,13 @@ AAdventurePlayerController* UBarkTask::GetAdventureController() const
     return AdventurePlayerController;
 }
 
-void UBarkTask::BarkCompleted(FText Text, int32 UID, bool bSuccess)
+void UBarkTask::BarkCompleted(int32 UID)
 {
     if (UID == MyUID)
     {
         UE_LOG(LogAdventureGame, VeryVerbose, TEXT("Task completion message UID: %d - BarkText: %s"),
                UID, *(BarkText.ToString()));
-        if (bSuccess)
-        {
-            TaskCompleted.Broadcast();
-        }
-        else
-        {
-            TaskInterrupted.Broadcast();
-        }
+        TaskCompleted.Broadcast();
         SetReadyToDestroy();
     }
     else

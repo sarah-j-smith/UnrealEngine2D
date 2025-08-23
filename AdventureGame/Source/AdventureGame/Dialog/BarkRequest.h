@@ -14,7 +14,7 @@ public:
                           FColor Color = G_NPC_Default_Text_Colour.ToFColor(true),
                           USphereComponent* Position = nullptr, float Duration = 0.0f, bool IsPlayer = true);
 
-    const TArray<FText>& GetBarkLines() const { return BarkLines; }
+    void GetBarkLines(TArray<FText>&OutBarkLines) const { Algo::Copy(BarkLines, OutBarkLines); }
 
     uint GetLineCount() const { return BarkLines.Num(); }
 
@@ -29,6 +29,8 @@ public:
     bool IsPlayer() const { return IsPlayerRequest; }
 
     float GetDurationForLine(int32 LineIndex) const;
+
+    FBarkRequest *NextRequest;
 
     /**
      * Create a bark text request for the Player. Use this for lines which may have newline
@@ -93,8 +95,13 @@ public:
                                                    FColor Color = G_NPC_Default_Text_Colour.ToFColor(true),
                                                    int32 UID = -1);
 
+    static void Dump(const FBarkRequest* Request);
+
+    static bool HasLongLines(const TArray<FText>& NewBarkLines);
+
 private:
-    const TArray<FText>& BarkLines;
+    TSet<uint> IsContinuation;
+    TArray<FText> BarkLines;
     int32 RequestUID = 0.0;
     FColor RequestColor;
     USphereComponent* RequestPosition = nullptr;

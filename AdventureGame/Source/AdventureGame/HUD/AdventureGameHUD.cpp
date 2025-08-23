@@ -156,8 +156,7 @@ void UAdventureGameHUD::AddBarkText(const TArray<FText>& BarkTextArray, USphereC
 void UAdventureGameHUD::AddBarkText(const FText& BarkText, USphereComponent* Position, TOptional<FColor> TextColor)
 {
     FColor Col = TextColor.Get(G_Player_Default_Text_Colour.ToFColor(true));
-    FBarkRequest *Request = FBarkRequest::CreateNPCRequest(BarkText, 0, Position, Col);
-    Bark->AddBarkRequest(Request);
+    Bark->AddBarkRequest(FBarkRequest::CreateNPCRequest(BarkText, 0, Position, Col));
 }
 
 void UAdventureGameHUD::ClearBarkText()

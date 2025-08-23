@@ -6,6 +6,8 @@
 #include "../AdventureGame.h"
 #include "BarkLine.h"
 #include "BarkRequest.h"
+#include "../Player/AdventureCharacter.h"
+#include "../Player/AdventurePlayerController.h"
 #include "Components/SphereComponent.h"
 
 #include "Components/VerticalBox.h"
@@ -23,7 +25,12 @@ void UBarkText::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
     Super::NativeTick(MyGeometry, InDeltaTime);
 
-    if (!IsHidden && IsBarking)
+    if (IsBarking && IsRenderTransitionSet && IsOneLineAtMinimumSet)
+    {
+        ShowContainer();
+    }
+
+    if (IsBarking)
     {
         if (ViewTarget == nullptr)
         {
@@ -35,6 +42,7 @@ void UBarkText::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
             const FVector CameraLocation = ViewTarget->GetActorLocation();
             const FVector Offset = BarkPosition->GetComponentLocation() - CameraLocation;
             SetRenderTranslation(FVector2D(Offset.X, Offset.Y));
+            IsRenderTransitionSet = true;
         }
     }
 
@@ -56,15 +64,24 @@ void UBarkText::NativeDestruct()
 
 void UBarkText::AddBarkRequest(const FBarkRequest *BarkRequest)
 {
-    RequestQueue.Add(BarkRequest);
-    SetBarkLineTimer();
+    // UE_LOG(LogAdventureGame, Warning, TEXT("AddBarkRequest"));
+    // FBarkRequest::Dump(const_cast<FBarkRequest *>(BarkRequest));
+    AddToLinkedList(BarkRequest);
+    if (!IsBarking)
+    {
+        LoadNextBarkRequest();
+        IsBarking = true;
+        BarkLineTimer = 0.1f;
+    }
 }
 
-void UBarkText::SetText(FText NewText)
+void UBarkText::SetText(const FText &NewText)
 {
+    UE_LOG(LogAdventureGame, VeryVerbose, TEXT(">> ============== SetText ================"));
     APlayerController* PlayerController = GetOwningPlayer();
     check(PlayerController);
     check(BarkLineClass);
+    DumpBarkText();
     if (BarkContainer->GetChildrenCount() >= G_MAX_BARK_LINES)
     {
         UWidget *OldChild = BarkContainer->GetChildAt(0);
@@ -80,10 +97,14 @@ void UBarkText::SetText(FText NewText)
         BarkLine->Text->SetColorAndOpacity(BarkTextColor);
         BarkContainer->AddChildToVerticalBox(Widget);
     }
+    IsOneLineAtMinimumSet = true;
+    DumpBarkText();
+    UE_LOG(LogAdventureGame, VeryVerbose, TEXT("<< ============== SetText ================"));
 }
 
 void UBarkText::ClearText()
 {
+    UE_LOG(LogAdventureGame, VeryVerbose, TEXT("ClearText"));
     HideContainer();
     ClearBarkLineTimer();
     BarkContainer->ClearChildren();
@@ -91,16 +112,22 @@ void UBarkText::ClearText()
     bWarningShown = false;
     CurrentUID = -1;
     CurrentBarkLine = 0;
+    IsRenderTransitionSet = false;
+    IsOneLineAtMinimumSet = false;
 }
 
 void UBarkText::HideContainer()
 {
+    if (IsHidden) return;
+    UE_LOG(LogAdventureGame, VeryVerbose, TEXT("HideContainer"));
     BarkContainer->SetVisibility(ESlateVisibility::Hidden);
     IsHidden = true;
 }
 
 void UBarkText::ShowContainer()
 {
+    if (!IsHidden) return;
+    UE_LOG(LogAdventureGame, VeryVerbose, TEXT("ShowContainer"));
     BarkContainer->SetVisibility(ESlateVisibility::Visible);
     IsHidden = false;
 }
@@ -124,30 +151,51 @@ void UBarkText::SetBarkLines(const TArray<FText>& NewBarkLines)
 
 void UBarkText::LoadNextBarkRequest()
 {
-    CurrentBarkRequest = RequestQueue[0];
-    RequestQueue.RemoveAt(0);
-    BarkLines = CurrentBarkRequest->GetBarkLines();
+    CurrentBarkRequest = PopBarkRequest();
+    if (!CurrentBarkRequest)
+    {
+        UE_LOG(LogAdventureGame, Warning, TEXT("Bark Request Loading Failed"));
+        return;
+    }
+    BarkLines.Empty();
+    CurrentBarkRequest->GetBarkLines(BarkLines);
     CurrentUID = CurrentBarkRequest->GetUID();
     BarkPosition = CurrentBarkRequest->GetPosition();
+    if (!IsValid(BarkPosition))
+    {
+        const AAdventurePlayerController* PlayerController = Cast<AAdventurePlayerController>(GetOwningPlayer());
+        BarkPosition = PlayerController->PlayerCharacter->Sphere;
+    }
     BarkLineDisplayTime = CurrentBarkRequest->GetDuration();
     BarkTextColor = CurrentBarkRequest->GetColor();
 }
 
 void UBarkText::AddQueuedBarkLine()
 {
-    if (!IsLastBarkLine())
+    UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AddQueuedBarkLine - count: %d - current: %d"), BarkLines.Num(), CurrentBarkLine);
+    if (CurrentBarkLine < BarkLines.Num())
     {
-        SetText(BarkLines[++CurrentBarkLine]);
+        HideContainer();
+        IsRenderTransitionSet = false;
+        IsOneLineAtMinimumSet = false;
+        UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AddQueuedBarkLine: %d %s"), CurrentBarkLine, *BarkLines[CurrentBarkLine].ToString())
+        SetText(BarkLines[CurrentBarkLine]);
         SetBarkLineTimer();
+        CurrentBarkLine++;
     }
     else
     {
+        UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AddQueuedBarkLine - no more lines - doing clean up"));
         if (CurrentBarkRequest)
         delete CurrentBarkRequest;
         CurrentBarkRequest = nullptr;
-        BarkRequestCompleteDelegate.Broadcast(CurrentUID);
+        if (CurrentUID >= 0)
+        {
+            UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AddQueuedBarkLine - found UID, broadcasting - doing clean up"));
+            BarkRequestCompleteDelegate.Broadcast(CurrentUID);
+        }
         ClearText();
-        if (RequestQueue.Num() > 0)
+        if (RequestQueue)
         {
             HideContainer();
             LoadNextBarkRequest();
@@ -160,6 +208,7 @@ void UBarkText::SetBarkLineTimer()
 {
     BarkLineTimer = CurrentBarkRequest ? CurrentBarkRequest->GetDurationForLine(CurrentBarkLine) : BarkLineDisplayTime;
     IsBarking = true;
+    UE_LOG(LogAdventureGame, VeryVerbose, TEXT("#### SetBarkLineTimer: %f"), BarkLineTimer);
 }
 
 void UBarkText::ClearBarkLineTimer()

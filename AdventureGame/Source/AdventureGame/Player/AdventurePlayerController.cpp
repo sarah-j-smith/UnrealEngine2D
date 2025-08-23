@@ -25,9 +25,6 @@ AAdventurePlayerController::AAdventurePlayerController()
     SetShowMouseCursor(true);
     DefaultMouseCursor = EMouseCursor::Crosshairs;
     bEnableMouseOverEvents = true;
-
-    BarkTimerDelegate.BindUObject(this, &AAdventurePlayerController::OnBarkTimerTimeOut);
-
     UE_LOG(LogAdventureGame, VeryVerbose, TEXT("Construct: AAdventurePlayerController"));
 }
 
@@ -171,6 +168,7 @@ void AAdventurePlayerController::SetupHUD()
         UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AAdventureGameModeBase::SetupHUD - AddToViewport"));
     }
     AdventureHUDWidget->VerbsUI->OnVerbChanged.BindDynamic(this, &AAdventurePlayerController::AssignVerb);
+    AdventureHUDWidget->Bark->BarkRequestCompleteDelegate.AddUObject(this, &AAdventurePlayerController::OnBarkTimerTimeOut);
 }
 
 void AAdventurePlayerController::SetupAnimationDelegates()
@@ -937,63 +935,34 @@ void AAdventurePlayerController::TriggerUpdateInteractionText()
     UpdateInteractionTextDelegate.Broadcast();
 }
 
-void AAdventurePlayerController::PlayerBark(const FText &BarkText, TOptional<FColor> TextColor, float TimeToPause,
-    USphereComponent *Position, int32 BarkTaskUid)
+void AAdventurePlayerController::PlayerBark(const FText &BarkText, int32 BarkTaskUid)
 {
-    if (Position == nullptr)
-    {
-        Position = PlayerCharacter->Sphere;
-    }
     IsBarking = true;
-    AdventureHUDWidget->AddBarkText(BarkText, Position, TextColor.Get(PlayerCharacter->BarkColor));
-
+    const FBarkRequest *Request = FBarkRequest::CreatePlayerRequest(BarkText);
+    AdventureHUDWidget->Bark->AddBarkRequest(Request);
+    BarkID = Request->GetUID();
     CurrentBarkTask = BarkTaskUid;
-    CurrentBarkText = BarkText;
-
-    if (TimeToPause == 0)
-    {
-        TimeToPause = UAdvBlueprintFunctionLibrary::GetBarkTime(BarkText.ToString());
-    }
-    GetWorldTimerManager().SetTimer(TimerHandle_Bark, BarkTimerDelegate, 1.0f, false, TimeToPause);
 }
 
-void AAdventurePlayerController::PlayerBarkLines(const TArray<FText>& BarkTextArray, TOptional<FColor> TextColor,
-    float TimeToPause, USphereComponent* Position, int32 BarkTaskUid)
+void AAdventurePlayerController::PlayerBarkLines(const TArray<FText>& BarkTextArray, int32 BarkTaskUid)
 {
     if (BarkTextArray.IsEmpty()) return;
-    if (Position == nullptr)
-    {
-        Position = PlayerCharacter->Sphere;
-    }
     IsBarking = true;
-    AdventureHUDWidget->AddBarkText(BarkTextArray, Position,
-        TextColor.Get(G_NPC_Default_Text_Colour.ToFColor(true
-        )));
-
+    const FBarkRequest *Request = FBarkRequest::CreatePlayerMultilineRequest(BarkTextArray);
+    BarkID = Request->GetUID();
     CurrentBarkTask = BarkTaskUid;
-    CurrentBarkText = BarkTextArray[0];
-
-    if (TimeToPause == 0)
-    {
-        for (FText Text : BarkTextArray)
-        {
-            TimeToPause += UAdvBlueprintFunctionLibrary::GetBarkTime(Text.ToString());
-        }
-    }
-    GetWorldTimerManager().SetTimer(TimerHandle_Bark, BarkTimerDelegate, 1.0f, false, TimeToPause);
 }
 
-void AAdventurePlayerController::OnBarkTimerTimeOut()
+void AAdventurePlayerController::OnBarkTimerTimeOut(int32 BarkTask)
 {
-    UE_LOG(LogAdventureGame, Warning, TEXT("OnBarkTimerTimeOut"));
-    if (IsBarking)
+    UE_LOG(LogAdventureGame, Warning, TEXT("OnBarkTimerTimeOut - BarkID: %d -- looking for: %d"), BarkTask, BarkID);
+    if (IsBarking && BarkTask == BarkID)
     {
         UE_LOG(LogAdventureGame, Warning, TEXT("OnBarkTimerTimeOut - IsBarking"));
-        EndBark.Broadcast(CurrentBarkText, CurrentBarkTask, true);
+        EndBark.Broadcast(CurrentBarkTask);
+        BarkID = 0;
         CurrentBarkTask = 0;
-        CurrentBarkText = FText::GetEmpty();
         IsBarking = false;
-        AdventureHUDWidget->Bark->ClearText();
     }
 }
 
@@ -1007,9 +976,8 @@ void AAdventurePlayerController::ClearBark(bool ShouldInterrupt)
         if (ShouldInterrupt)
         {
             UE_LOG(LogAdventureGame, Warning, TEXT("ClearBark - ShouldInterrupt"));
-            EndBark.Broadcast(CurrentBarkText, CurrentBarkTask, false);
+            EndBark.Broadcast(CurrentBarkTask);
         }
-        GetWorldTimerManager().ClearTimer(TimerHandle_Bark);
         IsBarking = false;
     }
     AdventureHUDWidget->Bark->ClearText();

@@ -6,14 +6,15 @@
 
 FBarkRequest::FBarkRequest(const TArray<FText>& NewBarkLines, const int32 UID,
                            const FColor Color, USphereComponent* Position,
-                           const float Duration, bool IsPlayer)
-    : BarkLines(NewBarkLines)
+                           const float Duration, const bool IsPlayer)
+    : NextRequest(nullptr)
       , RequestUID(UID)
       , RequestColor(Color)
       , RequestPosition(Position)
       , RequestDuration(Duration)
       , IsPlayerRequest(IsPlayer)
 {
+    Algo::Copy(NewBarkLines, BarkLines);
 }
 
 FBarkRequest::FBarkRequest(const FText& NewBarkLine, const int32 UID,
@@ -45,37 +46,40 @@ FBarkRequest* FBarkRequest::CreatePlayerMultilineRequest(const TArray<FText>& Ne
             Duration += UAdvBlueprintFunctionLibrary::GetBarkTime(Text.ToString());
         }
     }
-    if (Algo::FindBy(NewBarkLines, true, [](const FText& Text) { return Text.ToString().Len() > BARK_LINE_WIDTH; }))
+    if (HasLongLines(NewBarkLines))
     {
         TArray<FText> ShortTexts;
+        uint Index = 0;
+        TSet<uint> IsContinuation;
         for (const FText& Text : NewBarkLines)
         {
             if (Text.ToString().Len() > BARK_LINE_WIDTH)
             {
-                ShortTexts.Append(AdvGameUtils::WrapTextLinesToMaxCharacters(Text, BARK_LINE_WIDTH));
+                TArray<FText> Wrapped = AdvGameUtils::WrapTextLinesToMaxCharacters(Text, BARK_LINE_WIDTH);
+                ShortTexts.Append(Wrapped);
+                for (uint W = 1; W < Wrapped.Num(); W++)
+                {
+                    IsContinuation.Add(W + Index);
+                }
             }
             else
             {
                 ShortTexts.Add(Text);
+                ++Index;
             }
         }
-        return new FBarkRequest(ShortTexts, UID, Color, nullptr, Duration);
+        FBarkRequest *Request = new FBarkRequest(ShortTexts, UID, Color, nullptr, Duration);
+        Request->IsContinuation = IsContinuation;
     }
     return new FBarkRequest(NewBarkLines, UID, Color, nullptr, Duration);
 }
 
 float FBarkRequest::GetDurationForLine(const int32 LineIndex) const
 {
-    if (LineIndex < 0 || LineIndex >= BarkLines.Num()) return 0.0f;
-    if (TotalCharacterCount == 0)
-    {
-        for (const FText& Line : BarkLines)
-        {
-            TotalCharacterCount += Line.ToString().Len();
-        }
-        TotalLineCount = BarkLines.Num();
-    }
-    return RequestDuration * static_cast<float>(BarkLines[LineIndex].ToString().Len()) / static_cast<float>(TotalCharacterCount);
+    if (IsContinuation.Contains(LineIndex)) return 0.0f;
+    if (LineIndex < BarkLines.Num() - 1) return BARK_LINE_DELAY;
+    const uint DiscreteLineCount = BarkLines.Num() - IsContinuation.Num();
+    return BARK_LINE_DELAY * DiscreteLineCount;
 }
 
 FBarkRequest* FBarkRequest::CreatePlayerRequest(const FText& NewBarkLine, const float Duration, const int32 UID)
@@ -111,4 +115,21 @@ FBarkRequest* FBarkRequest::CreateNPCMultilineRequest(const TArray<FText>& NewBa
     NPCRequest->RequestPosition = Position;
     NPCRequest->RequestColor = Color;
     return NPCRequest;
+}
+
+void FBarkRequest::Dump(const FBarkRequest* Request)
+{
+    UE_LOG(LogAdventureGame, Warning, TEXT("Bark request ==================="));
+    UE_LOG(LogAdventureGame, Warning, TEXT("UID: %d - Color: %s - IsPlayer: %hs"),
+           Request->RequestUID, *Request->RequestColor.ToHex(), Request->IsPlayerRequest ? "true" : "false");
+    for (const FText& Line : Request->BarkLines)
+    {
+        UE_LOG(LogAdventureGame, Warning, TEXT("%s"), *Line.ToString());
+    }
+    UE_LOG(LogAdventureGame, Warning, TEXT("Bark request ==================="));
+}
+
+bool FBarkRequest::HasLongLines(const TArray<FText>& NewBarkLines)
+{
+    return Algo::FindBy(NewBarkLines, true, [](const FText& Text) { return Text.ToString().Len() > BARK_LINE_WIDTH; });
 }

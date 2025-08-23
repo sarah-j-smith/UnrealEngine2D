@@ -33,16 +33,11 @@ public:
      * for a time so the player can read it.
      * @param WorldContextObject Supplied by the blueprint, ignore.
      * @param BarkText Text to bark. Enter "\n" line feeds to split into rows.
-     * @param BarkTime Amount of time for the player character to delay. Defaults to "0" which means use the time based on the length of the string.
-     * @param BarkLocation Pointer to a USphereComponent that the text should try to follow. Defaults to NULL which means use the players bark location.
-     * @param TextColor Color to bark. Defaults to white.
      * @return The created bark task will either end successfully or be interrupted. Use the appropriate pins to respond to each.
      */
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", WorldContext = "WorldContextObject"),
         Category = "Flow Control")
-    static UBarkTask* DoBarkTask(const UObject* WorldContextObject, const FText BarkText,
-                                 float BarkTime = 0,
-                                 USphereComponent* BarkLocation = nullptr, FColor TextColor = FColor::White);
+    static UBarkTask* DoBarkTask(const UObject* WorldContextObject, const FText BarkText);
 
     virtual void Activate() override;
 
@@ -55,18 +50,9 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Barking")
     FText BarkText;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Barking")
-    float TimeToBark;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Barking")
-    USphereComponent* BarkLocation;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Barking")
-    FColor TextColor;
-
 private:
     UFUNCTION()
-    void BarkCompleted(FText Text, int32 UID, bool bSuccess);
+    void BarkCompleted(int32 UID);
 
     AAdventurePlayerController* GetAdventureController() const;
 };
