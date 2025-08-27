@@ -160,6 +160,7 @@ void UBarkText::LoadNextBarkRequest()
     BarkLines.Empty();
     CurrentBarkRequest->GetBarkLines(BarkLines);
     CurrentUID = CurrentBarkRequest->GetUID();
+    UE_LOG(LogAdventureGame, Warning, TEXT("LoadNextBarkRequest: %d - %s"), CurrentUID, *BarkLines[0].ToString());
     BarkPosition = CurrentBarkRequest->GetPosition();
     if (!IsValid(BarkPosition))
     {
@@ -189,17 +190,19 @@ void UBarkText::AddQueuedBarkLine()
         if (CurrentBarkRequest)
         delete CurrentBarkRequest;
         CurrentBarkRequest = nullptr;
-        if (CurrentUID >= 0)
-        {
-            UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AddQueuedBarkLine - found UID, broadcasting - doing clean up"));
-            BarkRequestCompleteDelegate.Broadcast(CurrentUID);
-        }
+        UE_LOG(LogAdventureGame, VeryVerbose, TEXT("AddQueuedBarkLine - UID %d, broadcasting - doing clean up"), CurrentUID);
+        BarkRequestCompleteDelegate.Broadcast(CurrentUID);
+        HideContainer();
         ClearText();
         if (RequestQueue)
         {
-            HideContainer();
             LoadNextBarkRequest();
             SetBarkLineTimer();
+        }
+        else
+        {
+            UE_LOG(LogAdventureGame, Warning, TEXT("AddQueuedBarkLine - request queue empty stop barking"));
+            IsBarking = false;
         }
     }
 }

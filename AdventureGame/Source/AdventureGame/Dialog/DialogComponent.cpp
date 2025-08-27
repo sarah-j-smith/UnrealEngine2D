@@ -137,12 +137,13 @@ void UDialogComponent::HandlePromptClick(int PromptIndex)
 {
     CurrentPromptIndex = PromptIndex - 1; // Prompts are numbered 1 - 5
     PromptList->SetPromptMenusEnabled(false);
-    UpdatePromptAtIndex(PromptIndex, PromptIndex);
+    UpdatePromptAtIndex(TopicIndex, PromptIndex);
     ShowPlayerBark();
 }
 
 void UDialogComponent::DisplayPrompts()
 {
+    UE_LOG(LogAdventureGame, Warning, TEXT("DisplayPrompts"));
     PromptList->SetPromptMenusEnabled(true);
     const int MaxPrompts = std::min(PromptList->PromptEntries.Num(), PromptsToShow.Num());
     if (MaxPrompts <= 0)
@@ -151,6 +152,7 @@ void UDialogComponent::DisplayPrompts()
         StopMonitoringConversations();
         return;
     }
+    PromptList->HidePromptEntries();
     for (int i = 0; i < MaxPrompts; ++i)
     {
         PromptList->SetPromptText(PromptsToShow[i].PromptText[0], PromptsToShow[i].HasBeenSelected, i);
@@ -160,12 +162,13 @@ void UDialogComponent::DisplayPrompts()
 
 void UDialogComponent::ShowPlayerBark()
 {
-    UE_LOG(LogAdventureGame, Warning, TEXT("ShowPlayerBark"));
     DialogState = EDialogState::Player;
     const FBarkRequest* PlayerRequest = FBarkRequest::CreatePlayerMultilineRequest(
         PromptsToShow[CurrentPromptIndex].PromptText);
     BarkUID = PlayerRequest->GetUID();
     Bark->AddBarkRequest(PlayerRequest);
+    UE_LOG(LogAdventureGame, Warning, TEXT("UDialogComponent::ShowPlayerBark - UID: %d - %s"), BarkUID,
+        *(PromptsToShow[CurrentPromptIndex].PromptText[0].ToString()));
 }
 
 void UDialogComponent::ShowNPCResponse()
@@ -183,6 +186,7 @@ void UDialogComponent::ShowNPCResponse()
 
 void UDialogComponent::ShowNextDialogPrompts()
 {
+    UE_LOG(LogAdventureGame, Warning, TEXT("ShowNextDialogPrompts"));
     if (PromptsToShow[CurrentPromptIndex].EndsConversation)
     {
 #if WITH_EDITOR
@@ -193,8 +197,10 @@ void UDialogComponent::ShowNextDialogPrompts()
                    *PromptText);
         }
 #endif
+        UE_LOG(LogAdventureGame, Warning, TEXT("ShowNextDialogPrompts"));
         if (!PopConversationTopic())
         {
+            UE_LOG(LogAdventureGame, Warning, TEXT("ShowNextDialogPrompts"));
             StopMonitoringConversations();
             return;
         }
@@ -216,7 +222,6 @@ void UDialogComponent::InitialiseForBarking()
     check(Apc);
     PromptList = Apc->AdventureHUDWidget->PromptList;
     Bark = Apc->AdventureHUDWidget->Bark;
-    BarkUID = AdvGameUtils::GetUUID();
     Apc->ClearBark(true);
     Bark->BarkRequestCompleteDelegate.AddUObject(this, &UDialogComponent::OnBarkTimerTimeout);
 }

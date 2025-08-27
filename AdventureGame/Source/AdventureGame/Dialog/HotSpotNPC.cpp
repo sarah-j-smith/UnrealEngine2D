@@ -44,12 +44,20 @@ EVerbType AHotSpotNPC::CheckForDefaultCommand() const
 void AHotSpotNPC::BeginPlay()
 {
     Super::BeginPlay();
+
+    DialogComponent->ConversationEndedEvent.AddUObject(this, &AHotSpotNPC::OnConversationComplete);
 }
 
 // Called every frame
 void AHotSpotNPC::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+
+    if (IsConversing && ShouldStopConversation)
+    {
+        ShouldStopConversation = true;
+        StopConversation();
+    }
 }
 
 void AHotSpotNPC::OnConverseWith_Implementation()
@@ -60,6 +68,7 @@ void AHotSpotNPC::OnConverseWith_Implementation()
     {
         Apc->AdventureHUDWidget->ShowPromptList();
         Apc->SetInputLocked(true);
+        IsConversing = true;
         DialogComponent->HandleConversations();
     }
 }
@@ -67,4 +76,22 @@ void AHotSpotNPC::OnConverseWith_Implementation()
 void AHotSpotNPC::OnTalkTo_Implementation()
 {
     Execute_OnConverseWith(this);
+}
+
+void AHotSpotNPC::OnConversationComplete()
+{
+    ShouldStopConversation = true;
+}
+
+void AHotSpotNPC::StopConversation()
+{
+    if (!IsConversing) return;
+    APlayerController *PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    if (AAdventurePlayerController *Apc = Cast<AAdventurePlayerController>(PC); IsValid(Apc))
+    {
+        Apc->AdventureHUDWidget->HidePromptList();
+        Apc->SetInputLocked(false);
+        DialogComponent->HandleConversations();
+    }
+    IsConversing = false;
 }

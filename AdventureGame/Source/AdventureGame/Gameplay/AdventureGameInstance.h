@@ -85,7 +85,6 @@ public:
 	{
 		UE_LOG(LogAdventureGame, Display, TEXT("UAdventureGameInstance::SetLoadTarget - Level: %s, Door: %s"),
 			*(LevelName.ToString()), *(DoorLabel.ToString()));
-		CurrentDoor = nullptr;
 		CurrentDoorLabel = DoorLabel;
 		CurrentLevelName = LevelName;
 		TriggerRoomTransition();

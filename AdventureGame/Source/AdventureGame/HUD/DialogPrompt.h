@@ -19,7 +19,7 @@ class ADVENTUREGAME_API UDialogPrompt : public UUserWidget
     GENERATED_BODY()
 public:
     virtual void NativeOnInitialized() override;
-
+    
     /// The bullet at the start of each line
     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
     UImage *PromptBullet;
@@ -33,13 +33,13 @@ public:
     UTextBlock *PromptText;
 
     UFUNCTION(BlueprintCallable)
-    void SetText(FText TextToSet);
+    void SetText(const FText &TextToSet);
 
     UFUNCTION(BlueprintCallable)
     void HighlightText();
 
     UFUNCTION(BlueprintCallable)
-    void ResetText();
+    void UnhighlightText();
 
     UFUNCTION(BlueprintCallable)
     void HidePrompt();
@@ -47,12 +47,12 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool HasBeenUsed;
 
-    UFUNCTION()
-    void HandleOnClicked();
-
+    // UFUNCTION()
+    // void HandleOnClicked();
+    
     UFUNCTION()
     void HandleOnHover();
-
+    
     UFUNCTION()
     void HandleOnUnhover();
 };

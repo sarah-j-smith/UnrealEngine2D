@@ -10,12 +10,10 @@
 
 void UDialogPrompt::NativeOnInitialized()
 {
-    PromptButton->OnClicked.AddUniqueDynamic(this, &UDialogPrompt::HandleOnClicked);
-    PromptButton->OnHovered.AddDynamic(this, &UDialogPrompt::HandleOnHover);
-    PromptButton->OnUnhovered.AddDynamic(this, &UDialogPrompt::HandleOnUnhover);
+    Super::NativeOnInitialized();
 }
 
-void UDialogPrompt::SetText(FText TextToSet)
+void UDialogPrompt::SetText(const FText &TextToSet)
 {
     SetVisibility(ESlateVisibility::Visible);
     PromptText->SetText(TextToSet);
@@ -27,7 +25,7 @@ void UDialogPrompt::HighlightText()
     PromptBullet->SetBrushTintColor(G_UI_Highlight_Colour);
 }
 
-void UDialogPrompt::ResetText()
+void UDialogPrompt::UnhighlightText()
 {
     PromptText->SetColorAndOpacity(HasBeenUsed ? G_UI_Disabled_Colour : G_UI_Dimmed_Colour);
     PromptBullet->SetBrushTintColor(HasBeenUsed ? G_UI_Disabled_Colour : G_UI_Dimmed_Colour);
@@ -39,18 +37,18 @@ void UDialogPrompt::HidePrompt()
     SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UDialogPrompt::HandleOnClicked()
-{
-    APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-    if (AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController))
-    {
-        if (IsVisible())
-        {
-            // AdventurePlayerController->HandleInventoryItemClicked(this);
-        }
-    }
-}
-
+// void UDialogPrompt::HandleOnClicked()
+// {
+//     APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+//     if (AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController))
+//     {
+//         if (IsVisible())
+//         {
+//             // AdventurePlayerController->HandleInventoryItemClicked(this);
+//         }
+//     }
+// }
+//
 void UDialogPrompt::HandleOnHover()
 {
     HighlightText();
@@ -58,6 +56,6 @@ void UDialogPrompt::HandleOnHover()
 
 void UDialogPrompt::HandleOnUnhover()
 {
-    ResetText();
+    UnhighlightText();
 }
 

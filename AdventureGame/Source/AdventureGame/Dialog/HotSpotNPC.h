@@ -40,6 +40,9 @@ public:
 
     virtual void OnTalkTo_Implementation() override;
 
+    UFUNCTION()
+    void OnConversationComplete();
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     USphereComponent* BarkPosition;
 
@@ -51,4 +54,10 @@ public:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "NPC")
     UPaperFlipbook *DefaultFlipbook;
+
+private:
+    void StopConversation();
+    
+    bool IsConversing = false;
+    bool ShouldStopConversation = false;
 };
