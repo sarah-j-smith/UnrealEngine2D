@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AdventureGame/AdventureGame.h"
 
 #include "PromptData.generated.h"
 
@@ -24,6 +25,42 @@ struct ADVENTUREGAME_API FPromptData: public FTableRowBase
     void Hide();
 
     bool IsIndex(int PromptIndex, int SubIndex) const;
+
+    bool HasEmptyText() const;
+
+    /**
+     * Validate if the <code>Index</code> and <code>SubIndex</code> are valid given the
+     * <code>PreviousIndex</code> and <code>PreviousSubIndex</code>. If both the previous
+     * values are -1 then this must be the first index, and both tested indices must be zero.
+     * Otherwise either the Index is strictly greater than the previous, or it is the same,
+     * and the SubIndex is strictly greater than the previous. If none of those three cases
+     * hold true then they are invalid.
+     * @param PreviousIndex Index of previous row
+     * @param PreviousSubIndex Sub index of previous row
+     * @param Index Index of row to test
+     * @param SubIndex SubIndex of row to test
+     * @return true if the Index/SubIndex pair is valid
+     */
+    static bool IsValidNextIndex(int PreviousIndex, int PreviousSubIndex, int Index, int SubIndex)
+    {
+        if (PreviousIndex == -1 && PreviousSubIndex == -1 && Index == 0 && SubIndex == 0) return true;
+        if (PreviousIndex == -1 || PreviousSubIndex == -1)
+        {
+            UE_LOG(LogAdventureGame, Fatal,
+                TEXT("Logic error in test! IsValidIndex - PreviousIndex: %d - PreviousSubIndex: %d"),
+                PreviousIndex, PreviousSubIndex);
+            return false;
+        }
+        if (PreviousIndex == Index - 1 && SubIndex == 0) return true;
+        if (PreviousIndex == Index && PreviousSubIndex == SubIndex - 1) return true;
+        UE_LOG(LogAdventureGame, Warning,
+            TEXT("Invalid index pair: - Index: %d - SubIndex: %d vs PreviousIndex: %d - PreviousSubIndex: %d"),
+            Index, SubIndex, PreviousIndex, PreviousSubIndex);
+        UE_LOG(LogAdventureGame, Warning,
+            TEXT("     Expected: [Index: %d - SubIndex: %d] or [Index: %d - SubIndex: %d]"),
+            PreviousIndex + 1, 0, PreviousIndex, PreviousSubIndex + 1);
+        return false;
+    }
 
     int32 NextSubIndex() const
     {

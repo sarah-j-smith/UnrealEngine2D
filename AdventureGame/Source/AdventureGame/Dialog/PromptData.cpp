@@ -21,3 +21,12 @@ bool FPromptData::IsIndex(int PromptIndex, int SubIndex) const
 {
     return PromptNumber == PromptIndex && SubIndex == PromptSubNumber;
 }
+
+bool FPromptData::HasEmptyText() const
+{
+    for (const FText& Text : PromptText)
+    {
+        if (Text.IsEmpty()) return true;
+    }
+    return false;
+}

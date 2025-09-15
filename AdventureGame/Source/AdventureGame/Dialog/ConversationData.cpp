@@ -63,6 +63,39 @@ int FConversationData::PromptsAvailableCount() const
     return Count;
 }
 
+bool FConversationData::Validate(FString &ErrorMessage)
+{
+    int32 PreviousPromptIndex = -1;
+    int32 PreviousPromptSubindex = -1;
+    int row = 0;
+    for (const FPromptData& Prompt : ConversationPromptArray)
+    {
+        if (Prompt.PromptText.IsEmpty() || Prompt.HasEmptyText())
+        {
+            ErrorMessage = FString::Printf(TEXT("Prompt %d (row %d) has empty text"), row, Prompt.PromptNumber);
+            return false;
+        }
+        if (Prompt.EndsConversation && Prompt.SwitchTopic)
+        {
+            ErrorMessage = FString::Printf(TEXT("Prompt %d (row %d) - %s switches topic but ends conversation"),
+                Prompt.PromptNumber, row, *(Prompt.PromptText[0].ToString()));
+            return false;
+        }
+        if (!FPromptData::IsValidNextIndex(PreviousPromptIndex, PreviousPromptSubindex,
+            Prompt.PromptNumber, Prompt.PromptSubNumber))
+        {
+            ErrorMessage = FString::Printf(
+                TEXT("Prompt (row %d) Invalid sequence  Prev [ %d / %d ], Next [ Prompt: %d / Sub-prompt: %d ]"),
+                row, PreviousPromptIndex, PreviousPromptSubindex, Prompt.PromptNumber, Prompt.PromptSubNumber);
+            return false;
+        }
+        PreviousPromptIndex = Prompt.PromptNumber;
+        PreviousPromptSubindex = Prompt.PromptSubNumber;
+        row += 1;
+    }
+    return true;
+}
+
 const FPromptData* FConversationData::FindPromptAtIndex(int32 PromptIndex, int32 SubIndex) const
 {
     return ConversationPromptArray.FindByPredicate(

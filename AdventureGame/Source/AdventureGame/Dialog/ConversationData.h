@@ -38,6 +38,8 @@ struct ADVENTUREGAME_API FConversationData: public FTableRowBase
      */
     int PromptsAvailableCount() const;
     
+    bool Validate(FString &ErrorMessage);
+    
 private:
     const FPromptData *FindPromptAtIndex(int32 PromptIndex, int32 SubIndex) const;
     int GetMaxPromptIndex() const;

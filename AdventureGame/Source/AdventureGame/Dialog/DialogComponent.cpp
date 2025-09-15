@@ -8,8 +8,6 @@
 #include "HotSpotNPC.h"
 #include "../HUD/PromptList.h"
 #include "AdventureGame/AdventureGame.h"
-#include "AdventureGame/Gameplay/AdvBlueprintFunctionLibrary.h"
-#include "AdventureGame/HUD/AdvGameUtils.h"
 #include "AdventureGame/Player/AdventurePlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -126,6 +124,7 @@ void UDialogComponent::AssignNewTopic(const UDataTable* NewTopic)
         if (Topic == NewTopic)
         {
             TopicIndex = IndexToSet;
+            UE_LOG(LogAdventureGame, Warning, TEXT("Assigning new conversation topic - %d"), TopicIndex);
             return;
         }
         ++IndexToSet;
@@ -137,7 +136,7 @@ void UDialogComponent::HandlePromptClick(int PromptIndex)
 {
     CurrentPromptIndex = PromptIndex - 1; // Prompts are numbered 1 - 5
     PromptList->SetPromptMenusEnabled(false);
-    UpdatePromptAtIndex(TopicIndex, PromptIndex);
+    UpdatePromptAtIndex(TopicIndex, CurrentPromptIndex);
     ShowPlayerBark();
 }
 
@@ -186,7 +185,8 @@ void UDialogComponent::ShowNPCResponse()
 
 void UDialogComponent::ShowNextDialogPrompts()
 {
-    UE_LOG(LogAdventureGame, Warning, TEXT("ShowNextDialogPrompts"));
+    UE_LOG(LogAdventureGame, Warning, TEXT("ShowNextDialogPrompts - current prompt: %d - %s"), CurrentPromptIndex,
+        *(PromptsToShow[CurrentPromptIndex].PromptText[0].ToString()));
     if (PromptsToShow[CurrentPromptIndex].EndsConversation)
     {
 #if WITH_EDITOR
@@ -197,16 +197,17 @@ void UDialogComponent::ShowNextDialogPrompts()
                    *PromptText);
         }
 #endif
-        UE_LOG(LogAdventureGame, Warning, TEXT("ShowNextDialogPrompts"));
+        UE_LOG(LogAdventureGame, Warning, TEXT("EndsConversation"));
         if (!PopConversationTopic())
         {
-            UE_LOG(LogAdventureGame, Warning, TEXT("ShowNextDialogPrompts"));
+            UE_LOG(LogAdventureGame, Warning, TEXT("EndsConversation - exiting"));
             StopMonitoringConversations();
             return;
         }
     }
     else if (PromptsToShow[CurrentPromptIndex].SwitchTopic)
     {
+        UE_LOG(LogAdventureGame, Warning, TEXT("Not: EndsConversation - SwitchTopic"));
         PushConversationTopic();
     }
     PromptsToShow.Empty();
@@ -273,7 +274,8 @@ bool UDialogComponent::PopConversationTopic()
 
 void UDialogComponent::PushConversationTopic()
 {
+    UE_LOG(LogAdventureGame, Warning, TEXT("PushConversationTopic"));
     Stack.Push(TopicIndex);
-    const UDataTable* NewTopic = PromptsToShow[TopicIndex].SwitchTopic;
+    const UDataTable* NewTopic = PromptsToShow[CurrentPromptIndex].SwitchTopic;
     AssignNewTopic(NewTopic);
 }
