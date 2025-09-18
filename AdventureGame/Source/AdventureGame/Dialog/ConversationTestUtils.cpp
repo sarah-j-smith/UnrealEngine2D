@@ -4,16 +4,18 @@
 #include "PromptData.h"
 #include "Misc/GeneratedTypeName.h"
 
-typedef const TCHAR* CharData[3][3];
- CharData PromptText = {
+using CharData = const TCHAR*[3][3];
+CharData PromptText = {
     {TEXT("Hello. My name is Inigo Montoya.")},
     {TEXT("You killed my father"), TEXT("Prepare to die")},
-    {TEXT("I just cut off you hand"), TEXT("What do you say now?")}};
+    {TEXT("I just cut off you hand"), TEXT("What do you say now?")}
+};
 
- CharData ResponseText = {
+CharData ResponseText = {
     {TEXT("I am Count Rugen.")},
     {TEXT("You are that sad little boy"), TEXT("Now I will have to kill you"), TEXT("How tragic")},
-    {TEXT("Bye"), TEXT("Damn this door is stuck"), TEXT("Can I plead for mercy?")}};
+    {TEXT("Bye"), TEXT("Damn this door is stuck"), TEXT("Can I plead for mercy?")}
+};
 
 FName SomeEvent = TEXT("Some event");
 
@@ -52,17 +54,25 @@ FPromptData FConversationTestUtils::CreatePromptData(
     return PromptData;
 }
 
-FConversationData CreateSequenceData(std::vector<int> PromptIndexes, std::vector<int> PromptSubIndexes)
+struct FSequenceDataSpec
+{
+    int PromptIndex;
+    int PromptSubIndex;
+    bool SingleUse;
+};
+
+FConversationData CreateSequenceData(std::vector<FSequenceDataSpec> SequenceDataSpecs)
 {
     FConversationData ConversationData;
 
-    for (uint i = 0; i < PromptIndexes.size(); i++)
+    for (uint i = 0; i < SequenceDataSpecs.size(); i++)
     {
         int StringsIndex = i % 3;
         ConversationData.ConversationPromptArray.Add(
-            FConversationTestUtils::CreatePromptData(PromptIndexes[i], PromptSubIndexes[i],
-                true, false,
-                                                     false, PromptText[StringsIndex], 1,
+            FConversationTestUtils::CreatePromptData(SequenceDataSpecs[i].PromptIndex,
+                                                     SequenceDataSpecs[i].PromptSubIndex,
+                                                     true, false,
+                                                     SequenceDataSpecs[i].SingleUse, PromptText[StringsIndex], 1,
                                                      ResponseText[StringsIndex], 1,
                                                      nullptr, false, TEXT("Some event")
             ));
@@ -72,26 +82,32 @@ FConversationData CreateSequenceData(std::vector<int> PromptIndexes, std::vector
 
 FConversationData FConversationTestUtils::CreateData()
 {
-    return CreateSequenceData({ 0, 1, 1 }, { 0, 0, 1 });
+    return CreateSequenceData(
+        {
+            {0, 0, false},
+            {1, 0, true},
+            {1, 1, false}
+        });
 }
 
 FConversationData FConversationTestUtils::CreateEmptyTextRowData()
 {
     FConversationData ConversationData;
 
+    // "Prompt 1 (row 1) has empty text"
     const TCHAR* EmptyText2[] = {}; // empty array
 
     ConversationData.ConversationPromptArray.Add(
-        FConversationTestUtils::CreatePromptData(0, 0, true, false,
-                                                 false, PromptText[0], 1,
-                                                 ResponseText[0], 1,
-                                                 nullptr, false, TEXT("Some event")
+        CreatePromptData(0, 0, true, false,
+                         false, PromptText[0], 1,
+                         ResponseText[0], 1,
+                         nullptr, false, TEXT("Some event")
         ));
     ConversationData.ConversationPromptArray.Add(
-        FConversationTestUtils::CreatePromptData(1, 0, true, false,
-                                                 true, EmptyText2, 0,
-                                                 ResponseText[1], 2,
-                                                 nullptr, false, TEXT("")
+        CreatePromptData(1, 0, true, false,
+                         true, EmptyText2, 0,
+                         ResponseText[1], 2,
+                         nullptr, false, TEXT("")
         )
     );
     return ConversationData;
@@ -101,38 +117,83 @@ FConversationData FConversationTestUtils::CreateEmptyTextItemData()
 {
     FConversationData ConversationData;
 
+    // "Prompt 2 (row 2) has empty text"
     const TCHAR* EmptyItem2[] = {TEXT("You killed my father"), TEXT("")}; // empty element
 
     ConversationData.ConversationPromptArray.Add(
-        FConversationTestUtils::CreatePromptData(0, 0, true, false,
-                                                 false, PromptText[0], 1,
-                                                 ResponseText[0], 1,
-                                                 nullptr, false, TEXT("Some event")
+        CreatePromptData(0, 0, true, false,
+                         false, PromptText[0], 1,
+                         ResponseText[0], 1,
+                         nullptr, false, TEXT("Some event")
         ));
     ConversationData.ConversationPromptArray.Add(
-        FConversationTestUtils::CreatePromptData(1, 0, true, false,
-                                                 true, EmptyItem2, 2,
-                                                 ResponseText[1], 2,
-                                                 nullptr, false, TEXT("")
+        CreatePromptData(1, 0, true, false,
+                         true, PromptText[1], 2,
+                         ResponseText[1], 2,
+                         nullptr, false, TEXT("")
+        )
+    );
+    ConversationData.ConversationPromptArray.Add(
+        CreatePromptData(2, 0, true, false,
+                         true, EmptyItem2, 2,
+                         ResponseText[2], 2,
+                         nullptr, false, TEXT("")
         )
     );
     return ConversationData;
 }
 
+
+FConversationData FConversationTestUtils::CreateSingleUseErrorData()
+{
+    FConversationData ConversationData;
+
+    return CreateSequenceData({
+        {0, 0, false},
+        {1, 0, false},
+        {1, 1, true}
+    });
+}
+
 FConversationData FConversationTestUtils::CreateBadOrderSequenceData()
 {
-    // The prompt indexes are not in order, the last 1 is out of sequence
-    return CreateSequenceData({ 0, 1, 1, 2, 1 },{ 0, 0, 1, 0, 0 });
+    // Prompt (row 4) Invalid sequence  Prev [ 2 / 0 ], Next [ Prompt: 1 / Sub-prompt: 0 ]
+    return CreateSequenceData({
+        {0, 0, false},
+        {1, 0, true},
+        {1, 1, false},
+        {2, 0, false},
+        {1, 0, false}
+    });
 }
 
 FConversationData FConversationTestUtils::CreateBadSubSequenceData()
 {
-    // The PromptSubIndexes for this should be { 0, 0, 1, 0, 0 }
-    return CreateSequenceData({ 0, 1, 1, 2, 3 },{ 0, 0, 0, 0, 0 });
+    // Prompt (row 2) Invalid sequence  Prev [ 1 / 0 ], Next [ Prompt: 1 / Sub-prompt: 0 ]
+    return CreateSequenceData({
+        {0, 0, false},
+        {1, 0, true},
+        {1, 0, false},
+        {2, 0, false},
+        {3, 0, false}
+    });
 }
 
 FConversationData FConversationTestUtils::CreateLongBadSequenceData()
 {
-    return CreateSequenceData({ 0, 1, 1, 2, 2, 2, 3, 4, 5, 6, 6, 7 },
-        { 0, 0, 1, 0, 1, /* should be 2*/ 0, 0, 0, 0, 0, 1, 0 });
+    // Prompt (row 5) Invalid sequence  Prev [ 2 / 1 ], Next [ Prompt: 2 / Sub-prompt: 0 ]
+    return CreateSequenceData({
+        {0, 0, false},
+        {1, 0, true},
+        {1, 1, false},
+        {2, 0, true},
+        {2, 1, true},
+        {2, 0, false},
+        {3, 0, false},
+        {4, 0, false},
+        {5, 0, false},
+        {6, 0, true},
+        {6, 1, false},
+        {7, 0, false}
+    });
 }

@@ -6,6 +6,8 @@
 #include "DialogComponent.h"
 #include "PaperFlipbookComponent.h"
 #include "../Player/AdventurePlayerController.h"
+#include "../HUD/AdventureGameHUD.h"
+
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -80,12 +82,15 @@ void AHotSpotNPC::OnTalkTo_Implementation()
 
 void AHotSpotNPC::OnConversationComplete()
 {
+    UE_LOG(LogTemp, Warning, TEXT("OnConversationComplete"));
     ShouldStopConversation = true;
 }
 
 void AHotSpotNPC::StopConversation()
 {
+    UE_LOG(LogTemp, Warning, TEXT("StopConversation - IsConversing: %s"), IsConversing ? TEXT("Yes") : TEXT("No"));
     if (!IsConversing) return;
+    UE_LOG(LogTemp, Warning, TEXT("Stopping Conversation"));
     APlayerController *PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
     if (AAdventurePlayerController *Apc = Cast<AAdventurePlayerController>(PC); IsValid(Apc))
     {

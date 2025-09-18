@@ -3,17 +3,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DataSaveRecord.h"
+#include "GameplayTagAssetInterface.h"
 #include "GameplayTagContainer.h"
-#include "../Player/AdventurePlayerController.h"
-#include "AdventureGame/AdventureGame.h"
-#include "AdventureGame/Enums/RoomTransitionPhase.h"
-#include "AdventureGame/HotSpots/Door.h"
+
+#include "../AdventureGame.h"
+
+#include "../Enums/RoomTransitionPhase.h"
 #include "Engine/TimerHandle.h"
 
 #include "Engine/GameInstance.h"
 #include "Kismet/GameplayStatics.h"
+
 #include "AdventureGameInstance.generated.h"
 
+class UItemList;
+class AAdventurePlayerController;
 class UAdventureSave;
 class ADoor;
 class UAdventureGameHUD;
@@ -22,7 +27,7 @@ class UAdventureGameHUD;
  * 
  */
 UCLASS()
-class ADVENTUREGAME_API UAdventureGameInstance : public UGameInstance
+class ADVENTUREGAME_API UAdventureGameInstance : public UGameInstance, public IGameplayTagAssetInterface
 {
 	GENERATED_BODY()
 public:
@@ -32,6 +37,12 @@ public:
 	///
 
 	virtual void Init() override;
+
+	UFUNCTION()
+	void OnSaveHotSpot(AHotSpot* HotSpot);
+
+	UFUNCTION()
+	void OnLoadHotSpot(AHotSpot* HotSpot);
 	
 	//////////////////////////////////
 	///
@@ -44,6 +55,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
 	TSubclassOf<UItemList> InventoryClass;
 
+	/// All the tags currently set in the game
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Save Game")
+	FGameplayTagContainer GameplayTags;
+	
+	// IGameplayTagAssetInterface interface.
+	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
+	
 private:
 	void CreateInventory();
 	
@@ -72,23 +90,10 @@ public:
 	FName StartingDoorLabel = "A1";
 
 	/// TriggerRoomTransition to a room based on a door that has a new level name and door label
-	void SetDestinationFromDoor(ADoor *NewCurrentDoor)
-	{
-		CurrentDoor = NewCurrentDoor;
-		CurrentDoorLabel = CurrentDoor->DoorLabel;
-		CurrentLevelName = CurrentDoor->LevelToLoad;
-		TriggerRoomTransition();
-	}
+	void SetDestinationFromDoor(ADoor *NewCurrentDoor);
 
 	/// TriggerRoomTransition to a room based on the level name and door label
-	void SetLoadTarget(FName LevelName, FName DoorLabel)
-	{
-		UE_LOG(LogAdventureGame, Display, TEXT("UAdventureGameInstance::SetLoadTarget - Level: %s, Door: %s"),
-			*(LevelName.ToString()), *(DoorLabel.ToString()));
-		CurrentDoorLabel = DoorLabel;
-		CurrentLevelName = LevelName;
-		TriggerRoomTransition();
-	}
+	void SetLoadTarget(FName LevelName, FName DoorLabel);
 
 	// The name of door the player character is at, or was most recently at.
 	FName CurrentDoorLabel = FName("A1");
@@ -138,6 +143,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category="SaveGame")
 	void LoadGame();
 
+	void RegisterHotSpotForSaveAndLoad(AHotSpot *HotSpot);
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Gameplay")
 	TSubclassOf<UAdventureSave> SaveGameClass;
 
@@ -145,6 +152,17 @@ public:
 	UAdventureSave* CurrentSaveGame;
 	
 private:
+	
+	TArray< TWeakObjectPtr< AHotSpot >> RegisteredHotSpots;
+
+	UPROPERTY()
+	TArray<FDataSaveRecord> AdventureSaves;
+	
+	//////////////////////////////////
+	///
+	/// LOAD ROOM
+	///
+	
 	const FName OnLoadRoomName = "OnLoadRoom";
 	const FName OnRoomLoadedName = "OnRoomLoaded";
 	const FName OnRoomUnloadedName = "OnRoomUnloaded";
@@ -218,16 +236,7 @@ private:
 	/// UTILITIES
 	///
 	
-	AAdventurePlayerController *GetAdventureController() const
-	{
-		APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-		AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
-		if (!IsValid(AdventurePlayerController))
-		{
-			UE_LOG(LogAdventureGame, Warning, TEXT("Adventure player controller is null"));
-		}
-		return AdventurePlayerController;
-	}
+	AAdventurePlayerController *GetAdventureController() const;
 
 	static UAdventureGameHUD *GetHUD();
 	
@@ -238,11 +247,4 @@ private:
 	FDelegateHandle OnInventoryChangedHandle;
 
 	void LogSaveGameStatus(USaveGame *SaveGame);
-
-public:
-
-	/// All the tags currently set in the game
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Save Game")
-	FGameplayTagContainer AdventureTags;
-	
 };

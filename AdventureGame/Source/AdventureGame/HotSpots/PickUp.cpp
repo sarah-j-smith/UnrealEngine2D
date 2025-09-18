@@ -3,8 +3,8 @@
 
 #include "PickUp.h"
 
+#include "AdventureGame/Enums/AdventureGameplayTags.h"
 #include "AdventureGame/Enums/VerbType.h"
-
 
 // Sets default values
 APickUp::APickUp()
@@ -21,6 +21,33 @@ APickUp::APickUp()
     Pickup = true;
 }
 
+// Called when the game starts or when spawned
+void APickUp::BeginPlay()
+{
+    Super::BeginPlay();
+    
+}
+
+FGameplayTagContainer APickUp::GetTags() const
+{
+    FGameplayTagContainer Tags = Super::GetTags();
+    if (SpriteHidden) Tags.AddTag(AdventureGameplayTags::HotSpot_SpriteHidden);
+    return Tags;
+}
+
+void APickUp::SetTags(const FGameplayTagContainer& Tags)
+{
+    Super::SetTags(Tags);
+    if (Tags.HasTag(AdventureGameplayTags::HotSpot_SpriteHidden))
+    {
+        HideSprite();
+    }
+    else
+    {
+        ShowSprite();
+    }
+}
+
 EVerbType APickUp::CheckForDefaultCommand() const
 {
     if (SpriteComponent->IsVisible())
@@ -28,13 +55,6 @@ EVerbType APickUp::CheckForDefaultCommand() const
         return EVerbType::PickUp;
     }
     return Super::CheckForDefaultCommand();
-}
-
-// Called when the game starts or when spawned
-void APickUp::BeginPlay()
-{
-    Super::BeginPlay();
-    
 }
 
 // Called every frame

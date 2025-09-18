@@ -108,7 +108,7 @@ void UItemDataAsset::StartTimer()
         AdventurePlayerController->GetWorldTimerManager().SetTimer(
             ActionHighlightTimerHandle, this,
             &UItemDataAsset::OnInteractionTimeout,
-            1.0, false, InteractionTimeout);
+            InteractionTimeout, false);
     }
 }
 

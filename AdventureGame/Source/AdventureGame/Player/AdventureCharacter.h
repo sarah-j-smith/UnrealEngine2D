@@ -10,6 +10,7 @@
 #include "FollowCamera.h"
 #include "AdventureCharacter.generated.h"
 
+enum class EWalkDirection : uint8;
 class UWidgetComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCharacterAnimComplete, EInteractionType, Interaction, bool, Complete);

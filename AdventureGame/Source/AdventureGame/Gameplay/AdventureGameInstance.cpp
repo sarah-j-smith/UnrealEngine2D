@@ -34,6 +34,40 @@ void UAdventureGameInstance::Init()
 	}
 }
 
+void UAdventureGameInstance::OnSaveHotSpot(AHotSpot* HotSpot)
+{
+	FDataSaveRecord SaveRecord;
+	SaveRecord.LevelName = CurrentLevelName.ToString();
+	SaveRecord.ObjectName = HotSpot->GetName();
+	SaveRecord.Tags = HotSpot->GetTags();
+	bool RecordFound = false;
+	for (FDataSaveRecord& Record : AdventureSaves)
+	{
+		if (Record.LevelName == SaveRecord.LevelName && Record.ObjectName == SaveRecord.ObjectName)
+		{
+			Record.Tags = SaveRecord.Tags;
+			RecordFound = true;
+			break;
+		}
+	}
+	if (!RecordFound)
+	{
+		AdventureSaves.Add(SaveRecord);
+	}
+}
+
+void UAdventureGameInstance::OnLoadHotSpot(AHotSpot* HotSpot)
+{
+	for (const FDataSaveRecord& Record : AdventureSaves)
+	{
+		if (Record.LevelName == CurrentLevelName && Record.ObjectName == HotSpot->GetName())
+		{
+			HotSpot->SetTags(Record.Tags);
+			break;
+		}
+	}
+}
+
 void UAdventureGameInstance::OnLoadRoom()
 {
 	UE_LOG(LogAdventureGame, Display, TEXT("UAdventureGameInstance::OnLoadRoom - RoomTransitionPhase: %s"),
@@ -90,7 +124,7 @@ void UAdventureGameInstance::NewRoomDelay()
 	AAdventurePlayerController* AdventurePlayerController = GetAdventureController();
 	AdventurePlayerController->GetWorldTimerManager().SetTimer(
 		RoomLoadTimer, this,
-		&UAdventureGameInstance::OnRoomLoadTimerTimeout, 1.0, false, RoomLoadDelay);
+		&UAdventureGameInstance::OnRoomLoadTimerTimeout, RoomLoadDelay, false);
 }
 
 void UAdventureGameInstance::OnRoomLoadTimerTimeout()
@@ -128,6 +162,11 @@ void UAdventureGameInstance::SetupRoom()
 	AdventurePlayerController->InterruptCurrentAction();
 }
 
+void UAdventureGameInstance::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
+{
+	TagContainer.AppendTags(GameplayTags);
+}
+
 void UAdventureGameInstance::StartNewRoom()
 {
 	AAdventurePlayerController* AdventurePlayerController = GetAdventureController();
@@ -152,8 +191,10 @@ void UAdventureGameInstance::SaveGame()
 	{
 		CurrentSaveGame = Cast<UAdventureSave>(UGameplayStatics::CreateSaveGameObject(SaveGameClass));
 	}
+	
 	CurrentSaveGame->StartingLevel = CurrentDoor->CurrentLevel;
 	CurrentSaveGame->StartingDoorLabel = CurrentDoor->DoorLabel;
+	
 	TArray<UInventoryItem*> Items;
 	CurrentSaveGame->Inventory.Reset(Inventory->InventorySize);
 	Inventory->GetInventoryItemsArray(Items);
@@ -162,9 +203,14 @@ void UAdventureGameInstance::SaveGame()
 		CurrentSaveGame->Inventory.Add(Item->ItemKind);
 	}
 
-	CurrentSaveGame->AdventureTags = AdventureTags;
+	CurrentSaveGame->AdventureTags = GameplayTags;
 
+	CurrentSaveGame->AdventureSaves.Empty();
+	CurrentSaveGame->AdventureSaves.Append(AdventureSaves);
+	
 	CurrentSaveGame->OnAdventureSave(this);
+
+	
 }
 
 void UAdventureGameInstance::LoadGame()
@@ -193,9 +239,18 @@ void UAdventureGameInstance::LoadGame()
 		}
 	}
 
-	AdventureTags = CurrentSaveGame->AdventureTags;
+	GameplayTags = CurrentSaveGame->AdventureTags;
+
+	AdventureSaves.Empty();
+	AdventureSaves.Append(CurrentSaveGame->AdventureSaves);
 	
 	CurrentSaveGame->OnAdventureLoad(this);
+}
+
+void UAdventureGameInstance::RegisterHotSpotForSaveAndLoad(AHotSpot* HotSpot)
+{
+	HotSpot->DataLoad.BindDynamic(this, &UAdventureGameInstance::OnLoadHotSpot);
+	RegisteredHotSpots.Add(HotSpot);
 }
 
 void UAdventureGameInstance::LoadRoom()
@@ -239,6 +294,25 @@ FLatentActionInfo UAdventureGameInstance::GetLatentActionForHandler(FName EventN
 	LatentActionInfo.ExecutionFunction = EventName;
 	LatentActionInfo.UUID = AdvGameUtils::GetUUID();
 	return LatentActionInfo;
+}
+
+/// TriggerRoomTransition to a room based on a door that has a new level name and door label
+void UAdventureGameInstance::SetDestinationFromDoor(ADoor *NewCurrentDoor)
+{
+	CurrentDoor = NewCurrentDoor;
+	CurrentDoorLabel = CurrentDoor->DoorLabel;
+	CurrentLevelName = CurrentDoor->LevelToLoad;
+	TriggerRoomTransition();
+}
+
+/// TriggerRoomTransition to a room based on the level name and door label
+void UAdventureGameInstance::SetLoadTarget(FName LevelName, FName DoorLabel)
+{
+	UE_LOG(LogAdventureGame, Display, TEXT("UAdventureGameInstance::SetLoadTarget - Level: %s, Door: %s"),
+		*(LevelName.ToString()), *(DoorLabel.ToString()));
+	CurrentDoorLabel = DoorLabel;
+	CurrentLevelName = LevelName;
+	TriggerRoomTransition();
 }
 
 ADoor* UAdventureGameInstance::FindDoor(FName DoorLabel)
@@ -327,4 +401,15 @@ UAdventureGameHUD* UAdventureGameInstance::GetHUD()
 		}
 	}
 	return nullptr;
+}
+
+AAdventurePlayerController *UAdventureGameInstance::GetAdventureController() const
+{
+	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController);
+	if (!IsValid(AdventurePlayerController))
+	{
+		UE_LOG(LogAdventureGame, Warning, TEXT("Adventure player controller is null"));
+	}
+	return AdventurePlayerController;
 }

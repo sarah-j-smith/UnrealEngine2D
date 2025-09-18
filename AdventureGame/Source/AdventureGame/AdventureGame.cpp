@@ -28,10 +28,12 @@ void FAdventureGame::StartupModule()
     FStringTableRegistry::Get().UnregisterStringTable(ITEM_STRINGS_KEY);
 	FStringTableRegistry::Get().UnregisterStringTable(ITEM_DESCRIPTIONS_KEY);
 	FStringTableRegistry::Get().UnregisterStringTable(ITEM_LONG_DESCRIPTIONS_KEY);
+	FStringTableRegistry::Get().UnregisterStringTable(UI_STRINGS_KEY);
     
     LOCTABLE_FROMFILE_GAME(ITEM_STRINGS_KEY, ITEMS_NAMESPACE_KEY, "StringTables/ItemStrings.csv");
     LOCTABLE_FROMFILE_GAME(ITEM_DESCRIPTIONS_KEY, ITEMS_NAMESPACE_KEY, "StringTables/ItemDescriptions.csv");
     LOCTABLE_FROMFILE_GAME(ITEM_LONG_DESCRIPTIONS_KEY, ITEMS_NAMESPACE_KEY, "StringTables/ItemLongDescriptions.csv");
+    LOCTABLE_FROMFILE_GAME(UI_STRINGS_KEY, UI_NAMESPACE_KEY, "StringTables/UIStrings.csv");
 }
 
 void FAdventureGame::ShutdownModule()
@@ -39,6 +41,7 @@ void FAdventureGame::ShutdownModule()
 	FStringTableRegistry::Get().UnregisterStringTable(ITEM_STRINGS_KEY);
 	FStringTableRegistry::Get().UnregisterStringTable(ITEM_DESCRIPTIONS_KEY);
 	FStringTableRegistry::Get().UnregisterStringTable(ITEM_LONG_DESCRIPTIONS_KEY);
+	FStringTableRegistry::Get().UnregisterStringTable(UI_STRINGS_KEY);
     FDefaultGameModuleImpl::ShutdownModule();
 }
 

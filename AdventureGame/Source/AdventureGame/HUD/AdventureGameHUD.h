@@ -8,6 +8,7 @@
 #include "PromptList.h"
 #include "VerbsUI.h"
 #include "AdventureGame/Dialog/BarkText.h"
+#include "AdventureGame/Enums/SaveGameStatus.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
@@ -57,6 +58,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateInteractionTextEvent();
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateSaveGameIndicatorEvent(ESaveGameStatus SaveGameStatus, bool Success);
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateInventoryTextEvent();

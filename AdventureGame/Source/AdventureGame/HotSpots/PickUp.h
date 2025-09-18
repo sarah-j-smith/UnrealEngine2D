@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "HotSpot.h"
+#include "PaperSpriteComponent.h"
 #include "PickUp.generated.h"
 
 UCLASS()
@@ -16,13 +17,15 @@ public:
     // Sets default values for this actor's properties
     APickUp();
 
-    virtual EVerbType CheckForDefaultCommand() const override;
-
-protected:
     // Called when the game starts or when spawned
     virtual void BeginPlay() override;
 
-public:
+    virtual FGameplayTagContainer GetTags() const override;
+
+    virtual void SetTags(const FGameplayTagContainer& Tags) override;
+
+    virtual EVerbType CheckForDefaultCommand() const override;
+    
     // Called every frame
     virtual void Tick(float DeltaTime) override;
 

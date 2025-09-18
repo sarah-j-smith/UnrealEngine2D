@@ -29,14 +29,14 @@ struct ADVENTUREGAME_API FPromptData: public FTableRowBase
     bool HasEmptyText() const;
 
     /**
-     * Validate if the <code>Index</code> and <code>SubIndex</code> are valid given the
+     * Check if the <code>Index</code> and <code>SubIndex</code> are valid given the
      * <code>PreviousIndex</code> and <code>PreviousSubIndex</code>. If both the previous
      * values are -1 then this must be the first index, and both tested indices must be zero.
      * Otherwise either the Index is strictly greater than the previous, or it is the same,
      * and the SubIndex is strictly greater than the previous. If none of those three cases
-     * hold true then they are invalid.
-     * @param PreviousIndex Index of previous row
-     * @param PreviousSubIndex Sub index of previous row
+     * hold true then they are invalid. An error message is logged if the pair is invalid.
+     * @param PreviousIndex Index of previous row. -1 if this is the first row.
+     * @param PreviousSubIndex Sub index of previous row. -1 if this is the first row.
      * @param Index Index of row to test
      * @param SubIndex SubIndex of row to test
      * @return true if the Index/SubIndex pair is valid
@@ -46,9 +46,8 @@ struct ADVENTUREGAME_API FPromptData: public FTableRowBase
         if (PreviousIndex == -1 && PreviousSubIndex == -1 && Index == 0 && SubIndex == 0) return true;
         if (PreviousIndex == -1 || PreviousSubIndex == -1)
         {
-            UE_LOG(LogAdventureGame, Fatal,
-                TEXT("Logic error in test! IsValidIndex - PreviousIndex: %d - PreviousSubIndex: %d"),
-                PreviousIndex, PreviousSubIndex);
+            // PreviousIndex == -1 || PreviousSubIndex == -1 means this is the first row.
+            UE_LOG(LogAdventureGame, Fatal, TEXT("Expect first row index == 0 and sub-index == 0"));
             return false;
         }
         if (PreviousIndex == Index - 1 && SubIndex == 0) return true;

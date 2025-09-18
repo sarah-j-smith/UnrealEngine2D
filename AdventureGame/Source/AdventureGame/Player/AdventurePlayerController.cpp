@@ -5,15 +5,17 @@
 
 #include "AdventureAIController.h"
 #include "AdventureCharacter.h"
+#include "Puck.h"
+
 #include "../AdventureGame.h"
+#include "../Gameplay/AdventureSave.h"
 #include "../Gameplay/AdventureGameInstance.h"
 #include "../HUD/AdvGameUtils.h"
-#include "../Items/InventoryItem.h"
+#include "../HUD/AdventureGameHUD.h"
 #include "../HUD/ItemSlot.h"
+#include "../Items/InventoryItem.h"
 #include "../Items/ItemList.h"
 #include "../HotSpots/Door.h"
-#include "../Gameplay/AdventureSave.h"
-#include "AdventureGame/Gameplay/AdvBlueprintFunctionLibrary.h"
 
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
@@ -129,33 +131,56 @@ void AAdventurePlayerController::Tick(float DeltaTime)
     }
 }
 
+void AAdventurePlayerController::OnSaveGameComplete(const FString& SlotName, const int32 UserIndex, bool Success)
+{
+    UpdateSaveGameIndicator.Broadcast(ESaveGameStatus::Saved, Success);
+    UE_LOG(LogAdventureGame, VeryVerbose, TEXT("SaveGame: Saved - %s"), Success ? TEXT("true") : TEXT("false"));
+}
+
+void AAdventurePlayerController::OnLoadGameComplete(const FString& SlotName, const int32, USaveGame* LoadedGame)
+{
+    UAdventureGameInstance* AdventureGameInstance = Cast<UAdventureGameInstance>(GetGameInstance());
+    checkf(AdventureGameInstance != nullptr, TEXT("AdventureGameInstance was nullptr"));
+    checkf(LoadedGame != nullptr, TEXT("Loaded game is null"));
+    UAdventureSave *AdventureSave = Cast<UAdventureSave>(LoadedGame);
+    checkf(AdventureSave != nullptr, TEXT("Loaded game wrong save class"));
+    if (AdventureSave == nullptr)
+    {
+        UE_LOG(LogAdventureGame, VeryVerbose, TEXT("LoadGame: %s failed, or could not be cast to UAdventureSave"), *SlotName);
+        UpdateSaveGameIndicator.Broadcast(ESaveGameStatus::Loaded, false);
+    }
+    else
+    {
+        AdventureGameInstance->CurrentSaveGame = AdventureSave;
+        AdventureGameInstance->LoadGame();
+        UE_LOG(LogAdventureGame, VeryVerbose, TEXT("LoadGame: %s Loaded"), *SlotName);
+        UpdateSaveGameIndicator.Broadcast(ESaveGameStatus::Loaded, true);
+    }
+    SetInputLocked(true);
+    TriggerUpdateInteractionText();
+}
+
 void AAdventurePlayerController::HandleSaveGame(const FString& GameName)
 {
-    if (UAdventureGameInstance* AdventureGameInstance = Cast<UAdventureGameInstance>(GetGameInstance()))
-    {
-        AdventureGameInstance->SaveGame();
-        bool OK = UGameplayStatics::SaveGameToSlot(AdventureGameInstance->CurrentSaveGame, GameName, 0);
-        UE_LOG(LogAdventureGame, VeryVerbose, TEXT("SaveGame: %s Saved - %s"), *GameName, OK ? TEXT("true") : TEXT("false"));
-    }
+    UAdventureGameInstance* AdventureGameInstance = Cast<UAdventureGameInstance>(GetGameInstance());
+    if (!AdventureGameInstance) return;
+    SetInputLocked(true);
+    UpdateSaveGameIndicator.Broadcast(ESaveGameStatus::Saving, true);
+    AdventureGameInstance->SaveGame();
+    // Writes out all non-transient properties - so a UPROPERTY that does not have the Transient flag
+    UGameplayStatics::AsyncSaveGameToSlot(AdventureGameInstance->CurrentSaveGame, GameName, 0, SaveGameToSlotDelegate);
+    UE_LOG(LogAdventureGame, VeryVerbose, TEXT("SaveGame: %s Save commenced"), *GameName);
 }
 
 void AAdventurePlayerController::HandleLoadGame(const FString& GameName)
 {
-    if (UAdventureGameInstance* AdventureGameInstance = Cast<UAdventureGameInstance>(GetGameInstance()))
-    {
-        USaveGame *LoadedGame = UGameplayStatics::LoadGameFromSlot(GameName, 0);
-        if (UAdventureSave *AdventureSave = Cast<UAdventureSave>(LoadedGame))
-        {
-            AdventureGameInstance->CurrentSaveGame = AdventureSave;
-            AdventureGameInstance->LoadGame();
-            UE_LOG(LogAdventureGame, VeryVerbose, TEXT("LoadGame: %s Loaded"), *GameName);
-        }
-        else
-        {
-            UE_LOG(LogAdventureGame, VeryVerbose, TEXT("LoadGame: %s failed, or could not be cast to UAdventureSave"), *GameName);
-        }
-    }
-    TriggerUpdateInteractionText();
+    UAdventureGameInstance* AdventureGameInstance = Cast<UAdventureGameInstance>(GetGameInstance());
+    if (!AdventureGameInstance) return;
+
+    SetInputLocked(true);
+    UpdateSaveGameIndicator.Broadcast(ESaveGameStatus::Loading, false);
+    UGameplayStatics::AsyncLoadGameFromSlot(GameName, 0, LoadGameFromSlotDelegate);
+    USaveGame *LoadedGame = UGameplayStatics::LoadGameFromSlot(GameName, 0);
 }
 
 void AAdventurePlayerController::SetupHUD()
@@ -230,10 +255,13 @@ void AAdventurePlayerController::SetupAIController(APawn* AttachToPawn)
 
 void AAdventurePlayerController::HandleTouchInput(float LocationX, float LocationY)
 {
+#if WITH_EDITOR
     const FString Message = FString::Printf(TEXT("TouchInput x: %f, y: %f"), LocationX, LocationY);
-    GEngine->AddOnScreenDebugMessage(1, 5.0, FColor::Cyan,
-                        *Message,false, FVector2D(2.0, 2.0));
-
+    // GEngine->AddOnScreenDebugMessage(1, 5.0, FColor::Cyan,
+    //                     *Message,false, FVector2D(2.0, 2.0));
+    UE_LOG(LogAdventureGame, Display, TEXT("%s"), *Message);
+#endif
+    
     if (LockInput) return;
     if (!IsValid(PlayerCharacter)) return;
 
@@ -506,8 +534,9 @@ AHotSpot* AAdventurePlayerController::HotSpotClicked()
     {
 #if WITH_EDITOR
         FString HotSpotMessage = FString::Printf(TEXT("Got HotSpot: %s"), *HotSpot->GetName());
-        GEngine->AddOnScreenDebugMessage(1, 20.0, FColor::White, HotSpotMessage,
-                                         false, FVector2D(2.0, 2.0));
+        // GEngine->AddOnScreenDebugMessage(1, 20.0, FColor::White, HotSpotMessage,
+        //                                  false, FVector2D(2.0, 2.0));
+        UE_LOG(LogAdventureGame, Display, TEXT("%s"), *HotSpotMessage);
 #endif
         return HotSpot;
     }
@@ -522,9 +551,7 @@ AHotSpot* AAdventurePlayerController::HotSpotTapped(float X, float Y)
     AActor* HitActor = HitResult.GetActor();
     if (AHotSpot* HotSpot = Cast<AHotSpot>(HitActor))
     {
-        FString HotSpotMessage = FString::Printf(TEXT("Got HotSpot: %s"), *HotSpot->GetName());
-        GEngine->AddOnScreenDebugMessage(1, 20.0, FColor::White, HotSpotMessage,
-                                         false, FVector2D(2.0, 2.0));
+        UE_LOG(LogAdventureGame, VeryVerbose, TEXT("Got HotSpot: %s"), *HotSpot->GetName());
         return HotSpot;
     }
     return nullptr;
@@ -625,10 +652,13 @@ void AAdventurePlayerController::HandleAIMovementCompleteNotify(EPathFollowingRe
         if (CurrentHotSpot && (Result == EPathFollowingResult::Blocked || Result == EPathFollowingResult::OffPath))
         {
             FVector HotSpotLocation = CurrentHotSpot->WalkToPoint->GetComponentLocation();
+#if WITH_EDITOR
             const FString Message = FString::Printf(TEXT("Movement blocked to %s - %s - is walk to point on the nav mesh?"),
                 *(CurrentHotSpot->ShortDescription.ToString()), *(HotSpotLocation.ToString()));
             GEngine->AddOnScreenDebugMessage(1, 5.0, FColor::Cyan,
                                 *Message,false, FVector2D(2.0, 2.0));
+            UE_LOG(LogAdventureGame, Warning, TEXT("%s"), *Message);
+#endif
         }
     }
 }

@@ -16,6 +16,7 @@ FConversationData GetDataForTestName(const FString& TestName)
     if (TestName == "BadSubSequence") return FConversationTestUtils::CreateBadSubSequenceData();
     if (TestName == "BadOrderSequence") return FConversationTestUtils::CreateBadOrderSequenceData();
     if (TestName == "LongBadSequence") return FConversationTestUtils::CreateLongBadSequenceData();
+    if (TestName == "SingleUseError") return FConversationTestUtils::CreateSingleUseErrorData();
     UE_LOG(LogAdventureGame, Fatal, TEXT("Illegal test name"));
     return FConversationTestUtils::CreateEmptyTextRowData();
 }
@@ -23,42 +24,39 @@ FConversationData GetDataForTestName(const FString& TestName)
 FString GetErrorMessageForTestName(const FString& TestName)
 {
     const FString Expected = FString::Printf(TEXT("Prompt %d (row %d) has empty text"), 1, 1);
-    
-    if (TestName == "EmptyTextRow") return FString::Printf(TEXT("Prompt %d (row %d) has empty text"), 1, 1);
-    if (TestName == "EmptyTextItem") return FString::Printf(TEXT("Prompt %d (row %d) has empty text"), 1, 1);
-    if (TestName == "BadSubSequence") return FString::Printf(TEXT("Prompt %d (row %d) has empty text"), 1, 1);
-    if (TestName == "BadOrderSequence") return FString::Printf(
-        TEXT("Prompt (row %d) - invalid sequence Prev: (%d - %d), This: (%d - %d)"),
-        2, 1, 0, 1, 0);
-    if (TestName == "LongBadSequence") return FString::Printf(
-        TEXT("Prompt (row %d) - invalid sequence Prev: (%d - %d), This: (%d - %d)"),
-        2, 1, 0, 1, 0);
+    if (TestName == "EmptyTextRow") return FString::Printf(EMPTY_TEXT_ERROR, 1, 1);
+    if (TestName == "EmptyTextItem") return FString::Printf(EMPTY_TEXT_ERROR, 2, 2);
+    if (TestName == "BadSubSequence") return FString::Printf(SEQUENCE_ERROR, 2, 1, 0, 1, 0);
+    if (TestName == "BadOrderSequence") return FString::Printf(SEQUENCE_ERROR, 4, 2, 0, 1, 0);
+    if (TestName == "LongBadSequence") return FString::Printf(SEQUENCE_ERROR, 5, 2, 1, 2, 0);
+    if (TestName == "SingleUseError") return FString::Printf(SINGLE_USE_ERROR, 1, 1, 1, 2);
     UE_LOG(LogAdventureGame, Fatal, TEXT("Illegal test name"));
     return TEXT("Illegal test name");
-}
-
-void ConversationDataVerifyTest::GetTests(TArray<FString>& OutBeautifiedNames, TArray<FString>& OutTestCommands) const
-{
-    OutBeautifiedNames.Append({ TEXT("Empty Text Row"), TEXT("Empty Text Item"),
-        TEXT("Bad Sub-Sequence"),TEXT("Bad Order Sequence"),TEXT("Long Bad Sequence") });
-    OutTestCommands.Append({ TEXT("EmptyTextRow"), TEXT("EmptyTextItem"),
-        TEXT("BadSubSequence"),TEXT("BadOrderSequence"),TEXT("LongBadSequence") });
 }
 
 uint8 GetCountForTestName(const FString& TestName)
 {
     if (TestName == "EmptyTextRow") return 2;
-    if (TestName == "EmptyTextItem") return 2;
+    if (TestName == "EmptyTextItem") return 3;
     if (TestName == "BadSubSequence") return 4;
     if (TestName == "BadOrderSequence") return 3;
     if (TestName == "LongBadSequence") return 8;
+    if (TestName == "SingleUseError") return 2;
     UE_LOG(LogAdventureGame, Fatal, TEXT("Illegal test name"));
     return 0;
 }
 
+void ConversationDataVerifyTest::GetTests(TArray<FString>& OutBeautifiedNames, TArray<FString>& OutTestCommands) const
+{
+    OutBeautifiedNames.Append({ TEXT("Empty Text Row"), TEXT("Empty Text Item"),
+        TEXT("Bad Sub-Sequence"),TEXT("Bad Order Sequence"),TEXT("Long Bad Sequence"),TEXT("Single Use Error") });
+    OutTestCommands.Append({ TEXT("EmptyTextRow"), TEXT("EmptyTextItem"),
+        TEXT("BadSubSequence"),TEXT("BadOrderSequence"),TEXT("LongBadSequence"), TEXT("SingleUseError") });
+}
+
 bool ConversationDataVerifyTest::RunTest(const FString& Parameters)
 {
-    if (Parameters == "BadOrderSequence")
+    if (Parameters == "SingleUseError")
     {
         UE_LOG(LogAdventureGame, Display, TEXT("Hi mom"));
     };

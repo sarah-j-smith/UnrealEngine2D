@@ -67,17 +67,18 @@ bool FConversationData::Validate(FString &ErrorMessage)
 {
     int32 PreviousPromptIndex = -1;
     int32 PreviousPromptSubindex = -1;
+    bool PreviousRowSingleUse = false;
     int row = 0;
     for (const FPromptData& Prompt : ConversationPromptArray)
     {
         if (Prompt.PromptText.IsEmpty() || Prompt.HasEmptyText())
         {
-            ErrorMessage = FString::Printf(TEXT("Prompt %d (row %d) has empty text"), row, Prompt.PromptNumber);
+            ErrorMessage = FString::Printf(EMPTY_TEXT_ERROR, row, Prompt.PromptNumber);
             return false;
         }
         if (Prompt.EndsConversation && Prompt.SwitchTopic)
         {
-            ErrorMessage = FString::Printf(TEXT("Prompt %d (row %d) - %s switches topic but ends conversation"),
+            ErrorMessage = FString::Printf(SWITCH_AND_END_ERROR,
                 Prompt.PromptNumber, row, *(Prompt.PromptText[0].ToString()));
             return false;
         }
@@ -85,12 +86,18 @@ bool FConversationData::Validate(FString &ErrorMessage)
             Prompt.PromptNumber, Prompt.PromptSubNumber))
         {
             ErrorMessage = FString::Printf(
-                TEXT("Prompt (row %d) Invalid sequence  Prev [ %d / %d ], Next [ Prompt: %d / Sub-prompt: %d ]"),
+                SEQUENCE_ERROR,
                 row, PreviousPromptIndex, PreviousPromptSubindex, Prompt.PromptNumber, Prompt.PromptSubNumber);
+            return false;
+        }
+        if (Prompt.PromptNumber == PreviousPromptIndex && !PreviousRowSingleUse)
+        {
+            ErrorMessage = FString::Printf(SINGLE_USE_ERROR, PreviousPromptIndex, row - 1, Prompt.PromptNumber, row);
             return false;
         }
         PreviousPromptIndex = Prompt.PromptNumber;
         PreviousPromptSubindex = Prompt.PromptSubNumber;
+        PreviousRowSingleUse = Prompt.SingleUse;
         row += 1;
     }
     return true;

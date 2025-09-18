@@ -2,8 +2,13 @@
 
 
 #include "Door.h"
+
 #include "../Constants.h"
 #include "../Gameplay/AdventureGameInstance.h"
+#include "../Enums/VerbType.h"
+
+#include "AdventureGame/Enums/AdventureGameplayTags.h"
+#include "Internationalization/StringTableRegistry.h"
 
 bool ADoor::LockDoor()
 {
@@ -48,6 +53,19 @@ EVerbType ADoor::CheckForDefaultCommand() const
 		break;
 	}
 	return Super::CheckForDefaultCommand();
+}
+
+FGameplayTagContainer ADoor::GetTags() const
+{
+	FGameplayTagContainer Tags = Super::GetTags();
+	if (DoorState != EDoorState::Unknown) AdventureGameplayTags::SetDoorState(DoorState, Tags);
+	return Tags;
+}
+
+void ADoor::SetTags(const FGameplayTagContainer& Tags)
+{
+	Super::SetTags(Tags);
+	DoorState = AdventureGameplayTags::GetDoorState(Tags);
 }
 
 bool ADoor::UnlockDoor()

@@ -6,6 +6,11 @@
 
 #include "ConversationData.generated.h"
 
+#define EMPTY_TEXT_ERROR TEXT("Prompt %d (row %d) has empty text")
+#define SEQUENCE_ERROR TEXT("Prompt (row %d) Invalid sequence  Prev [ %d / %d ], Next [ Prompt: %d / Sub-prompt: %d ]")
+#define SWITCH_AND_END_ERROR TEXT("Prompt %d (row %d) - %s switches topic but ends conversation")
+#define SINGLE_USE_ERROR TEXT("Prompt %d (row %d) - should be single use, else next prompt %d (row %d) will not display.")
+
 /**
  * A single topic loaded into memory, ready to display in game.
  */

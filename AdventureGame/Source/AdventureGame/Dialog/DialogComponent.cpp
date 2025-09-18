@@ -7,8 +7,11 @@
 #include "ConversationData.h"
 #include "HotSpotNPC.h"
 #include "../HUD/PromptList.h"
-#include "AdventureGame/AdventureGame.h"
-#include "AdventureGame/Player/AdventurePlayerController.h"
+#include "../HUD/AdventureGameHUD.h"
+
+#include "../AdventureGame.h"
+#include "../Player/AdventurePlayerController.h"
+
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
@@ -18,7 +21,7 @@ UDialogComponent::UDialogComponent()
     // off to improve performance if you don't need them.
     PrimaryComponentTick.bCanEverTick = true;
 
-    // ...
+    
 }
 
 
@@ -27,10 +30,15 @@ void UDialogComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    ConversationDataLoad.ExecuteIfBound(this);
     FillConversationData();
+    ConversationDataLoad.ExecuteIfBound(this);
 }
 
+void UDialogComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+    Super::EndPlay(EndPlayReason);
+    ConversationDataSave.ExecuteIfBound(this);
+}
 
 // Called every frame
 void UDialogComponent::TickComponent(float DeltaTime, ELevelTick TickType,
@@ -40,7 +48,6 @@ void UDialogComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
     // ...
 }
-
 
 void UDialogComponent::FillConversationData()
 {
@@ -60,6 +67,16 @@ void UDialogComponent::FillConversationData()
         FConversationData TopicConversationData;
         TopicConversationData.ConversationPromptArray = PromptsForTopic;
         ConversationData.Add(TopicConversationData);
+#if WITH_EDITOR
+        FString ErrorMessage;
+        bool IsOK = TopicConversationData.Validate(ErrorMessage);
+        if (!IsOK && !ErrorMessage.IsEmpty())
+        {
+            GEngine->AddOnScreenDebugMessage(1, 10.0, FColor::Red,
+                    *ErrorMessage,false, FVector2D(2.0, 2.0));
+            UE_LOG(LogAdventureGame, Error, TEXT("Error in Conversation: check tables: %s"), *ErrorMessage);
+        }
+#endif
     }
 }
 
@@ -189,14 +206,6 @@ void UDialogComponent::ShowNextDialogPrompts()
         *(PromptsToShow[CurrentPromptIndex].PromptText[0].ToString()));
     if (PromptsToShow[CurrentPromptIndex].EndsConversation)
     {
-#if WITH_EDITOR
-        if (PromptsToShow[CurrentPromptIndex].SwitchTopic)
-        {
-            const FString PromptText = PromptsToShow[CurrentPromptIndex].PromptText[0].ToString().Left(20);
-            UE_LOG(LogAdventureGame, Error, TEXT("Ignoring switch topic on prompt %s - because it ends conversation"),
-                   *PromptText);
-        }
-#endif
         UE_LOG(LogAdventureGame, Warning, TEXT("EndsConversation"));
         if (!PopConversationTopic())
         {

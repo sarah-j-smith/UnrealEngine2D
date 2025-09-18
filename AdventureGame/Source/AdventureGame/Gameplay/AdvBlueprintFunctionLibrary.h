@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "../Enums/DoorState.h"
 #include "AdvBlueprintFunctionLibrary.generated.h"
 
+class UAdventureGameInstance;
 enum class EItemKind: uint8;
 class UInventoryItem;
 class AAdventurePlayerController;
@@ -55,4 +57,39 @@ public:
 
     UFUNCTION(BLueprintCallable, Category = "Player Actions", BlueprintPure)
     static float GetBarkTime(const FString &BarkText);
+
+    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Save Game", meta = (WorldContext = "WorldContextObject"))
+    static UAdventureGameInstance* GetAdventureInstance(const UObject* WorldContextObject);
+    
+    /**
+     * Check based on state if the door or item can be locked
+     * @param DoorState Current state of the door or item
+     * @return true if the door or item can be locked
+     */
+    UFUNCTION(BLueprintCallable, Category = "Door State", BlueprintPure)
+    bool CanLock(EDoorState DoorState) { return CanLockDoorOrItem(DoorState); }
+
+    /**
+     * Check if the door or item can be unlocked.
+     * @param DoorState Current state of the door or openable item
+     * @return true if the door or item can be unlocked
+     */
+    UFUNCTION(BLueprintCallable, Category = "Door State", BlueprintPure)
+    bool CanUnlock(EDoorState DoorState) { return CanUnlockDoorOrItem(DoorState); };
+
+    /**
+     * Check based on state if the door or item can be locked
+     * @param DoorState Current state of the door or item
+     * @return true if the door or item can be locked
+     */
+    UFUNCTION(BLueprintCallable, Category = "Door State", BlueprintPure)
+    bool CanOpen(EDoorState DoorState) { return CanOpenDoorOrItem(DoorState); };
+
+    /**
+     * Check based on state if the door or item can be locked
+     * @param DoorState Current state of the door or item
+     * @return true if the door or item can be locked
+     */
+    UFUNCTION(BLueprintCallable, Category = "Door State", BlueprintPure)
+    bool CanClose(EDoorState DoorState) { return CanCloseDoorOrItem(DoorState); };
 };

@@ -1,18 +1,23 @@
 #pragma once
 
+#include "DoorState.h"
 #include "NativeGameplayTags.h"
 
 namespace AdventureGameplayTags
 {
     /// Schema is:
-    ///     Scope - Location  -  What - Disposition
-    ADVENTUREGAME_API  UE_DECLARE_GAMEPLAY_TAG_EXTERN(Achievement_Gameplay_UnlockTowerExteriorDoor);
-    
-    ADVENTUREGAME_API  UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_TowerExterior_TowerDoor_Opened);
-    ADVENTUREGAME_API  UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_TowerExterior_TowerDoor_Closed);
-    
-    ADVENTUREGAME_API  UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_TowerExterior_Knife_PickedUp);
-    ADVENTUREGAME_API  UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_TowerExterior_Gherkin_PickedUp);
+    ///     Scope - Disposition
+    ///
+    ///     Door State
+    ADVENTUREGAME_API  UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Opened);
+    ADVENTUREGAME_API  UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Closed);
+    ADVENTUREGAME_API  UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Locked);
 
-    FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString);
+    ///     HotSpot values
+    ADVENTUREGAME_API  UE_DECLARE_GAMEPLAY_TAG_EXTERN(HotSpot_Hidden);
+    ADVENTUREGAME_API  UE_DECLARE_GAMEPLAY_TAG_EXTERN(HotSpot_SpriteHidden);
+    
+    ADVENTUREGAME_API extern void SetDoorState(EDoorState State, FGameplayTagContainer &Tags);
+
+    ADVENTUREGAME_API extern EDoorState GetDoorState(const FGameplayTagContainer &Tags);
 };

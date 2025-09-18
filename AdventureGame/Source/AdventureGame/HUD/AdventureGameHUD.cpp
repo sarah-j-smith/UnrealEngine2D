@@ -177,6 +177,28 @@ void UAdventureGameHUD::UpdateInteractionTextEvent()
     SetInteractionText();
 }
 
+void UAdventureGameHUD::UpdateSaveGameIndicatorEvent(const ESaveGameStatus SaveGameStatus, bool Success)
+{
+    switch (SaveGameStatus)
+    {
+    case ESaveGameStatus::Saved:
+        InteractionUI->EndSaving(Success);
+        break;
+    case ESaveGameStatus::Saving:
+        InteractionUI->StartSaving();
+        break;
+    case ESaveGameStatus::Loading:
+        InteractionUI->StartLoading();
+        break;
+    case ESaveGameStatus::Loaded:
+        InteractionUI->EndLoading(Success);
+        break;
+    default:
+        // Do nothing
+        break;
+    }
+}
+
 void UAdventureGameHUD::UpdateInventoryTextEvent()
 {
     SetInventoryText();

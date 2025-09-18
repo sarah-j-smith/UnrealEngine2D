@@ -7,16 +7,20 @@
 #include "../AdventureGame.h"
 #include "../Player/AdventureCharacter.h"
 #include "../Player/AdventurePlayerController.h"
+#include "AdventureGame/Enums/AdventureGameplayTags.h"
+#include "AdventureGame/Gameplay/AdventureGameInstance.h"
 
 #include "Kismet/GameplayStatics.h"
 
 AHotSpot::AHotSpot()
 	: AStaticMeshActor()
 {
-	// This is not a "real" sphere - its not a mesh, its just a collision volume defined by dimensions
+	// This is not a "real" sphere - it's not a mesh, its just a collision volume defined by dimensions
 	WalkToPoint = CreateDefaultSubobject<USphereComponent>(TEXT("PlayerDetectorSphere"));
 	WalkToPoint->SetupAttachment(RootComponent);
 	WalkToPoint->SetSphereRadius(4.0f);
+
+	
 }
 
 void AHotSpot::BeginPlay()
@@ -39,14 +43,54 @@ void AHotSpot::BeginPlay()
 	const APawn *PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	WalkToPosition = WalkToPoint->GetComponentLocation();
 	WalkToPosition.Z = PlayerPawn->GetActorLocation().Z;
-
-	UItemDataAsset *UseAsset = OnUseSuccessItem.LoadSynchronous();
-	if (UItemDataAsset *GiveAsset = OnUseSuccessItem.LoadSynchronous(); UseAsset || GiveAsset)
+	
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	AAdventurePlayerController *Apc = Cast<AAdventurePlayerController>(PlayerController);
+	if (UItemDataAsset *GiveAsset = OnUseSuccessItem.LoadSynchronous())
 	{
-		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-		AAdventurePlayerController *Apc = Cast<AAdventurePlayerController>(PlayerController);
-		UseAsset->SetAdventurePlayerController(Apc);
 		GiveAsset->SetAdventurePlayerController(Apc);
+	}
+	if (UItemDataAsset *UseAsset = OnUseSuccessItem.LoadSynchronous())
+	{
+		UseAsset->SetAdventurePlayerController(Apc);
+	}
+	RegisterForSaveAndLoad();
+	DataLoad.ExecuteIfBound(this);
+}
+
+void AHotSpot::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	RegisteredForSaveAndLoad = false;
+	DataSave.ExecuteIfBound(this);
+	Super::EndPlay(EndPlayReason);
+}
+
+FGameplayTagContainer AHotSpot::GetTags() const
+{
+	FGameplayTagContainer Tags;
+	if (HotSpotHidden) Tags.AddTag(AdventureGameplayTags::HotSpot_Hidden);
+	return Tags;
+}
+
+void AHotSpot::SetTags(const FGameplayTagContainer& Tags)
+{
+	if (Tags.HasTag(AdventureGameplayTags::HotSpot_Hidden))
+	{
+		Hide();
+	}
+	else
+	{
+		Show();
+	}
+}
+
+void AHotSpot::RegisterForSaveAndLoad()
+{
+	if (!RegisteredForSaveAndLoad)
+	{
+		RegisteredForSaveAndLoad = true;
+		UAdventureGameInstance *GameInstance = Cast<UAdventureGameInstance>(GetWorld()->GetGameInstance());
+		GameInstance->RegisterHotSpotForSaveAndLoad(this);
 	}
 }
 

@@ -10,6 +10,8 @@
 
 #include "InteractionHUD.generated.h"
 
+class UImage;
+
 /**
  * 
  */
@@ -20,6 +22,15 @@ class ADVENTUREGAME_API UInteractionHUD : public UUserWidget
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock *InteractionDescription;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock *Score;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock *SaveIndicator;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	UImage *Bullet;
 
 	UFUNCTION(BlueprintCallable)
 	void SetText(FText NewText);
@@ -33,6 +44,38 @@ public:
 	UFUNCTION(Blueprintable)
 	void ResetText();
 
+	UFUNCTION(BlueprintCallable)
+	void StartSaving();
+	
+	UFUNCTION(BlueprintCallable)
+	void EndSaving(bool Success);
+
+	UFUNCTION(BlueprintCallable)
+	void StartLoading();
+	
+	UFUNCTION(BlueprintCallable)
+	void EndLoading(bool Success);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Saving Indicator")
+	float FlashTempo = 0.5f; // flash on then off every this many seconds.
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Saving Indicator")
+	float ReturnToRestTime = 1.5f;
+
+	bool IsSaving = false;
+
+	bool IsSaveIndicatorFlashOn = false;
+
+	FTimerHandle FlashTimerHandle;
+
+	UFUNCTION()
+	void FlashTimerTimeout();
+	
+	FTimerHandle ReturnToRestTimerHandle;
+	
+	UFUNCTION()
+	void ReturnToRestTimerTimeout();
+	
 	/** Color when highlighted - eg D79115FF */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	FLinearColor TextHighlightColor = FLinearColor::Green;
@@ -43,5 +86,9 @@ public:
 
 
 private:
+	void StartFlashing();
+
+	void EndFlashing(bool Success);
+	
 	bool TextLocked;
 };

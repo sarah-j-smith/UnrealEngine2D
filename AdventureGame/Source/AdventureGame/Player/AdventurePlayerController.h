@@ -6,26 +6,35 @@
 
 #include "../Enums/PlayerCommand.h"
 #include "../Enums/ChoiceState.h"
-
-#include "AdventureAIController.h"
-#include "../HUD/AdventureGameHUD.h"
-#include "../HotSpots/HotSpot.h"
 #include "../Enums/InteractionType.h"
 #include "../Enums/VerbType.h"
-#include "Puck.h"
 #include "../Items/InventoryItem.h"
+#include "../Enums/SaveGameStatus.h"
+
 #include "AdventureGame/Constants.h"
+#include "AdventureGame/Gameplay/AdventureGameInstance.h"
 
 #include "GameFramework/PlayerController.h"
 #include "AdventurePlayerController.generated.h"
 
+class AAdventureCharacter;
+
+namespace EPathFollowingResult
+{
+	enum Type : int;
+}
+
 class UItemSlot;
+class UAdventureGameHUD;
+class AHotSpot;
+class APuck;
 
 DECLARE_DELEGATE(FRunInterruptedActionDelegate);
 
 DECLARE_MULTICAST_DELEGATE(FBeginAction);
 DECLARE_MULTICAST_DELEGATE(FInterruptAction);
 DECLARE_MULTICAST_DELEGATE(FUpdateInteractionText);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FUpdateSaveGameIndicator, ESaveGameStatus /* SaveStatus */, bool /* Success */);
 
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FEndAction, EInteractionType /* Interaction */, int32 /* UID */, bool /* Completed */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FEndBark, int32 /* UID */);
@@ -83,16 +92,7 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Save Game")
-	FString DefaultSaveGameName = SAVE_GAME_NAME;
-
-	UFUNCTION(BlueprintCallable, Category="Save Game")
-	void HandleSaveGame(const FString& GameName);
-
-	UFUNCTION(BlueprintCallable, Category="Save Game")
-	void HandleLoadGame(const FString& GameName);
-
+	
 	void HandleTouchInput(float X, float Y);
 	
 	void HandlePointAndClickInput();
@@ -104,6 +104,36 @@ public:
 	void MouseEnterHotSpot(AHotSpot *HotSpot);
 
 	void MouseLeaveHotSpot();
+
+			
+	//////////////////////////////////
+	///
+	/// SAVE AND LOAD GAME
+	///
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Save Game")
+	FString DefaultSaveGameName = SAVE_GAME_NAME;
+
+private:
+	UFUNCTION()
+	void OnSaveGameComplete(const FString &SlotName, const int32 UserIndex, bool Success);
+
+	UFUNCTION()
+	void OnLoadGameComplete(const FString &SlotName, const int32 UserIndex, USaveGame* LoadedGame);
+
+	UFUNCTION(BlueprintCallable, Category="Save Game")
+	void HandleSaveGame(const FString& GameName);
+
+	UFUNCTION(BlueprintCallable, Category="Save Game")
+	void HandleLoadGame(const FString& GameName);
+
+	FAsyncSaveGameToSlotDelegate SaveGameToSlotDelegate;
+	FAsyncLoadGameFromSlotDelegate LoadGameFromSlotDelegate;
+	
+public:	
+	FUpdateSaveGameIndicator UpdateSaveGameIndicator;
+
+	ESaveGameStatus SaveGameStatus = ESaveGameStatus::UpToDate;
 
 	void SetInputLocked(bool bLocked);
 
@@ -352,6 +382,7 @@ public:
 	FInterruptAction InterruptActionDelegate;
 	FUpdateInteractionText UpdateInteractionTextDelegate;
 	FUpdateInteractionText UpdateInventoryTextDelegate;
+	FUpdateInteractionText UpdateSaveGameIndicatorDelegate;
 	
 	void PlayerClimb(int32 UID, EInteractTimeDirection InteractDirection);
 	

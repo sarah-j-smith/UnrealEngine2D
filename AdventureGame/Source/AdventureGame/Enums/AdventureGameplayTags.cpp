@@ -4,38 +4,44 @@
 
 namespace AdventureGameplayTags
 {
-    UE_DEFINE_GAMEPLAY_TAG_COMMENT(Achievement_Gameplay_UnlockTowerExteriorDoor, "Achievement.Gameplay.UnlockTowerExteriorDoor", "Player has done the gameplay to achieve unlock of the tower exterior door");
+    // If none of these tags is present for an item or hotspot then it's door state is "Unknown"
+    // and cannot be locked, unlocked, opened, closed or walked through.
+    UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Opened, "State.Opened", "The door or item is opened and accessible");
+    UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Closed, "State.Closed", "The door or item is closed and unlocked");
+    UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Locked, "State.Locked", "The door or item is closed and locked");
 
-    UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_TowerExterior_TowerDoor_Opened, "State.TowerExterior.TowerDoor.Opened", "The tower exterior door is opened");
-    UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_TowerExterior_TowerDoor_Closed, "State.TowerExterior.TowerDoor.Closed", "The tower exterior door is closed but unlocked");
-    
-    UE_DEFINE_GAMEPLAY_TAG_COMMENT(Item_TowerExterior_Knife_PickedUp, "Achievement.Gameplay.UnlockTowerExteriorDoor", "Player has done the gameplay to achieve unlock of the tower exterior door");
-    UE_DEFINE_GAMEPLAY_TAG_COMMENT(Item_TowerExterior_Gherkin_PickedUp, "Achievement.Gameplay.UnlockTowerExteriorDoor", "Player has done the gameplay to achieve unlock of the tower exterior door");
+    // Status for various items in the objects that appear in the game. The default state is when the
+    // tag is not present. For example if its not Hidden then its Visible.
+    UE_DEFINE_GAMEPLAY_TAG_COMMENT(HotSpot_Hidden, "HotSpot.Hidden", "The entire HotSpot actor is hidden");
+    UE_DEFINE_GAMEPLAY_TAG_COMMENT(HotSpot_SpriteHidden, "HotSpot.SpriteHidden", "The PickUp sprite is hidden");
 
 
-    FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString)
+    void SetDoorState(EDoorState State, FGameplayTagContainer &Tags)
     {
-        const UGameplayTagsManager& Manager = UGameplayTagsManager::Get();
-        FGameplayTag Tag = Manager.RequestGameplayTag(FName(*TagString), false);
-
-        if (!Tag.IsValid() && bMatchPartialString)
+        Tags.RemoveTag(AdventureGameplayTags::State_Closed);
+        Tags.RemoveTag(AdventureGameplayTags::State_Opened);
+        Tags.RemoveTag(AdventureGameplayTags::State_Locked);
+        switch (State)
         {
-            FGameplayTagContainer AllTags;
-            Manager.RequestAllGameplayTags(AllTags, true);
-
-            for (const FGameplayTag& TestTag : AllTags)
-            {
-                if (TestTag.ToString().Contains(TagString))
-                {
-                    UE_LOG(LogAdventureGame, Display,
-                        TEXT("Could not find exact match for tag [%s] but found partial match on tag [%s]."),
-                        *TagString, *TestTag.ToString());
-                    Tag = TestTag;
-                    break;
-                }
-            }
+        case EDoorState::Unknown:
+            break;
+        case EDoorState::Closed:
+            Tags.AddTag(AdventureGameplayTags::State_Closed);
+            break;
+        case EDoorState::Opened:
+            Tags.AddTag(AdventureGameplayTags::State_Opened);
+            break;
+        case EDoorState::Locked:
+            Tags.AddTag(AdventureGameplayTags::State_Locked);
+            break;
         }
+    }
 
-        return Tag;
+    EDoorState GetDoorState(const FGameplayTagContainer &Tags)
+    {
+        if (Tags.HasTag(AdventureGameplayTags::State_Closed)) return EDoorState::Closed;
+        if (Tags.HasTag(AdventureGameplayTags::State_Opened)) return EDoorState::Opened;
+        if (Tags.HasTag(AdventureGameplayTags::State_Locked)) return EDoorState::Locked;
+        return EDoorState::Unknown;
     }
 };

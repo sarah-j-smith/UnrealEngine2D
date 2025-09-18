@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 
 #include "Engine/StaticMeshActor.h"
 #include "../Gameplay/VerbInteractions.h"
 #include "../Enums/WalkDirection.h"
 #include "Components/SphereComponent.h"
-#include "PaperSpriteComponent.h"
 #include "AdventureGame/Items/ItemDataAsset.h"
 
 #include "HotSpot.generated.h"
@@ -17,6 +17,10 @@ enum class EVerbType : uint8;
 
 class UPaperSprite;
 class AAdventurePlayerController;
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FHotSpotDataSave, AHotSpot *, HotSpot);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FHotSpotDataLoad, AHotSpot *, HotSpot);
+
 /**
  * 
  */
@@ -30,6 +34,24 @@ public:
 	
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	//////////////////////////////////
+	///
+	/// SAVE AND LOAD
+	///
+
+	FHotSpotDataLoad DataLoad;
+	FHotSpotDataSave DataSave;
+
+	virtual FGameplayTagContainer GetTags() const;
+	virtual void SetTags(const FGameplayTagContainer& Tags);
+
+private:
+	bool RegisteredForSaveAndLoad = false;
+	void RegisterForSaveAndLoad();
+
+public:
 	//////////////////////////////////
 	///
 	/// HOTSPOT PROPERTIES
@@ -163,8 +185,9 @@ public:
 	void Show();
 
 	void SetEnableMeshComponent(bool Enabled);
-	
+
 protected:
+	// Used in debug messages only - not unique.
 	FString HotSpotType = "HotSpot";
 	FString HotSpotName = "HotSpot";
 	

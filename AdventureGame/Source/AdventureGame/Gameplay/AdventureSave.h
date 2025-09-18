@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DataSaveRecord.h"
 #include "GameplayTagContainer.h"
 #include "AdventureGame/Enums/ItemKind.h"
 
@@ -11,6 +12,7 @@
 #include "AdventureSave.generated.h"
 
 class UAdventureGameInstance;
+
 /**
  * 
  */
@@ -50,4 +52,6 @@ public:
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save Game")
     void OnAdventureLoad(const UAdventureGameInstance *GameInstance);
 
+    UPROPERTY()
+    TArray<FDataSaveRecord> AdventureSaves;
 };

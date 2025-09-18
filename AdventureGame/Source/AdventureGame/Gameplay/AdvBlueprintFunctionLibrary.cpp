@@ -2,6 +2,8 @@
 
 
 #include "AdvBlueprintFunctionLibrary.h"
+
+#include "AdventureGameInstance.h"
 #include "../Player/AdventurePlayerController.h"
 #include "../Enums/ItemKind.h"
 #include "AdventureGame/Constants.h"
@@ -105,4 +107,14 @@ float UAdvBlueprintFunctionLibrary::GetBarkTime(const FString& BarkText)
     if (LetterCount <= LONG_LETTER_COUNT) return LineDelay + LONG_BARK_TIME;
     if (LetterCount <= EXTRA_LONG_LETTER_COUNT) return LineDelay + EXTRA_LONG_BARK_TIME;
     return LineDelay * 2.0;
+}
+
+UAdventureGameInstance* UAdvBlueprintFunctionLibrary::GetAdventureInstance(const UObject* WorldContextObject)
+{
+    if (UAdventureGameInstance* AdventureGameInstance = Cast<UAdventureGameInstance>(UGameplayStatics::GetGameInstance(WorldContextObject)))
+    {
+        return AdventureGameInstance;
+    }
+    UE_LOG(LogAdventureGame, Error, TEXT("Could not access Adventure Game Instance"));
+    return nullptr;
 }

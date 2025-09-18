@@ -4,6 +4,8 @@
 
 #include "../AdventureGame.h"
 #include "../HUD/AdvGameUtils.h"
+#include "../Enums/WalkDirection.h"
+
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"

@@ -12,7 +12,15 @@
 /// so that LOCTABLE and other macros will work.
 #define ITEM_STRINGS_KEY "ItemStrings"
 
+/// Translations namespace for all item and hotspot in-game text
 #define ITEMS_NAMESPACE_KEY "ItemsNamespace"
+
+/// Table of strings for messages in the UI.
+#define UI_STRINGS_KEY "UIStrings"
+
+/// Translations namespace for all UI text not gameplay related
+#define UI_NAMESPACE_KEY "UINamespace"
+
 
 /// See ItemDescriptions.csv - use these in LOCTABLE
 #define G_WALK_TO_KEY "Walk_to"
@@ -38,6 +46,12 @@ constexpr FLinearColor G_NPC_Default_Text_Colour = FLinearColor( COL(0x44), COL(
 
 /// Default player bark text color FFFFFFFF
 constexpr FLinearColor G_Player_Default_Text_Colour = FLinearColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+/// Color for UI messages that have been just updated 00952EFF
+constexpr FLinearColor G_UI_Status_Color = FLinearColor(COL(0x00), COL(0x95), COL(0x2E), 1.0);
+
+/// Color for UI error messages that have just updated AB1212FF
+constexpr FLinearColor G_UI_Error_Color = FLinearColor(COL(0xAB), COL(0x12), COL(0x12), 1.0);
 
 constexpr int32 GMax_Number_Of_Prompts = 5;
 

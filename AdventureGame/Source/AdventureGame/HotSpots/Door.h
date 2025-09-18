@@ -15,8 +15,13 @@ UCLASS()
 class ADVENTUREGAME_API ADoor : public APickUp
 {
 	GENERATED_BODY()
+	
 public:
 	virtual EVerbType CheckForDefaultCommand() const override;
+
+	virtual FGameplayTagContainer GetTags() const override;
+
+	virtual void SetTags(const FGameplayTagContainer& Tags) override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Door)
 	FName LevelToLoad;
@@ -27,8 +32,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Door)
 	FName DoorLabel;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Door)
-	EDoorState DoorState;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Door)
+	EDoorState DoorState = EDoorState::Unknown;
 
 	UFUNCTION(BlueprintCallable, Category = Door)
 	bool UnlockDoor();

@@ -30,5 +30,7 @@ public:
 
     static FConversationData CreateBadOrderSequenceData();
     
+    static FConversationData CreateSingleUseErrorData();
+    
     static FConversationData CreateLongBadSequenceData();
 };
