@@ -59,5 +59,5 @@ constexpr int32 GMax_Number_Of_Prompts = 5;
 #define NEW_LINE_SEPARATOR TEXT("\\n")
 
 #define G_MAX_BARK_LINES 3
-#define BARK_LINE_DELAY 3.0f
+#define BARK_LINE_DELAY 1.5f
 #define BARK_LINE_WIDTH 30

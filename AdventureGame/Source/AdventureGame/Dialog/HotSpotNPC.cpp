@@ -13,7 +13,7 @@
 // Sets default values
 AHotSpotNPC::AHotSpotNPC()
 {
-    PrimaryActorTick.bCanEverTick = false;
+    PrimaryActorTick.bCanEverTick = true;
 
     // This is not a "real" sphere - its not a mesh, its just a collision volume defined by dimensions
     BarkPosition = CreateDefaultSubobject<USphereComponent>(TEXT("BarkPosition"));

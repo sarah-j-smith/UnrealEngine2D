@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "Engine/TimerHandle.h"
+
 #include "DialogPrompt.generated.h"
 
 class UImage;
@@ -46,13 +48,20 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool HasBeenUsed;
-
-    // UFUNCTION()
-    // void HandleOnClicked();
     
     UFUNCTION()
     void HandleOnHover();
     
     UFUNCTION()
     void HandleOnUnhover();
+
+    void FlashPrompt();
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float FlashTime = 0.6f;
+    
+    UFUNCTION(BlueprintCallable)
+    void PromptTimerTimeout();
+    
+    FTimerHandle PromptTimerHandle;
 };

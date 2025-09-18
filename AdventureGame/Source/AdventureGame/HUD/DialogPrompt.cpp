@@ -37,18 +37,6 @@ void UDialogPrompt::HidePrompt()
     SetVisibility(ESlateVisibility::Hidden);
 }
 
-// void UDialogPrompt::HandleOnClicked()
-// {
-//     APlayerController *PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-//     if (AAdventurePlayerController *AdventurePlayerController = Cast<AAdventurePlayerController>(PlayerController))
-//     {
-//         if (IsVisible())
-//         {
-//             // AdventurePlayerController->HandleInventoryItemClicked(this);
-//         }
-//     }
-// }
-//
 void UDialogPrompt::HandleOnHover()
 {
     HighlightText();
@@ -57,5 +45,19 @@ void UDialogPrompt::HandleOnHover()
 void UDialogPrompt::HandleOnUnhover()
 {
     UnhighlightText();
+}
+
+void UDialogPrompt::FlashPrompt()
+{
+    GetWorld()->GetTimerManager().SetTimer(PromptTimerHandle, this, &UDialogPrompt::PromptTimerTimeout,
+        FlashTime, false);
+    HighlightText();
+    SetIsEnabled(true);
+}
+
+void UDialogPrompt::PromptTimerTimeout()
+{
+    UnhighlightText();
+    SetIsEnabled(false);
 }
 

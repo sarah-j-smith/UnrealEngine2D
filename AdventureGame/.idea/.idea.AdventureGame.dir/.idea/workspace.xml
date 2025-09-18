@@ -11,55 +11,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e7d87409-0359-4ca5-b933-df4b7b2a98d8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Config/Tags/AdventureTags.ini" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Config/Tags/TowerInterior.ini" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/StringTables/UIStrings.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/Enums/SaveGameStatus.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/Enums/SaveGameStatus.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/Gameplay/DataSaveRecord.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AdventureGame/Gameplay/DataSaveRecord.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AdventureGame.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AdventureGame.uproject.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/AdventureGame.uproject.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/Tags/TowerExterior.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/Tags/TowerExterior.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/NPC/Eyes_In_Wall/DT_Eyes_In_Hole_Topic_Intro.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/NPC/Eyes_In_Wall/DT_Eyes_In_Hole_Topic_Intro.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/NPC/Eyes_In_Wall/DT_Eyes_In_Hole_Topic_Tower.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/NPC/Eyes_In_Wall/DT_Eyes_In_Hole_Topic_Tower.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/NPC/BP_NPC_Eyes.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/NPC/BP_NPC_Eyes.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/Widgets/BP_InteractionHUD.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Blueprints/Widgets/BP_InteractionHUD.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Hotspots/BP_Door_TowerExteriorToInterior.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Hotspots/BP_Door_TowerExteriorToInterior.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Levels/AdventureData.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Levels/AdventureData.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PointAndClick/Levels/TowerExterior.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PointAndClick/Levels/TowerExterior.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/AdventureGame.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/AdventureGame.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Constants.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Constants.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Dialog/ConversationData.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Dialog/ConversationData.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Dialog/ConversationData.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Dialog/ConversationData.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Dialog/ConversationDataVerifyTest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Dialog/ConversationDataVerifyTest.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Dialog/ConversationTestUtils.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Dialog/ConversationTestUtils.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Dialog/ConversationTestUtils.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Dialog/ConversationTestUtils.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Dialog/DialogComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Dialog/DialogComponent.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Dialog/DialogComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Dialog/DialogComponent.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Dialog/HotSpotNPC.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Dialog/HotSpotNPC.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Dialog/PromptData.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Dialog/PromptData.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Enums/AdventureGameplayTags.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Enums/AdventureGameplayTags.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Enums/AdventureGameplayTags.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Enums/AdventureGameplayTags.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Gameplay/AdvBlueprintFunctionLibrary.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Gameplay/AdvBlueprintFunctionLibrary.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Gameplay/AdvBlueprintFunctionLibrary.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Gameplay/AdvBlueprintFunctionLibrary.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Gameplay/AdventureGameInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Gameplay/AdventureGameInstance.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Gameplay/AdventureGameInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Gameplay/AdventureGameInstance.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Gameplay/AdventureSave.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Gameplay/AdventureSave.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HUD/AdventureGameHUD.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HUD/AdventureGameHUD.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HUD/AdventureGameHUD.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HUD/AdventureGameHUD.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HUD/InteractionHUD.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HUD/InteractionHUD.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HUD/InteractionHUD.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HUD/InteractionHUD.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HotSpots/Door.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HotSpots/Door.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HotSpots/Door.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HotSpots/Door.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HotSpots/HotSpot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HotSpots/HotSpot.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HotSpots/HotSpot.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HotSpots/HotSpot.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HotSpots/PickUp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HotSpots/PickUp.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HotSpots/PickUp.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HotSpots/PickUp.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Items/ItemDataAsset.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Items/ItemDataAsset.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Player/AdventureCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Player/AdventureCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Player/AdventureCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Player/AdventureCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Player/AdventurePlayerController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Player/AdventurePlayerController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/Player/AdventurePlayerController.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/Player/AdventurePlayerController.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HUD/DialogPrompt.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HUD/DialogPrompt.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HUD/DialogPrompt.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HUD/DialogPrompt.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AdventureGame/HUD/PromptList.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AdventureGame/HUD/PromptList.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -219,6 +180,7 @@
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Public/BlueprintNamespaceUtilities.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Public/DetailsDiff.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Public/FindInBlueprints.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Public/ReviewComments.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Public/SBlueprintDiff.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Public/SBlueprintEditorSelectedDebugObjectWidget.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/Kismet/Public/SBlueprintRevisionMenu.h" root0="FORCE_HIGHLIGHTING" />
@@ -269,6 +231,7 @@
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/SequencerCore/Private/MVVM/ViewModels/TrackAreaViewModel.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/SequencerCore/Public/MVVM/ICastable.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/SkeletalMeshEditor/Private/SControlRigMappingWindow.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/SwarmInterface/SwarmInterface.Build.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/TurnkeySupport/Private/TurnkeyEditorSupport.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/UATHelper/UATHelperModule.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/UMGEditor/Private/Graph/GraphVariableDetailsCustomization.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -296,6 +259,7 @@
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/UnrealEd/Private/TexAlignTools.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/UnrealEd/Private/UnrealEdSrv.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/UnrealEd/Public/CreditsScreen.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/UnrealEd/Public/Editor.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/UnrealEd/Public/EditorModeTools.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/UnrealEd/Public/Kismet2/CompilerResultsLog.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Shared/Epic Games/UE_5.5/Engine/Source/Editor/UnrealEd/Public/PackageTools.h" root0="FORCE_HIGHLIGHTING" />
@@ -625,8 +589,35 @@
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="cidr-memory-view://2" root0="FORCE_HIGHLIGHTING" />
-    <setting file="cidr-memory-view://3" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="cidr-memory-view://7" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -854,7 +845,7 @@
       <workItem from="1756266628776" duration="12336000" />
       <workItem from="1757850515987" duration="42563000" />
       <workItem from="1757996443248" duration="22981000" />
-      <workItem from="1758085951541" duration="28797000" />
+      <workItem from="1758085951541" duration="32798000" />
     </task>
     <servers />
   </component>

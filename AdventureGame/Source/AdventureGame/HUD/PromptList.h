@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "DialogPrompt.h"
 #include "Blueprint/UserWidget.h"
+
 #include "PromptList.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPromptClickedDelegate, int, PromptIndex);

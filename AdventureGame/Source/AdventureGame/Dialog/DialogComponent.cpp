@@ -129,6 +129,7 @@ void UDialogComponent::StopMonitoringConversations()
     TearDownBarkingSetup();
     PromptsToShow.Empty();
     DialogState = EDialogState::Hidden;
+    PromptList->PromptClickedEvent.RemoveAll(this);
     ConversationEndedEvent.Broadcast();
 }
 
@@ -153,6 +154,7 @@ void UDialogComponent::HandlePromptClick(int PromptIndex)
 {
     CurrentPromptIndex = PromptIndex - 1; // Prompts are numbered 1 - 5
     PromptList->SetPromptMenusEnabled(false);
+    PromptList->PromptEntries[CurrentPromptIndex]->FlashPrompt();
     UpdatePromptAtIndex(TopicIndex, CurrentPromptIndex);
     ShowPlayerBark();
 }
